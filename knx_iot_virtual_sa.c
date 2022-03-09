@@ -103,6 +103,17 @@ volatile int quit = 0;  /**< stop variable, used by handle_signal */
 bool g_reset = false;   /**< reset variable, set by commandline arguments */
 bool g_OnOff_1;   /**< global variable for OnOff_1 */bool g_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */bool g_OnOff_2;   /**< global variable for OnOff_2 */bool g_InfoOnOff_2;   /**< global variable for InfoOnOff_2 */bool g_OnOff_3;   /**< global variable for OnOff_3 */bool g_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */bool g_OnOff_4;   /**< global variable for OnOff_4 */bool g_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+int app_initialize_stack();
+void signal_event_loop(void);
+void register_resources(void);
+int app_init(void);
+#ifdef __cplusplus
+}
+#endif
+
 /**
  * @brief s-mode response callback
  * will be called when a response is received on an s-mode read request
@@ -188,7 +199,6 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
      hardware that sets the global variables.
   */
   bool error_state = false; /**< the error state, the generated code */
-  int oc_status_code = OC_STATUS_OK;
 
   PRINT("-- Begin get_OnOff_1 /p/1 \n");
   /* check if the accept header is CBOR */
@@ -199,11 +209,11 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   CborError error;
   error = cbor_encode_boolean(&g_encoder, g_OnOff_1);
   if (error) {
-    oc_status_code = true;
+    error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
   if (error_state == false) {
-    oc_send_cbor_response(request, oc_status_code);
+    oc_send_cbor_response(request, OC_STATUS_OK);
   } else {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
@@ -288,7 +298,6 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
      hardware that sets the global variables.
   */
   bool error_state = false; /**< the error state, the generated code */
-  int oc_status_code = OC_STATUS_OK;
 
   PRINT("-- Begin get_InfoOnOff_1 /p/2 \n");
   /* check if the accept header is CBOR */
@@ -299,11 +308,11 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   CborError error;
   error = cbor_encode_boolean(&g_encoder, g_InfoOnOff_1);
   if (error) {
-    oc_status_code = true;
+    error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
   if (error_state == false) {
-    oc_send_cbor_response(request, oc_status_code);
+    oc_send_cbor_response(request, OC_STATUS_OK);
   } else {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
@@ -382,7 +391,6 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
      hardware that sets the global variables.
   */
   bool error_state = false; /**< the error state, the generated code */
-  int oc_status_code = OC_STATUS_OK;
 
   PRINT("-- Begin get_OnOff_2 /p/3 \n");
   /* check if the accept header is CBOR */
@@ -393,11 +401,11 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   CborError error;
   error = cbor_encode_boolean(&g_encoder, g_OnOff_2);
   if (error) {
-    oc_status_code = true;
+    error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
   if (error_state == false) {
-    oc_send_cbor_response(request, oc_status_code);
+    oc_send_cbor_response(request, OC_STATUS_OK);
   } else {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
@@ -482,7 +490,6 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
      hardware that sets the global variables.
   */
   bool error_state = false; /**< the error state, the generated code */
-  int oc_status_code = OC_STATUS_OK;
 
   PRINT("-- Begin get_InfoOnOff_2 /p/4 \n");
   /* check if the accept header is CBOR */
@@ -493,11 +500,11 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   CborError error;
   error = cbor_encode_boolean(&g_encoder, g_InfoOnOff_2);
   if (error) {
-    oc_status_code = true;
+    error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
   if (error_state == false) {
-    oc_send_cbor_response(request, oc_status_code);
+    oc_send_cbor_response(request, OC_STATUS_OK);
   } else {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
@@ -576,7 +583,6 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
      hardware that sets the global variables.
   */
   bool error_state = false; /**< the error state, the generated code */
-  int oc_status_code = OC_STATUS_OK;
 
   PRINT("-- Begin get_OnOff_3 /p/5 \n");
   /* check if the accept header is CBOR */
@@ -587,11 +593,11 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   CborError error;
   error = cbor_encode_boolean(&g_encoder, g_OnOff_3);
   if (error) {
-    oc_status_code = true;
+    error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
   if (error_state == false) {
-    oc_send_cbor_response(request, oc_status_code);
+    oc_send_cbor_response(request, OC_STATUS_OK);
   } else {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
@@ -676,7 +682,6 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
      hardware that sets the global variables.
   */
   bool error_state = false; /**< the error state, the generated code */
-  int oc_status_code = OC_STATUS_OK;
 
   PRINT("-- Begin get_InfoOnOff_3 /p/6 \n");
   /* check if the accept header is CBOR */
@@ -687,11 +692,11 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   CborError error;
   error = cbor_encode_boolean(&g_encoder, g_InfoOnOff_3);
   if (error) {
-    oc_status_code = true;
+    error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
   if (error_state == false) {
-    oc_send_cbor_response(request, oc_status_code);
+    oc_send_cbor_response(request, OC_STATUS_OK);
   } else {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
@@ -770,7 +775,6 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
      hardware that sets the global variables.
   */
   bool error_state = false; /**< the error state, the generated code */
-  int oc_status_code = OC_STATUS_OK;
 
   PRINT("-- Begin get_OnOff_4 /p/7 \n");
   /* check if the accept header is CBOR */
@@ -781,11 +785,11 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
   CborError error;
   error = cbor_encode_boolean(&g_encoder, g_OnOff_4);
   if (error) {
-    oc_status_code = true;
+    error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
   if (error_state == false) {
-    oc_send_cbor_response(request, oc_status_code);
+    oc_send_cbor_response(request, OC_STATUS_OK);
   } else {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
@@ -870,7 +874,6 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
      hardware that sets the global variables.
   */
   bool error_state = false; /**< the error state, the generated code */
-  int oc_status_code = OC_STATUS_OK;
 
   PRINT("-- Begin get_InfoOnOff_4 /p/8 \n");
   /* check if the accept header is CBOR */
@@ -881,11 +884,11 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
   CborError error;
   error = cbor_encode_boolean(&g_encoder, g_InfoOnOff_4);
   if (error) {
-    oc_status_code = true;
+    error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
   if (error_state == false) {
-    oc_send_cbor_response(request, oc_status_code);
+    oc_send_cbor_response(request, OC_STATUS_OK);
   } else {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
@@ -1239,103 +1242,10 @@ initialize_variables(void)
   g_InfoOnOff_4 = true;   /**< global variable for InfoOnOff_4 */ 
 }
 
-#ifndef NO_MAIN
-#ifdef WIN32
-/**
- * @brief signal the event loop (windows version)
- * wakes up the main function to handle the next callback
- */
-STATIC void
-signal_event_loop(void)
-{
-  WakeConditionVariable(&cv);
-}
-#endif /* WIN32 */
-
-#ifdef __linux__
-/**
- * @brief signal the event loop (Linux)
- * wakes up the main function to handle the next callback
- */
-STATIC void
-signal_event_loop(void)
-{
-  pthread_mutex_lock(&mutex);
-  pthread_cond_signal(&cv);
-  pthread_mutex_unlock(&mutex);
-}
-#endif /* __linux__ */
-
-/**
- * @brief handle Ctrl-C
- * @param signal the captured signal
- */
-STATIC void
-handle_signal(int signal)
-{
-  (void)signal;
-  signal_event_loop();
-  quit = 1;
-}
-
-/**
- * @brief print usage and quits
- *
- */
-STATIC void
-print_usage()
-{
-  PRINT("Usage:\n");
-  PRINT("no arguments : starts the server\n");
-  PRINT("-help  : this message\n");
-  PRINT("reset  : does an full reset of the device\n");
-  exit(0);
-}
-
-/**
- * @brief main application.
- * initializes the global variables
- * registers and starts the handler
- * handles (in a loop) the next event.
- * shuts down the stack
- */
-int
-main(int argc, char *argv[])
+int app_initialize_stack()
 {
   int init;
-  oc_clock_time_t next_event;
-  bool do_send_s_mode = false;
   char *fname = "my_software_image";
-
-#ifdef WIN32
-  /* windows specific */
-  InitializeCriticalSection(&cs);
-  InitializeConditionVariable(&cv);
-  /* install Ctrl-C */
-  signal(SIGINT, handle_signal);
-#endif
-#ifdef __linux__
-  /* Linux specific */
-  struct sigaction sa;
-  sigfillset(&sa.sa_mask);
-  sa.sa_flags = 0;
-  sa.sa_handler = handle_signal;
-  /* install Ctrl-C */
-  sigaction(SIGINT, &sa, NULL);
-#endif
-
-  for (int i = 0; i < argc; i++) {
-    printf("argv[%d] = %s\n", i, argv[i]);
-  }
-  if (argc > 1) {
-    if (strcmp(argv[1], "reset") == 0) {
-      PRINT(" internal reset\n");
-      g_reset = true;
-    }
-    if (strcmp(argv[1], "-help") == 0) {
-      print_usage();
-    }
-  }
 
   PRINT("KNX-IOT Server name : \"%s\"\n", MY_NAME);
 
@@ -1396,6 +1306,110 @@ main(int argc, char *argv[])
   PRINT("Server \"%s\" running, waiting on incoming "
         "connections.\n",
         MY_NAME);
+  return 0;
+}
+
+#ifdef WIN32
+/**
+ * @brief signal the event loop (windows version)
+ * wakes up the main function to handle the next callback
+ */
+STATIC void
+signal_event_loop(void)
+{
+
+#ifndef NO_MAIN
+  WakeConditionVariable(&cv);
+#endif /* NO_MAIN */
+}
+#endif /* WIN32 */
+
+#ifndef NO_MAIN
+
+#ifdef __linux__
+/**
+ * @brief signal the event loop (Linux)
+ * wakes up the main function to handle the next callback
+ */
+STATIC void
+signal_event_loop(void)
+{
+  pthread_mutex_lock(&mutex);
+  pthread_cond_signal(&cv);
+  pthread_mutex_unlock(&mutex);
+}
+#endif /* __linux__ */
+
+/**
+ * @brief handle Ctrl-C
+ * @param signal the captured signal
+ */
+STATIC void
+handle_signal(int signal)
+{
+  (void)signal;
+  signal_event_loop();
+  quit = 1;
+}
+
+/**
+ * @brief print usage and quits
+ *
+ */
+STATIC void
+print_usage()
+{
+  PRINT("Usage:\n");
+  PRINT("no arguments : starts the server\n");
+  PRINT("-help  : this message\n");
+  PRINT("reset  : does an full reset of the device\n");
+  exit(0);
+}
+/**
+ * @brief main application.
+ * initializes the global variables
+ * registers and starts the handler
+ * handles (in a loop) the next event.
+ * shuts down the stack
+ */
+int
+main(int argc, char *argv[])
+{
+  oc_clock_time_t next_event;
+  bool do_send_s_mode = false;
+
+#ifdef WIN32
+  /* windows specific */
+  InitializeCriticalSection(&cs);
+  InitializeConditionVariable(&cv);
+  /* install Ctrl-C */
+  signal(SIGINT, handle_signal);
+#endif
+#ifdef __linux__
+  /* Linux specific */
+  struct sigaction sa;
+  sigfillset(&sa.sa_mask);
+  sa.sa_flags = 0;
+  sa.sa_handler = handle_signal;
+  /* install Ctrl-C */
+  sigaction(SIGINT, &sa, NULL);
+#endif
+
+  for (int i = 0; i < argc; i++) {
+    printf("argv[%d] = %s\n", i, argv[i]);
+  }
+  if (argc > 1) {
+    if (strcmp(argv[1], "reset") == 0) {
+      PRINT(" internal reset\n");
+      g_reset = true;
+    }
+    if (strcmp(argv[1], "-help") == 0) {
+      print_usage();
+    }
+  }
+
+  /* do all initialization */
+  app_initialize_stack();
 
 #ifdef WIN32
   /* windows specific loop */

@@ -7,8 +7,11 @@
 - clone this repo
 - go to the repo (cd)
 - mkdir build
-- cmake ..
+- cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5
 - build with visual studio
+
+
+
 
 ### knx_iot_virtual_la
 
