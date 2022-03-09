@@ -28,7 +28,6 @@ class MyFrame : public wxFrame
 public:
     MyFrame();
 private:
-    void OnHello(wxCommandEvent& event);
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnPressed1(wxCommandEvent& event);
@@ -38,10 +37,7 @@ private:
     void OnTimer(wxTimerEvent& event);
     wxTimer m_timer;
 };
-enum
-{
-    ID_Hello = 1
-};
+
 wxIMPLEMENT_APP(MyApp);
 bool MyApp::OnInit()
 {
@@ -50,23 +46,18 @@ bool MyApp::OnInit()
     return true;
 }
 MyFrame::MyFrame()
-    : wxFrame(NULL, wxID_ANY, "KNX virtual Push Button"),
-    m_timer(this, TIMER_ID)
+    : wxFrame(NULL, wxID_ANY, "KNX virtual Push Button")
 {
     wxMenu *menuFile = new wxMenu;
-    menuFile->Append(ID_Hello, "&Hello...\tCtrl-H",
-                     "Help string shown in status bar for this menu item");
-    menuFile->AppendSeparator();
     menuFile->Append(wxID_EXIT);
     wxMenu *menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
     wxMenuBar *menuBar = new wxMenuBar;
     menuBar->Append(menuFile, "&File");
-    //menuBar->Append(menuHelp, "&Help");
+    menuBar->Append(menuHelp, "&Help");
     SetMenuBar( menuBar );
     CreateStatusBar();
     SetStatusText("Welcome to KNX Virtual!");
-    Bind(wxEVT_MENU, &MyFrame::OnHello, this, ID_Hello);
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 
@@ -84,7 +75,12 @@ MyFrame::MyFrame()
 
     app_initialize_stack();
 
-    m_timer.Start(1);    // 1 mili interval
+    //m_timer.Bind(wxEVT_TIMER, &MyFrame::OnTimer, this);
+    //m_timer.Start(1);    // 1 mili interval
+    // https://forums.wxwidgets.org/viewtopic.php?t=41836
+    //m_timer.Connect(m_timer.GetId(), wxEVT_TIMER, wxTimerEventHandler(MyFrame::OnTimer), NULL, this);
+    m_timer.Bind(wxEVT_TIMER, &MyFrame::OnTimer, this);
+    m_timer.Start(1, wxTIMER_CONTINUOUS);
 
 }
 void MyFrame::OnExit(wxCommandEvent& event)
@@ -93,19 +89,18 @@ void MyFrame::OnExit(wxCommandEvent& event)
 }
 void MyFrame::OnAbout(wxCommandEvent& event)
 {
-    wxMessageBox("This is a wxWidgets Hello World example",
-                 "About Hello World", wxOK | wxICON_INFORMATION);
+    wxMessageBox("This is tool is KNX-IOT virtual for push button\n (c) Cascoda Ltd\n (c) KNX.org",
+                 "KNX-IOT virtual Push Button",
+      wxOK | wxICON_INFORMATION);
 }
-void MyFrame::OnHello(wxCommandEvent& event)
-{
-    wxLogMessage("Hello world from wxWidgets!");
-}
+
 void MyFrame::OnPressed1(wxCommandEvent& event)
 {
   oc_do_s_mode_with_scope(2, "/p/1", "t");
   oc_do_s_mode_with_scope(5, "/p/1", "t");
 
-  wxLogMessage("on pressed 1!");
+  //wxLogMessage("on pressed 1!");
+  SetStatusText("Button 1 pressed");
 }
 
 void MyFrame::OnPressed2(wxCommandEvent& event)
@@ -114,24 +109,32 @@ void MyFrame::OnPressed2(wxCommandEvent& event)
   oc_do_s_mode_with_scope(2, "/p/3", "t");
   oc_do_s_mode_with_scope(5, "/p/3", "t");
 
-  wxLogMessage("on pressed 2!");
+  //wxLogMessage("on pressed 2!");
+  SetStatusText("Button 2 pressed");
 }
 
 void MyFrame::OnPressed3(wxCommandEvent& event)
 {
 
-  wxLogMessage("on pressed 3!");
+  oc_do_s_mode_with_scope(2, "/p/5", "t");
+  oc_do_s_mode_with_scope(5, "/p/5", "t");
+  //wxLogMessage("on pressed 3!");
+  SetStatusText("Button 3 pressed");
 }
 
 void MyFrame::OnPressed4(wxCommandEvent& event)
 {
-  wxLogMessage("on pressed 4!");
+
+  oc_do_s_mode_with_scope(2, "/p/7", "t");
+  oc_do_s_mode_with_scope(5, "/p/7", "t");
+  //wxLogMessage("on pressed 4!");
+  SetStatusText("Button 4 pressed");
 }
 
 void MyFrame::OnTimer(wxTimerEvent& event)
 {
-  // do whatever you want to do every second here
-  //print("sss");
+  // do whatever you want to do every mili second here
   oc_clock_time_t next_event;
   next_event = oc_main_poll();
+  //SetStatusText(".");
 }
