@@ -101,7 +101,89 @@ STATIC CRITICAL_SECTION cs;   /**< event loop variable */
 #define btoa(x) ((x) ? "true" : "false")
 volatile int quit = 0;  /**< stop variable, used by handle_signal */
 bool g_reset = false;   /**< reset variable, set by commandline arguments */
-bool g_OnOff_1;   /**< global variable for OnOff_1 */bool g_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */bool g_OnOff_2;   /**< global variable for OnOff_2 */bool g_InfoOnOff_2;   /**< global variable for InfoOnOff_2 */bool g_OnOff_3;   /**< global variable for OnOff_3 */bool g_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */bool g_OnOff_4;   /**< global variable for OnOff_4 */bool g_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
+
+bool g_OnOff_1;   /**< global variable for OnOff_1 */
+bool g_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
+bool g_OnOff_2;   /**< global variable for OnOff_2 */
+bool g_InfoOnOff_2;   /**< global variable for InfoOnOff_2 */
+bool g_OnOff_3;   /**< global variable for OnOff_3 */
+bool g_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */
+bool g_OnOff_4;   /**< global variable for OnOff_4 */
+bool g_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
+
+void app_set_bool_variable(char* url, bool value) {
+if ( strcmp(url, "/p/1") == 0) { 
+    g_OnOff_1 = value;   /**< global variable for OnOff_1 */
+  }if ( strcmp(url, "/p/2") == 0) { 
+    g_InfoOnOff_1 = value;   /**< global variable for InfoOnOff_1 */
+  }if ( strcmp(url, "/p/3") == 0) { 
+    g_OnOff_2 = value;   /**< global variable for OnOff_2 */
+  }if ( strcmp(url, "/p/4") == 0) { 
+    g_InfoOnOff_2 = value;   /**< global variable for InfoOnOff_2 */
+  }if ( strcmp(url, "/p/5") == 0) { 
+    g_OnOff_3 = value;   /**< global variable for OnOff_3 */
+  }if ( strcmp(url, "/p/6") == 0) { 
+    g_InfoOnOff_3 = value;   /**< global variable for InfoOnOff_3 */
+  }if ( strcmp(url, "/p/7") == 0) { 
+    g_OnOff_4 = value;   /**< global variable for OnOff_4 */
+  }if ( strcmp(url, "/p/8") == 0) { 
+    g_InfoOnOff_4 = value;   /**< global variable for InfoOnOff_4 */
+  }
+}
+
+bool app_retrieve_bool_variable(char* url) {
+if ( strcmp(url, "/p/1") == 0) { 
+    return g_OnOff_1;   /**< global variable for OnOff_1 */
+  }if ( strcmp(url, "/p/2") == 0) { 
+    return g_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
+  }if ( strcmp(url, "/p/3") == 0) { 
+    return g_OnOff_2;   /**< global variable for OnOff_2 */
+  }if ( strcmp(url, "/p/4") == 0) { 
+    return g_InfoOnOff_2;   /**< global variable for InfoOnOff_2 */
+  }if ( strcmp(url, "/p/5") == 0) { 
+    return g_OnOff_3;   /**< global variable for OnOff_3 */
+  }if ( strcmp(url, "/p/6") == 0) { 
+    return g_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */
+  }if ( strcmp(url, "/p/7") == 0) { 
+    return g_OnOff_4;   /**< global variable for OnOff_4 */
+  }if ( strcmp(url, "/p/8") == 0) { 
+    return g_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
+  }
+  return false;
+}
+
+
+typedef void (*oc_post_cb_t)(char* url);
+
+/**
+ * @brief The post callback
+ *
+ */
+typedef struct oc_post_struct_t
+{
+  oc_post_cb_t cb; /**< the post callback, e.g. when something has changed */
+} oc_post_struct_t;
+
+static oc_post_struct_t app_post = { NULL };
+
+void
+app_set_post_cb(oc_post_cb_t cb)
+{
+  app_post.cb = cb;
+}
+
+oc_post_struct_t *
+oc_get_post_cb(void)
+{
+  return &app_post;
+}
+
+void do_post_cb(char* url) {
+  oc_post_struct_t *my_cb = oc_get_post_cb();
+  if (my_cb && my_cb->cb) {
+    my_cb->cb(url);
+  }
+}
 
 #ifdef __cplusplus
 extern "C" {
@@ -136,7 +218,7 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
  *
  * sets the:
  * - manufacturer  : cascoda
- * - serial number : 0003000
+ * - serial number : 0004000
  * - base path
  * - knx spec version
  * - hardware version
@@ -151,7 +233,7 @@ app_init(void)
   int ret = oc_init_platform("cascoda", NULL, NULL);
 
   /* set the application name, version, base url, device serial number */
-  ret |= oc_add_device(MY_NAME, "1.0.0", "//", "0003000", NULL, NULL);
+  ret |= oc_add_device(MY_NAME, "1.0.0", "//", "0004000", NULL, NULL);
 
   oc_device_info_t *device = oc_core_get_device_info(0);
   PRINT("Serial Number: %s\n", oc_string(device->serialnumber));
@@ -268,6 +350,8 @@ post_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
     PRINT("  Send status to '/p/2' with flag: 't'\n");
     oc_do_s_mode_with_scope(2, "/p/2", "t");
     oc_do_s_mode_with_scope(5, "/p/2", "t");
+
+    do_post_cb("/p/1");
   
     PRINT("-- End post_OnOff_1\n");
     return;
@@ -361,6 +445,8 @@ post_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
      returns to this function here. Alternative is to have a callback from the
      hardware that sets the global variables.
    */
+
+    do_post_cb("/p/2");
   
     PRINT("-- End post_InfoOnOff_1\n");
     return;
@@ -460,6 +546,8 @@ post_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
     PRINT("  Send status to '/p/4' with flag: 't'\n");
     oc_do_s_mode_with_scope(2, "/p/4", "t");
     oc_do_s_mode_with_scope(5, "/p/4", "t");
+
+    do_post_cb("/p/3");
   
     PRINT("-- End post_OnOff_2\n");
     return;
@@ -553,6 +641,8 @@ post_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
      returns to this function here. Alternative is to have a callback from the
      hardware that sets the global variables.
    */
+
+    do_post_cb("/p/4");
   
     PRINT("-- End post_InfoOnOff_2\n");
     return;
@@ -652,6 +742,8 @@ post_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
     PRINT("  Send status to '/p/6' with flag: 't'\n");
     oc_do_s_mode_with_scope(2, "/p/6", "t");
     oc_do_s_mode_with_scope(5, "/p/6", "t");
+
+    do_post_cb("/p/5");
   
     PRINT("-- End post_OnOff_3\n");
     return;
@@ -745,6 +837,8 @@ post_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
      returns to this function here. Alternative is to have a callback from the
      hardware that sets the global variables.
    */
+
+    do_post_cb("/p/6");
   
     PRINT("-- End post_InfoOnOff_3\n");
     return;
@@ -844,6 +938,8 @@ post_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
     PRINT("  Send status to '/p/8' with flag: 't'\n");
     oc_do_s_mode_with_scope(2, "/p/8", "t");
     oc_do_s_mode_with_scope(5, "/p/8", "t");
+
+    do_post_cb("/p/7");
   
     PRINT("-- End post_OnOff_4\n");
     return;
@@ -937,6 +1033,8 @@ post_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
      returns to this function here. Alternative is to have a callback from the
      hardware that sets the global variables.
    */
+
+    do_post_cb("/p/8");
   
     PRINT("-- End post_InfoOnOff_4\n");
     return;

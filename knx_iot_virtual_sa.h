@@ -24,10 +24,34 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+/**
+ * Callback invoked by the stack when a successfull post is done
+ *
+ * @param[in] url the url of the post
+ *
+ */
+typedef void (*oc_post_cb_t)(char* url);
+
+/**
+ * @brief The post callback
+ *
+ */
+typedef struct oc_post_struct_t
+{
+  oc_post_cb_t cb; /**< the post callback, e.g. when something has changed */
+} oc_post_struct_t;
+
+void app_set_post_cb(oc_post_cb_t cb);
+
 int app_initialize_stack();
-void signal_event_loop(void);
-void register_resources(void);
-int app_init(void);
+
+bool app_retrieve_bool_variable(char* url);
+
+void app_set_bool_variable(char* url, bool value);
+
+
 #ifdef __cplusplus
 }
 #endif
