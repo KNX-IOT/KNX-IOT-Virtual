@@ -2,6 +2,8 @@
 
 ## virtual applications
 
+These applications are meant to run on Windows 10.
+
 ## installing wxWidgets on Windows
 
 download wxwidgets from (installer source code):
@@ -13,6 +15,11 @@ https://www.wxwidgets.org/downloads/
   - open c:\wxWidgets-3.1.5\build\msw\wx_vc16.sln (or take the highest number available)
   - accept convert solution suggestion: convert solution to newer version studio
   - build the solution
+
+Note: using wxWidgets requires perl
+If not installed then install it via a Windows installer available at:
+
+https://www.perl.org/get.html
 
 ## building the applications on Windows
 
