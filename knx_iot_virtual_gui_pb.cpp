@@ -71,6 +71,7 @@ wxIMPLEMENT_APP(MyApp);
 bool MyApp::OnInit()
 {
     MyFrame *frame = new MyFrame();
+    frame->Fit();
     frame->Show(true);
     return true;
 }
@@ -90,23 +91,23 @@ MyFrame::MyFrame()
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 
-    wxButton* btn_1 = new wxButton(this, BUTTON_1, _T("Button 1"), wxPoint(10, 10 ), wxSize(80, 25), 0);
+    wxButton* btn_1 = new wxButton(this, BUTTON_1, _T("Button 1 ('/p/1')"), wxPoint(10, 10 ), wxSize(130, 25), 0);
     btn_1->Bind(wxEVT_BUTTON, &MyFrame::OnPressed1, this);
-    wxButton* btn_2 = new wxButton(this, BUTTON_2, _T("Button 2"), wxPoint(10, 10 + 25), wxSize(80, 25), 0);
+    wxButton* btn_2 = new wxButton(this, BUTTON_2, _T("Button 2 ('/p/3')"), wxPoint(10, 10 + 25), wxSize(130, 25), 0);
     btn_2->Bind(wxEVT_BUTTON, &MyFrame::OnPressed2, this);
-    wxButton* btn_3 = new wxButton(this, BUTTON_3, _T("Button 3"), wxPoint(10, 10 + 50), wxSize(80, 25), 0);
+    wxButton* btn_3 = new wxButton(this, BUTTON_3, _T("Button 3 ('/p/5')"), wxPoint(10, 10 + 50), wxSize(130, 25), 0);
     btn_3->Bind(wxEVT_BUTTON, &MyFrame::OnPressed3, this);
-    wxButton* btn_4 = new wxButton(this, BUTTON_4, _T("Button 4"), wxPoint(10, 10 + 75), wxSize(80, 25), 0);
+    wxButton* btn_4 = new wxButton(this, BUTTON_4, _T("Button 4 ('/p/7')"), wxPoint(10, 10 + 75), wxSize(130, 25), 0);
     btn_4->Bind(wxEVT_BUTTON, &MyFrame::OnPressed4, this);
 
 
-    m_check_1 = new 	wxCheckBox(this, BUTTON_1, _T("FeedBack 1"), wxPoint(100, 10), wxSize(80, 25), 0);
+    m_check_1 = new 	wxCheckBox(this, BUTTON_1, _T("FeedBack 1 ('/p/2')"), wxPoint(150, 10), wxSize(130, 25), 0);
     m_check_1->Enable(false);
-    m_check_2 = new 	wxCheckBox(this, BUTTON_2, _T("FeedBack 2"), wxPoint(100, 10 + 25), wxSize(80, 25), 0);
+    m_check_2 = new 	wxCheckBox(this, BUTTON_2, _T("FeedBack 2 ('/p/4')"), wxPoint(150, 10 + 25), wxSize(130, 25), 0);
     m_check_2->Enable(false);
-    m_check_3 = new 	wxCheckBox(this, BUTTON_3, _T("FeedBack 3"), wxPoint(100, 10 + 50), wxSize(80, 25), 0);
+    m_check_3 = new 	wxCheckBox(this, BUTTON_3, _T("FeedBack 3 ('/p/6')"), wxPoint(150, 10 + 50), wxSize(130, 25), 0);
     m_check_3->Enable(false);
-    m_check_4 = new 	wxCheckBox(this, BUTTON_4, _T("FeedBack 4"), wxPoint(100, 10 + 75), wxSize(80, 25), 0);
+    m_check_4 = new 	wxCheckBox(this, BUTTON_4, _T("FeedBack 4 ('/p/8')"), wxPoint(150, 10 + 75), wxSize(130, 25), 0);
     m_check_4->Enable(false);
 
 
@@ -119,7 +120,7 @@ MyFrame::MyFrame()
     strcat(text, oc_string(device->serialnumber));
 
     wxTextCtrl* Statictext;
-    Statictext = new wxTextCtrl(this, wxID_ANY, text, wxPoint(10, 10 + 100), wxSize(80 * 3, 25), 0);
+    Statictext = new wxTextCtrl(this, wxID_ANY, text, wxPoint(10, 10 + 100), wxSize(150 + 130, 25), 0);
     Statictext->SetEditable(false);
 
     this->updateInfoCheckBoxes();
@@ -149,18 +150,19 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 
 void MyFrame::OnPressed1(wxCommandEvent& event)
 {
+  char url[] = "/p/1";
   char my_text[100];
-  bool p1 = app_retrieve_bool_variable("/p/1");
+  bool p1 = app_retrieve_bool_variable(url);
 
   if (p1 == true) {
     p1 = false;
   } else {
     p1 = true;
   }
-  app_set_bool_variable("/p/1", p1);
-  oc_do_s_mode_with_scope(2, "/p/1", "t");
-  oc_do_s_mode_with_scope(5, "/p/1", "t");
-  sprintf(my_text,"Button 1 pressed: %d", (int)p1);
+  app_set_bool_variable(url, p1);
+  oc_do_s_mode_with_scope(2, url, "t");
+  oc_do_s_mode_with_scope(5, url, "t");
+  sprintf(my_text,"Button 1 ('%s') pressed: %d", url, (int)p1);
   SetStatusText(my_text);
 }
 
@@ -179,7 +181,7 @@ void MyFrame::OnPressed2(wxCommandEvent& event)
   app_set_bool_variable(url, p7);
   oc_do_s_mode_with_scope(2, url, "t");
   oc_do_s_mode_with_scope(5, url, "t");
-  sprintf(my_text, "Button 2 pressed: %d", (int)p7);
+  sprintf(my_text, "Button 2 ('%s') pressed: %d", url, (int)p7);
   SetStatusText(my_text);
 }
 
@@ -198,7 +200,7 @@ void MyFrame::OnPressed3(wxCommandEvent& event)
   app_set_bool_variable(url, p7);
   oc_do_s_mode_with_scope(2, url, "t");
   oc_do_s_mode_with_scope(5, url, "t");
-  sprintf(my_text, "Button 3 pressed: %d", (int)p7);
+  sprintf(my_text, "Button 3 ('%s') pressed: %d", url, (int)p7);
   SetStatusText(my_text);
 }
 
