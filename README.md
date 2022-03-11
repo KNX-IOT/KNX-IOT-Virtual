@@ -14,7 +14,9 @@ https://www.wxwidgets.org/downloads/
   
   - open c:\wxWidgets-3.1.5\build\msw\wx_vc16.sln (or take the highest number available)
   - accept convert solution suggestion: convert solution to newer version studio
-  - build the solution
+  - build the solution :
+    - static Win32 library for Debug & Release
+    - static x64 library for Debug & Release
 
 Note: using wxWidgets requires perl
 If not installed then install it via a Windows installer available at:
@@ -27,7 +29,8 @@ https://www.perl.org/get.html
 - go to the repo (cd)
 - mkdir build
 - cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5
-- build with visual studio
+- open solution (sln) created in the build folder with visual studio
+- build the applications in visual studio
 
 ### knx_iot_virtual_pb
 

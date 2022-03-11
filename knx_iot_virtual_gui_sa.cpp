@@ -43,7 +43,6 @@ enum
 
 };
 
-
 class MyApp : public wxApp
 {
 public:
@@ -89,11 +88,12 @@ wxIMPLEMENT_APP(MyApp);
 bool MyApp::OnInit()
 {
     MyFrame *frame = new MyFrame();
+    frame->Fit();
     frame->Show(true);
     return true;
 }
 MyFrame::MyFrame()
-    : wxFrame(NULL, wxID_ANY, "KNX virtual Switch Actuator")
+    : wxFrame(NULL, wxID_ANY, "KNX-IOT virtual Switch Actuator")
 {
     wxMenu *menuFile = new wxMenu;
     menuFile->Append(wxID_EXIT);
@@ -104,35 +104,35 @@ MyFrame::MyFrame()
     menuBar->Append(menuHelp, "&Help");
     SetMenuBar( menuBar );
     CreateStatusBar();
-    SetStatusText("Welcome to KNX Virtual!");
+    SetStatusText("Welcome to KNX-IOT Virtual!");
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 
-    m_btn_1 = new wxButton(this, BUTTON_1, _T("Button 1"), wxPoint(10, 10 ), wxSize(80, 25), 0);
+    m_btn_1 = new wxButton(this, BUTTON_1, _T("Actuator 1 ('/p/1')"), wxPoint(10, 10 ), wxSize(130, 25), 0);
     m_btn_1->Enable(false);
-    m_btn_2 = new wxButton(this, BUTTON_2, _T("Button 2"), wxPoint(10, 10 + 25), wxSize(80, 25), 0);
+    m_btn_2 = new wxButton(this, BUTTON_2, _T("Actuator 2 ('/p/3')"), wxPoint(10, 10 + 25), wxSize(130, 25), 0);
     m_btn_2->Enable(false);
-    m_btn_3 = new wxButton(this, BUTTON_3, _T("Button 3"), wxPoint(10, 10 + 50), wxSize(80, 25), 0);
+    m_btn_3 = new wxButton(this, BUTTON_3, _T("Actuator 3 ('/p/5')"), wxPoint(10, 10 + 50), wxSize(130, 25), 0);
     m_btn_3->Enable(false);
-    m_btn_4 = new wxButton(this, BUTTON_4, _T("Button 4"), wxPoint(10, 10 + 75), wxSize(80, 25), 0);
+    m_btn_4 = new wxButton(this, BUTTON_4, _T("Actuator 4 ('/p/7')"), wxPoint(10, 10 + 75), wxSize(130, 25), 0);
     m_btn_4->Enable(false);
 
-    m_check_1 = new 	wxCheckBox(this, BUTTON_1, _T("FeedBack 1"), wxPoint(100, 10), wxSize(80, 25), 0);
+    m_check_1 = new 	wxCheckBox(this, BUTTON_1, _T("FeedBack 1 ('/p/2')"), wxPoint(150, 10), wxSize(130, 25), 0);
     m_check_1->Enable(false);
-    m_check_2 = new 	wxCheckBox(this, BUTTON_2, _T("FeedBack 2"), wxPoint(100, 10 + 25), wxSize(80, 25), 0);
+    m_check_2 = new 	wxCheckBox(this, BUTTON_2, _T("FeedBack 2 ('/p/4')"), wxPoint(150, 10 + 25), wxSize(130, 25), 0);
     m_check_2->Enable(false);
-    m_check_3 = new 	wxCheckBox(this, BUTTON_3, _T("FeedBack 3"), wxPoint(100, 10 + 50), wxSize(80, 25), 0);
+    m_check_3 = new 	wxCheckBox(this, BUTTON_3, _T("FeedBack 3 ('/p/6')"), wxPoint(150, 10 + 50), wxSize(130, 25), 0);
     m_check_3->Enable(false);
-    m_check_4 = new 	wxCheckBox(this, BUTTON_4, _T("FeedBack 4"), wxPoint(100, 10 + 75), wxSize(80, 25), 0);
+    m_check_4 = new 	wxCheckBox(this, BUTTON_4, _T("FeedBack 4 ('/p/8')"), wxPoint(150, 10 + 75), wxSize(130, 25), 0);
     m_check_4->Enable(false);
 
-    m_fault_1 = new 	wxCheckBox(this, BUTTON_1, _T("Fault 1"), wxPoint(190, 10), wxSize(80, 25), 0);
+    m_fault_1 = new 	wxCheckBox(this, BUTTON_1, _T("Fault 1 (on '/p/1') "), wxPoint(290, 10), wxSize(130, 25), 0);
     m_fault_1->Bind(wxEVT_CHECKBOX, &MyFrame::OnFault1, this);
-    m_fault_2 = new 	wxCheckBox(this, BUTTON_2, _T("Fault 2"), wxPoint(190, 10 + 25), wxSize(80, 25), 0);
+    m_fault_2 = new 	wxCheckBox(this, BUTTON_2, _T("Fault 2 (on '/p/3') "), wxPoint(290, 10 + 25), wxSize(130, 25), 0);
     m_fault_2->Bind(wxEVT_CHECKBOX, &MyFrame::OnFault2, this);
-    m_fault_3 = new 	wxCheckBox(this, BUTTON_3, _T("Fault 3"), wxPoint(190, 10 + 50), wxSize(80, 25), 0);
+    m_fault_3 = new 	wxCheckBox(this, BUTTON_3, _T("Fault 3 (on '/p/5') "), wxPoint(290, 10 + 50), wxSize(130, 25), 0);
     m_fault_3->Bind(wxEVT_CHECKBOX, &MyFrame::OnFault3, this);
-    m_fault_4 = new 	wxCheckBox(this, BUTTON_4, _T("Fault 4"), wxPoint(190, 10 + 75), wxSize(80, 25), 0);
+    m_fault_4 = new 	wxCheckBox(this, BUTTON_4, _T("Fault 4 (on '/p/7') "), wxPoint(290, 10 + 75), wxSize(130, 25), 0);
     m_fault_4->Bind(wxEVT_CHECKBOX, &MyFrame::OnFault4, this);
 
 
@@ -145,7 +145,7 @@ MyFrame::MyFrame()
     strcat(text, oc_string(device->serialnumber));
 
     wxTextCtrl* Statictext;
-    Statictext = new wxTextCtrl(this, wxID_ANY, text, wxPoint(10, 10 + 100), wxSize(80 * 3, 25), 0);
+    Statictext = new wxTextCtrl(this, wxID_ANY, text, wxPoint(10, 10 + 100), wxSize(290 + 130, 25), 0);
     Statictext->SetEditable(false);
 
     this->updateInfoCheckBoxes();
@@ -177,7 +177,8 @@ void MyFrame::OnFault1(wxCommandEvent& event)
 {
   char url[] = "/p/1";
   char my_text[100];
-  bool p1 = app_retrieve_bool_variable(url);
+
+  bool p1 = m_fault_1->GetValue();
   app_set_fault_variable(url, p1);
 
   sprintf(my_text,"Actuator 1 Fault: %d", (int)p1);
@@ -188,7 +189,7 @@ void MyFrame::OnFault2(wxCommandEvent& event)
 {
   char url[] = "/p/3";
   char my_text[100];
-  bool p1 = app_retrieve_bool_variable(url);
+  bool p1 = m_fault_1->GetValue();
   app_set_fault_variable(url, p1);
 
   sprintf(my_text, "Actuator 2 Fault: %d", (int)p1);
@@ -199,7 +200,8 @@ void MyFrame::OnFault3(wxCommandEvent& event)
 {
   char url[] = "/p/5";
   char my_text[100];
-  bool p1 = app_retrieve_bool_variable(url);
+  bool p1 = m_fault_1->GetValue();
+
   app_set_fault_variable(url, p1);
 
   sprintf(my_text, "Actuator 3 Fault: %d", (int)p1);
@@ -210,9 +212,8 @@ void MyFrame::OnFault4(wxCommandEvent& event)
 {
   char url[] = "/p/7";
   char my_text[100];
-  bool p1 = app_retrieve_bool_variable(url);
+  bool p1 = m_fault_1->GetValue();
   app_set_fault_variable(url, p1);
-
   sprintf(my_text, "Actuator 4 Fault: %d", (int)p1);
   SetStatusText(my_text);
 }
@@ -244,7 +245,7 @@ void  MyFrame::updateInfoCheckBoxes()
 
 void MyFrame::bool2text(bool on_off, char* text)
 {
-  strcpy(text, "Button 1 ");
+  //strcpy(text, "Button 1 ");
   if (on_off) {
     strcat(text, " On");
   }
@@ -257,22 +258,22 @@ void  MyFrame::updateInfoButtons()
 {
   char text[200];
   bool p = app_retrieve_bool_variable("/p/1");
-  strcpy(text, "Button 1 ");
+  strcpy(text, "Actuator 1 ('/p/1')");
   this->bool2text(p, text);
   m_btn_1->SetLabel(text);
 
   p = app_retrieve_bool_variable("/p/3");
-  strcpy(text, "Button 2 ");
+  strcpy(text, "Actuator 2 ('/p/3')");
   this->bool2text(p, text);
   m_btn_2->SetLabel(text);
   
   p = app_retrieve_bool_variable("/p/5");
-  strcpy(text, "Button 3 ");
+  strcpy(text, "Actuator 3 ('/p/5') ");
   this->bool2text(p, text);
   m_btn_3->SetLabel(text);
 
   p = app_retrieve_bool_variable("/p/7");
-  strcpy(text, "Button 4 ");
+  strcpy(text, "Actuator 4 ('/p/7')");
   this->bool2text(p, text);
   m_btn_4->SetLabel(text);
 }
