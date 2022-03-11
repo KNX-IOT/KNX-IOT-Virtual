@@ -109,7 +109,20 @@ MyFrame::MyFrame()
     m_check_4 = new 	wxCheckBox(this, BUTTON_4, _T("FeedBack 4"), wxPoint(100, 10 + 75), wxSize(80, 25), 0);
     m_check_4->Enable(false);
 
+
     app_initialize_stack();
+
+    char text[500];
+
+    strcpy(text, "Device Serial Number: ");
+    oc_device_info_t* device = oc_core_get_device_info(0);
+    strcat(text, oc_string(device->serialnumber));
+
+    wxTextCtrl* Statictext;
+    Statictext = new wxTextCtrl(this, wxID_ANY, text, wxPoint(10, 10 + 100), wxSize(80 * 3, 25), 0);
+    Statictext->SetEditable(false);
+
+    //app_initialize_stack();
 
     this->updateInfoCheckBoxes();
 
