@@ -52,6 +52,12 @@ bool app_retrieve_bool_variable(char* url);
 void app_set_bool_variable(char* url, bool value);
 
 
+bool app_retrieve_fault_variable(char* url);
+
+void app_set_fault_variable(char* url, bool value);
+
+
+
 #ifdef __cplusplus
 }
 #endif

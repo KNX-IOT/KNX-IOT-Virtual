@@ -10,6 +10,8 @@ FetchContent_Declare(
 )
 
 find_package(wxWidgets REQUIRED COMPONENTS net core base)
+include(${wxWidgets_USE_FILE})
+
 
 if(NOT knx-iot-stack_POPULATED)
     FetchContent_Populate(knx-iot-stack)
@@ -27,8 +29,12 @@ add_executable(knx_iot_virtual_sa
 )
 target_link_libraries(knx_iot_virtual_sa kisClientServer)
 
-include(${wxWidgets_USE_FILE})
 add_executable(knx_iot_virtual_gui_pb WIN32
      ${PROJECT_SOURCE_DIR}/knx_iot_virtual_gui_pb.cpp
      ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.c)
 target_link_libraries(knx_iot_virtual_gui_pb ${wxWidgets_LIBRARIES} kisClientServer)
+
+add_executable(knx_iot_virtual_gui_sa WIN32
+     ${PROJECT_SOURCE_DIR}/knx_iot_virtual_gui_sa.cpp
+     ${PROJECT_SOURCE_DIR}/knx_iot_virtual_sa.c)
+target_link_libraries(knx_iot_virtual_gui_sa ${wxWidgets_LIBRARIES} kisClientServer)

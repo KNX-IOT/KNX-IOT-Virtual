@@ -110,6 +110,11 @@ bool g_OnOff_3;   /**< global variable for OnOff_3 */
 bool g_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */
 bool g_OnOff_4;   /**< global variable for OnOff_4 */
 bool g_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
+ 
+bool g_fault_InfoOnOff_1;   /**< global variable for fault InfoOnOff_1 */ 
+bool g_fault_InfoOnOff_2;   /**< global variable for fault InfoOnOff_2 */ 
+bool g_fault_InfoOnOff_3;   /**< global variable for fault InfoOnOff_3 */ 
+bool g_fault_InfoOnOff_4;   /**< global variable for fault InfoOnOff_4 */
 
 void app_set_bool_variable(char* url, bool value) {
 if ( strcmp(url, "/p/1") == 0) { 
@@ -152,6 +157,39 @@ if ( strcmp(url, "/p/1") == 0) {
   return false;
 }
 
+
+void app_set_fault_variable(char* url, bool value){
+ 
+  if ( strcmp(url, "/p/2") == 0) { 
+    g_fault_InfoOnOff_1 = value;   /**< global variable for InfoOnOff_1 */
+  } 
+  if ( strcmp(url, "/p/4") == 0) { 
+    g_fault_InfoOnOff_2 = value;   /**< global variable for InfoOnOff_2 */
+  } 
+  if ( strcmp(url, "/p/6") == 0) { 
+    g_fault_InfoOnOff_3 = value;   /**< global variable for InfoOnOff_3 */
+  } 
+  if ( strcmp(url, "/p/8") == 0) { 
+    g_fault_InfoOnOff_4 = value;   /**< global variable for InfoOnOff_4 */
+  }
+}
+
+bool app_retrieve_fault_variable(char* url) {
+ 
+  if ( strcmp(url, "/p/2") == 0) { 
+    return g_fault_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
+  } 
+  if ( strcmp(url, "/p/4") == 0) { 
+    return g_fault_InfoOnOff_2;   /**< global variable for InfoOnOff_2 */
+  } 
+  if ( strcmp(url, "/p/6") == 0) { 
+    return g_fault_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */
+  } 
+  if ( strcmp(url, "/p/8") == 0) { 
+    return g_fault_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
+  }
+  return false;
+}
 
 typedef void (*oc_post_cb_t)(char* url);
 
@@ -300,7 +338,8 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_OnOff_1\n");
-}/**
+}
+/**
  * @brief GET method for "InfoOnOff_1" resource at "/p/2".
  *
  * function is called to initialize the return values of the GET method.
@@ -342,7 +381,8 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_InfoOnOff_1\n");
-} 
+}
+ 
 /**
  * @brief POST method for "InfoOnOff_1" resource at "/p/2".
  *
@@ -437,7 +477,8 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_OnOff_2\n");
-}/**
+}
+/**
  * @brief GET method for "InfoOnOff_2" resource at "/p/4".
  *
  * function is called to initialize the return values of the GET method.
@@ -479,7 +520,8 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_InfoOnOff_2\n");
-} 
+}
+ 
 /**
  * @brief POST method for "InfoOnOff_2" resource at "/p/4".
  *
@@ -574,7 +616,8 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_OnOff_3\n");
-}/**
+}
+/**
  * @brief GET method for "InfoOnOff_3" resource at "/p/6".
  *
  * function is called to initialize the return values of the GET method.
@@ -616,7 +659,8 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_InfoOnOff_3\n");
-} 
+}
+ 
 /**
  * @brief POST method for "InfoOnOff_3" resource at "/p/6".
  *
@@ -711,7 +755,8 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_OnOff_4\n");
-}/**
+}
+/**
  * @brief GET method for "InfoOnOff_4" resource at "/p/8".
  *
  * function is called to initialize the return values of the GET method.
@@ -753,7 +798,8 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_InfoOnOff_4\n");
-} 
+}
+ 
 /**
  * @brief POST method for "InfoOnOff_4" resource at "/p/8".
  *

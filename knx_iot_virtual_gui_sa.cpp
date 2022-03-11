@@ -35,7 +35,11 @@ enum
   CHECK_1 = TIMER_ID + 1,
   CHECK_2 = CHECK_1 + 1,
   CHECK_3 = CHECK_2 + 1,
-  CHECK_4 = CHECK_3 + 1
+  CHECK_4 = CHECK_3 + 1,
+  FAULT_1 = CHECK_4 + 1,
+  FAULT_2 = FAULT_1 + 1,
+  FAULT_3 = FAULT_2 + 1,
+  FAULT_4 = FAULT_3 + 1
 
 };
 
@@ -53,18 +57,32 @@ public:
 private:
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
-    void OnPressed1(wxCommandEvent& event);
-    void OnPressed2(wxCommandEvent& event);
-    void OnPressed3(wxCommandEvent& event);
-    void OnPressed4(wxCommandEvent& event);
+    void OnFault1(wxCommandEvent& event);
+    void OnFault2(wxCommandEvent& event);
+    void OnFault3(wxCommandEvent& event);
+    void OnFault4(wxCommandEvent& event);
     void OnTimer(wxTimerEvent& event);
 
     void updateInfoCheckBoxes();
+    void updateInfoButtons();
+    void bool2text(bool on_off, char* text);
+
     wxTimer m_timer;
+
+    wxButton* m_btn_1;
+    wxButton* m_btn_2;
+    wxButton* m_btn_3;
+    wxButton* m_btn_4;
+
     wxCheckBox* m_check_1;
     wxCheckBox* m_check_2;
     wxCheckBox* m_check_3;
     wxCheckBox* m_check_4;
+
+    wxCheckBox* m_fault_1;
+    wxCheckBox* m_fault_2;
+    wxCheckBox* m_fault_3;
+    wxCheckBox* m_fault_4;
 };
 
 wxIMPLEMENT_APP(MyApp);
@@ -75,7 +93,7 @@ bool MyApp::OnInit()
     return true;
 }
 MyFrame::MyFrame()
-    : wxFrame(NULL, wxID_ANY, "KNX virtual Push Button")
+    : wxFrame(NULL, wxID_ANY, "KNX virtual Switch Actuator")
 {
     wxMenu *menuFile = new wxMenu;
     menuFile->Append(wxID_EXIT);
@@ -90,15 +108,14 @@ MyFrame::MyFrame()
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 
-    wxButton* btn_1 = new wxButton(this, BUTTON_1, _T("Button 1"), wxPoint(10, 10 ), wxSize(80, 25), 0);
-    btn_1->Bind(wxEVT_BUTTON, &MyFrame::OnPressed1, this);
-    wxButton* btn_2 = new wxButton(this, BUTTON_2, _T("Button 2"), wxPoint(10, 10 + 25), wxSize(80, 25), 0);
-    btn_2->Bind(wxEVT_BUTTON, &MyFrame::OnPressed2, this);
-    wxButton* btn_3 = new wxButton(this, BUTTON_3, _T("Button 3"), wxPoint(10, 10 + 50), wxSize(80, 25), 0);
-    btn_3->Bind(wxEVT_BUTTON, &MyFrame::OnPressed3, this);
-    wxButton* btn_4 = new wxButton(this, BUTTON_4, _T("Button 4"), wxPoint(10, 10 + 75), wxSize(80, 25), 0);
-    btn_4->Bind(wxEVT_BUTTON, &MyFrame::OnPressed4, this);
-
+    m_btn_1 = new wxButton(this, BUTTON_1, _T("Button 1"), wxPoint(10, 10 ), wxSize(80, 25), 0);
+    m_btn_1->Enable(false);
+    m_btn_2 = new wxButton(this, BUTTON_2, _T("Button 2"), wxPoint(10, 10 + 25), wxSize(80, 25), 0);
+    m_btn_2->Enable(false);
+    m_btn_3 = new wxButton(this, BUTTON_3, _T("Button 3"), wxPoint(10, 10 + 50), wxSize(80, 25), 0);
+    m_btn_3->Enable(false);
+    m_btn_4 = new wxButton(this, BUTTON_4, _T("Button 4"), wxPoint(10, 10 + 75), wxSize(80, 25), 0);
+    m_btn_4->Enable(false);
 
     m_check_1 = new 	wxCheckBox(this, BUTTON_1, _T("FeedBack 1"), wxPoint(100, 10), wxSize(80, 25), 0);
     m_check_1->Enable(false);
@@ -108,6 +125,15 @@ MyFrame::MyFrame()
     m_check_3->Enable(false);
     m_check_4 = new 	wxCheckBox(this, BUTTON_4, _T("FeedBack 4"), wxPoint(100, 10 + 75), wxSize(80, 25), 0);
     m_check_4->Enable(false);
+
+    m_fault_1 = new 	wxCheckBox(this, BUTTON_1, _T("Fault 1"), wxPoint(190, 10), wxSize(80, 25), 0);
+    m_fault_1->Bind(wxEVT_CHECKBOX, &MyFrame::OnFault1, this);
+    m_fault_2 = new 	wxCheckBox(this, BUTTON_2, _T("Fault 2"), wxPoint(190, 10 + 25), wxSize(80, 25), 0);
+    m_fault_2->Bind(wxEVT_CHECKBOX, &MyFrame::OnFault2, this);
+    m_fault_3 = new 	wxCheckBox(this, BUTTON_3, _T("Fault 3"), wxPoint(190, 10 + 50), wxSize(80, 25), 0);
+    m_fault_3->Bind(wxEVT_CHECKBOX, &MyFrame::OnFault3, this);
+    m_fault_4 = new 	wxCheckBox(this, BUTTON_4, _T("Fault 4"), wxPoint(190, 10 + 75), wxSize(80, 25), 0);
+    m_fault_4->Bind(wxEVT_CHECKBOX, &MyFrame::OnFault4, this);
 
 
     app_initialize_stack();
@@ -136,88 +162,58 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 {
   char text[500];
 
-  strcpy(text, "KNX-IOT virtual for push button\n");
+  strcpy(text, "KNX-IOT virtual for switch actuator\n");
   strcat(text, "\nDevice Serial Number: ");
   oc_device_info_t* device = oc_core_get_device_info(0);
   strcat(text, oc_string(device->serialnumber));
 
   strcat(text, "\n\n (c) Cascoda Ltd\n (c) KNX.org");
 
-  wxMessageBox(text, "KNX-IOT virtual Push Button",
+  wxMessageBox(text, "KNX-IOT virtual Switch Actuator",
     wxOK | wxICON_NONE);
 }
 
-void MyFrame::OnPressed1(wxCommandEvent& event)
+void MyFrame::OnFault1(wxCommandEvent& event)
 {
+  char url[] = "/p/1";
   char my_text[100];
-  bool p1 = app_retrieve_bool_variable("/p/1");
+  bool p1 = app_retrieve_bool_variable(url);
+  app_set_fault_variable(url, p1);
 
-  if (p1 == true) {
-    p1 = false;
-  } else {
-    p1 = true;
-  }
-  app_set_bool_variable("/p/1", p1);
-  oc_do_s_mode_with_scope(2, "/p/1", "t");
-  oc_do_s_mode_with_scope(5, "/p/1", "t");
-  sprintf(my_text,"Button 1 pressed: %d", (int)p1);
+  sprintf(my_text,"Actuator 1 Fault: %d", (int)p1);
   SetStatusText(my_text);
 }
 
-void MyFrame::OnPressed2(wxCommandEvent& event)
+void MyFrame::OnFault2(wxCommandEvent& event)
 {
   char url[] = "/p/3";
   char my_text[100];
-  bool p7 = app_retrieve_bool_variable(url);
+  bool p1 = app_retrieve_bool_variable(url);
+  app_set_fault_variable(url, p1);
 
-  if (p7 == true) {
-    p7 = false;
-  }
-  else {
-    p7 = true;
-  }
-  app_set_bool_variable(url, p7);
-  oc_do_s_mode_with_scope(2, url, "t");
-  oc_do_s_mode_with_scope(5, url, "t");
-  sprintf(my_text, "Button 2 pressed: %d", (int)p7);
+  sprintf(my_text, "Actuator 2 Fault: %d", (int)p1);
   SetStatusText(my_text);
 }
 
-void MyFrame::OnPressed3(wxCommandEvent& event)
+void MyFrame::OnFault3(wxCommandEvent& event)
 {
   char url[] = "/p/5";
   char my_text[100];
-  bool p7 = app_retrieve_bool_variable(url);
+  bool p1 = app_retrieve_bool_variable(url);
+  app_set_fault_variable(url, p1);
 
-  if (p7 == true) {
-    p7 = false;
-  }
-  else {
-    p7 = true;
-  }
-  app_set_bool_variable(url, p7);
-  oc_do_s_mode_with_scope(2, url, "t");
-  oc_do_s_mode_with_scope(5, url, "t");
-  sprintf(my_text, "Button 3 pressed: %d", (int)p7);
+  sprintf(my_text, "Actuator 3 Fault: %d", (int)p1);
   SetStatusText(my_text);
 }
 
-void MyFrame::OnPressed4(wxCommandEvent& event)
+void MyFrame::OnFault4(wxCommandEvent& event)
 {
   char url[] = "/p/7";
   char my_text[100];
-  bool p7 = app_retrieve_bool_variable(url);
+  bool p1 = app_retrieve_bool_variable(url);
+  app_set_fault_variable(url, p1);
 
-  if (p7 == true) {
-    p7 = false;
-  }
-  else {
-    p7 = true;
-  }
-  app_set_bool_variable(url, p7);
-  oc_do_s_mode_with_scope(2, url, "t");
-  oc_do_s_mode_with_scope(5, url, "t");
-  sprintf(my_text, "Button 4 pressed: %d", (int)p7);
+  sprintf(my_text, "Actuator 4 Fault: %d", (int)p1);
   SetStatusText(my_text);
 }
 
@@ -229,6 +225,7 @@ void MyFrame::OnTimer(wxTimerEvent& event)
   //wxLogMessage("on pressed 4!");
   //SetStatusText(".");
   this->updateInfoCheckBoxes();
+  this->updateInfoButtons();
 }
 
 
@@ -243,4 +240,39 @@ void  MyFrame::updateInfoCheckBoxes()
   m_check_3->SetValue(p);
   p = app_retrieve_bool_variable("/p/8");
   m_check_4->SetValue(p);
+}
+
+void MyFrame::bool2text(bool on_off, char* text)
+{
+  strcpy(text, "Button 1 ");
+  if (on_off) {
+    strcat(text, " On");
+  }
+  else {
+    strcat(text, " Off");
+  }
+}
+
+void  MyFrame::updateInfoButtons()
+{
+  char text[200];
+  bool p = app_retrieve_bool_variable("/p/1");
+  strcpy(text, "Button 1 ");
+  this->bool2text(p, text);
+  m_btn_1->SetLabel(text);
+
+  p = app_retrieve_bool_variable("/p/3");
+  strcpy(text, "Button 2 ");
+  this->bool2text(p, text);
+  m_btn_2->SetLabel(text);
+  
+  p = app_retrieve_bool_variable("/p/5");
+  strcpy(text, "Button 3 ");
+  this->bool2text(p, text);
+  m_btn_3->SetLabel(text);
+
+  p = app_retrieve_bool_variable("/p/7");
+  strcpy(text, "Button 4 ");
+  this->bool2text(p, text);
+  m_btn_4->SetLabel(text);
 }

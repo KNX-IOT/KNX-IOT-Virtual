@@ -110,6 +110,11 @@ bool g_OnOff_3;   /**< global variable for OnOff_3 */
 bool g_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */
 bool g_OnOff_4;   /**< global variable for OnOff_4 */
 bool g_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
+ 
+bool g_fault_OnOff_1;   /**< global variable for fault OnOff_1 */ 
+bool g_fault_OnOff_2;   /**< global variable for fault OnOff_2 */ 
+bool g_fault_OnOff_3;   /**< global variable for fault OnOff_3 */ 
+bool g_fault_OnOff_4;   /**< global variable for fault OnOff_4 */
 
 void app_set_bool_variable(char* url, bool value) {
 if ( strcmp(url, "/p/1") == 0) { 
@@ -152,6 +157,39 @@ if ( strcmp(url, "/p/1") == 0) {
   return false;
 }
 
+
+void app_set_fault_variable(char* url, bool value){
+ 
+  if ( strcmp(url, "/p/1") == 0) { 
+    g_fault_OnOff_1 = value;   /**< global variable for OnOff_1 */
+  } 
+  if ( strcmp(url, "/p/3") == 0) { 
+    g_fault_OnOff_2 = value;   /**< global variable for OnOff_2 */
+  } 
+  if ( strcmp(url, "/p/5") == 0) { 
+    g_fault_OnOff_3 = value;   /**< global variable for OnOff_3 */
+  } 
+  if ( strcmp(url, "/p/7") == 0) { 
+    g_fault_OnOff_4 = value;   /**< global variable for OnOff_4 */
+  }
+}
+
+bool app_retrieve_fault_variable(char* url) {
+ 
+  if ( strcmp(url, "/p/1") == 0) { 
+    return g_fault_OnOff_1;   /**< global variable for OnOff_1 */
+  } 
+  if ( strcmp(url, "/p/3") == 0) { 
+    return g_fault_OnOff_2;   /**< global variable for OnOff_2 */
+  } 
+  if ( strcmp(url, "/p/5") == 0) { 
+    return g_fault_OnOff_3;   /**< global variable for OnOff_3 */
+  } 
+  if ( strcmp(url, "/p/7") == 0) { 
+    return g_fault_OnOff_4;   /**< global variable for OnOff_4 */
+  }
+  return false;
+}
 
 typedef void (*oc_post_cb_t)(char* url);
 
@@ -300,7 +338,8 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_OnOff_1\n");
-} 
+}
+ 
 /**
  * @brief POST method for "OnOff_1" resource at "/p/1".
  *
@@ -345,7 +384,15 @@ post_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
      hardware that sets the global variables.
    */
     /* update the status information of InfoOnOff_1*/
-    g_InfoOnOff_1 = g_OnOff_1;
+    if (g_fault_OnOff_1 == false) { 
+      PRINT("  No Fault update feedback to %d'\n", g_OnOff_1);
+      /* no fault hence update the feedback with the current state of the actuator */
+      g_InfoOnOff_1 = g_OnOff_1;
+    } else {
+      /* fault hence update the feedback with "false" */
+      PRINT("  Fault'\n");
+      g_InfoOnOff_1 = false;
+    }
     /* send the status information to '/p/2' with flag 't'*/
     PRINT("  Send status to '/p/2' with flag: 't'\n");
     oc_do_s_mode_with_scope(2, "/p/2", "t");
@@ -401,60 +448,8 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_InfoOnOff_1\n");
-} 
+}
 /**
- * @brief POST method for "InfoOnOff_1" resource at "/p/2".
- *
- * The function has as input the request body, which are the input values of the
- * POST method.
- * The input values (as a set) are checked if all supplied values are correct.
- * If the input values are correct, they will be assigned to the global property
- * values. 
- *
- * @param request the request representation.
- * @param interfaces the used interfaces during the request.
- * @param user_data the supplied user data.
- */
-STATIC void
-post_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
-                void *user_data)
-{
-  (void)interfaces;
-  (void)user_data;
-  bool error_state = false;
-  PRINT("-- Begin post_InfoOnOff_1:\n");
-
-  oc_rep_t *rep = NULL;
-  /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
-    /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
-  }
-  /* handle the type of payload correctly. */
-  if ((rep != NULL) && (rep->type == OC_REP_BOOL)) {
-    PRINT("  post_InfoOnOff_1 received : %d\n", rep->value.boolean);
-    g_InfoOnOff_1 = rep->value.boolean;
-
-    oc_send_cbor_response(request, OC_STATUS_CHANGED);
-    /* MANUFACTORER: add here the code to talk to the HW if one implements an
-     actuator. The call to the HW needs to fill in the global variable before it
-     returns to this function here. Alternative is to have a callback from the
-     hardware that sets the global variables.
-   */
-
-    do_post_cb("/p/2");
-  
-    PRINT("-- End post_InfoOnOff_1\n");
-    return;
-  }
-
-  oc_send_response(request, OC_STATUS_BAD_REQUEST);
-  PRINT("-- End post_InfoOnOff_1\n");
-}/**
  * @brief GET method for "OnOff_2" resource at "/p/3".
  *
  * function is called to initialize the return values of the GET method.
@@ -496,7 +491,8 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_OnOff_2\n");
-} 
+}
+ 
 /**
  * @brief POST method for "OnOff_2" resource at "/p/3".
  *
@@ -541,7 +537,15 @@ post_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
      hardware that sets the global variables.
    */
     /* update the status information of InfoOnOff_2*/
-    g_InfoOnOff_2 = g_OnOff_2;
+    if (g_fault_OnOff_2 == false) { 
+      PRINT("  No Fault update feedback to %d'\n", g_OnOff_2);
+      /* no fault hence update the feedback with the current state of the actuator */
+      g_InfoOnOff_2 = g_OnOff_2;
+    } else {
+      /* fault hence update the feedback with "false" */
+      PRINT("  Fault'\n");
+      g_InfoOnOff_2 = false;
+    }
     /* send the status information to '/p/4' with flag 't'*/
     PRINT("  Send status to '/p/4' with flag: 't'\n");
     oc_do_s_mode_with_scope(2, "/p/4", "t");
@@ -597,60 +601,8 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_InfoOnOff_2\n");
-} 
+}
 /**
- * @brief POST method for "InfoOnOff_2" resource at "/p/4".
- *
- * The function has as input the request body, which are the input values of the
- * POST method.
- * The input values (as a set) are checked if all supplied values are correct.
- * If the input values are correct, they will be assigned to the global property
- * values. 
- *
- * @param request the request representation.
- * @param interfaces the used interfaces during the request.
- * @param user_data the supplied user data.
- */
-STATIC void
-post_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
-                void *user_data)
-{
-  (void)interfaces;
-  (void)user_data;
-  bool error_state = false;
-  PRINT("-- Begin post_InfoOnOff_2:\n");
-
-  oc_rep_t *rep = NULL;
-  /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
-    /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
-  }
-  /* handle the type of payload correctly. */
-  if ((rep != NULL) && (rep->type == OC_REP_BOOL)) {
-    PRINT("  post_InfoOnOff_2 received : %d\n", rep->value.boolean);
-    g_InfoOnOff_2 = rep->value.boolean;
-
-    oc_send_cbor_response(request, OC_STATUS_CHANGED);
-    /* MANUFACTORER: add here the code to talk to the HW if one implements an
-     actuator. The call to the HW needs to fill in the global variable before it
-     returns to this function here. Alternative is to have a callback from the
-     hardware that sets the global variables.
-   */
-
-    do_post_cb("/p/4");
-  
-    PRINT("-- End post_InfoOnOff_2\n");
-    return;
-  }
-
-  oc_send_response(request, OC_STATUS_BAD_REQUEST);
-  PRINT("-- End post_InfoOnOff_2\n");
-}/**
  * @brief GET method for "OnOff_3" resource at "/p/5".
  *
  * function is called to initialize the return values of the GET method.
@@ -692,7 +644,8 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_OnOff_3\n");
-} 
+}
+ 
 /**
  * @brief POST method for "OnOff_3" resource at "/p/5".
  *
@@ -737,7 +690,15 @@ post_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
      hardware that sets the global variables.
    */
     /* update the status information of InfoOnOff_3*/
-    g_InfoOnOff_3 = g_OnOff_3;
+    if (g_fault_OnOff_3 == false) { 
+      PRINT("  No Fault update feedback to %d'\n", g_OnOff_3);
+      /* no fault hence update the feedback with the current state of the actuator */
+      g_InfoOnOff_3 = g_OnOff_3;
+    } else {
+      /* fault hence update the feedback with "false" */
+      PRINT("  Fault'\n");
+      g_InfoOnOff_3 = false;
+    }
     /* send the status information to '/p/6' with flag 't'*/
     PRINT("  Send status to '/p/6' with flag: 't'\n");
     oc_do_s_mode_with_scope(2, "/p/6", "t");
@@ -793,60 +754,8 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_InfoOnOff_3\n");
-} 
+}
 /**
- * @brief POST method for "InfoOnOff_3" resource at "/p/6".
- *
- * The function has as input the request body, which are the input values of the
- * POST method.
- * The input values (as a set) are checked if all supplied values are correct.
- * If the input values are correct, they will be assigned to the global property
- * values. 
- *
- * @param request the request representation.
- * @param interfaces the used interfaces during the request.
- * @param user_data the supplied user data.
- */
-STATIC void
-post_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
-                void *user_data)
-{
-  (void)interfaces;
-  (void)user_data;
-  bool error_state = false;
-  PRINT("-- Begin post_InfoOnOff_3:\n");
-
-  oc_rep_t *rep = NULL;
-  /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
-    /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
-  }
-  /* handle the type of payload correctly. */
-  if ((rep != NULL) && (rep->type == OC_REP_BOOL)) {
-    PRINT("  post_InfoOnOff_3 received : %d\n", rep->value.boolean);
-    g_InfoOnOff_3 = rep->value.boolean;
-
-    oc_send_cbor_response(request, OC_STATUS_CHANGED);
-    /* MANUFACTORER: add here the code to talk to the HW if one implements an
-     actuator. The call to the HW needs to fill in the global variable before it
-     returns to this function here. Alternative is to have a callback from the
-     hardware that sets the global variables.
-   */
-
-    do_post_cb("/p/6");
-  
-    PRINT("-- End post_InfoOnOff_3\n");
-    return;
-  }
-
-  oc_send_response(request, OC_STATUS_BAD_REQUEST);
-  PRINT("-- End post_InfoOnOff_3\n");
-}/**
  * @brief GET method for "OnOff_4" resource at "/p/7".
  *
  * function is called to initialize the return values of the GET method.
@@ -888,7 +797,8 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_OnOff_4\n");
-} 
+}
+ 
 /**
  * @brief POST method for "OnOff_4" resource at "/p/7".
  *
@@ -933,7 +843,15 @@ post_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
      hardware that sets the global variables.
    */
     /* update the status information of InfoOnOff_4*/
-    g_InfoOnOff_4 = g_OnOff_4;
+    if (g_fault_OnOff_4 == false) { 
+      PRINT("  No Fault update feedback to %d'\n", g_OnOff_4);
+      /* no fault hence update the feedback with the current state of the actuator */
+      g_InfoOnOff_4 = g_OnOff_4;
+    } else {
+      /* fault hence update the feedback with "false" */
+      PRINT("  Fault'\n");
+      g_InfoOnOff_4 = false;
+    }
     /* send the status information to '/p/8' with flag 't'*/
     PRINT("  Send status to '/p/8' with flag: 't'\n");
     oc_do_s_mode_with_scope(2, "/p/8", "t");
@@ -989,60 +907,8 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
   }
   PRINT("-- End get_InfoOnOff_4\n");
-} 
-/**
- * @brief POST method for "InfoOnOff_4" resource at "/p/8".
- *
- * The function has as input the request body, which are the input values of the
- * POST method.
- * The input values (as a set) are checked if all supplied values are correct.
- * If the input values are correct, they will be assigned to the global property
- * values. 
- *
- * @param request the request representation.
- * @param interfaces the used interfaces during the request.
- * @param user_data the supplied user data.
- */
-STATIC void
-post_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
-                void *user_data)
-{
-  (void)interfaces;
-  (void)user_data;
-  bool error_state = false;
-  PRINT("-- Begin post_InfoOnOff_4:\n");
-
-  oc_rep_t *rep = NULL;
-  /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
-    /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
-  }
-  /* handle the type of payload correctly. */
-  if ((rep != NULL) && (rep->type == OC_REP_BOOL)) {
-    PRINT("  post_InfoOnOff_4 received : %d\n", rep->value.boolean);
-    g_InfoOnOff_4 = rep->value.boolean;
-
-    oc_send_cbor_response(request, OC_STATUS_CHANGED);
-    /* MANUFACTORER: add here the code to talk to the HW if one implements an
-     actuator. The call to the HW needs to fill in the global variable before it
-     returns to this function here. Alternative is to have a callback from the
-     hardware that sets the global variables.
-   */
-
-    do_post_cb("/p/8");
-  
-    PRINT("-- End post_InfoOnOff_4\n");
-    return;
-  }
-
-  oc_send_response(request, OC_STATUS_BAD_REQUEST);
-  PRINT("-- End post_InfoOnOff_4\n");
 }
+
 
 /**
  * @brief register all the data point resources to the stack
@@ -1087,7 +953,7 @@ register_resources(void)
   oc_resource_bind_resource_type(res_InfoOnOff_1, "urn:knx:dpa.417.51");
   oc_resource_bind_resource_type(res_InfoOnOff_1, "DPT_Switch");
   oc_resource_bind_content_type(res_InfoOnOff_1, APPLICATION_CBOR);
-  oc_resource_bind_resource_interface(res_InfoOnOff_1, OC_IF_A); /* if.a */ 
+  oc_resource_bind_resource_interface(res_InfoOnOff_1, OC_IF_S); /* if.s */ 
   oc_resource_set_function_block_instance(res_InfoOnOff_1, 1); /* instance 1 */ 
   oc_resource_set_discoverable(res_InfoOnOff_1, true);
   /* periodic observable
@@ -1100,7 +966,6 @@ register_resources(void)
     an interrupt when something is read from the hardware. */
   oc_resource_set_observable(res_InfoOnOff_1, true);
   oc_resource_set_request_handler(res_InfoOnOff_1, OC_GET, get_InfoOnOff_1, NULL);
-  oc_resource_set_request_handler(res_InfoOnOff_1, OC_POST, post_InfoOnOff_1, NULL); 
   oc_add_resource(res_InfoOnOff_1);
   PRINT("Register Resource 'OnOff_2' with local path \"/p/3\"\n");
   oc_resource_t *res_OnOff_2 =
@@ -1129,7 +994,7 @@ register_resources(void)
   oc_resource_bind_resource_type(res_InfoOnOff_2, "urn:knx:dpa.417.51");
   oc_resource_bind_resource_type(res_InfoOnOff_2, "DPT_Switch");
   oc_resource_bind_content_type(res_InfoOnOff_2, APPLICATION_CBOR);
-  oc_resource_bind_resource_interface(res_InfoOnOff_2, OC_IF_A); /* if.a */ 
+  oc_resource_bind_resource_interface(res_InfoOnOff_2, OC_IF_S); /* if.s */ 
   oc_resource_set_function_block_instance(res_InfoOnOff_2, 2); /* instance 2 */ 
   oc_resource_set_discoverable(res_InfoOnOff_2, true);
   /* periodic observable
@@ -1142,7 +1007,6 @@ register_resources(void)
     an interrupt when something is read from the hardware. */
   oc_resource_set_observable(res_InfoOnOff_2, true);
   oc_resource_set_request_handler(res_InfoOnOff_2, OC_GET, get_InfoOnOff_2, NULL);
-  oc_resource_set_request_handler(res_InfoOnOff_2, OC_POST, post_InfoOnOff_2, NULL); 
   oc_add_resource(res_InfoOnOff_2);
   PRINT("Register Resource 'OnOff_3' with local path \"/p/5\"\n");
   oc_resource_t *res_OnOff_3 =
@@ -1171,7 +1035,7 @@ register_resources(void)
   oc_resource_bind_resource_type(res_InfoOnOff_3, "urn:knx:dpa.417.51");
   oc_resource_bind_resource_type(res_InfoOnOff_3, "DPT_Switch");
   oc_resource_bind_content_type(res_InfoOnOff_3, APPLICATION_CBOR);
-  oc_resource_bind_resource_interface(res_InfoOnOff_3, OC_IF_A); /* if.a */ 
+  oc_resource_bind_resource_interface(res_InfoOnOff_3, OC_IF_S); /* if.s */ 
   oc_resource_set_function_block_instance(res_InfoOnOff_3, 3); /* instance 3 */ 
   oc_resource_set_discoverable(res_InfoOnOff_3, true);
   /* periodic observable
@@ -1184,7 +1048,6 @@ register_resources(void)
     an interrupt when something is read from the hardware. */
   oc_resource_set_observable(res_InfoOnOff_3, true);
   oc_resource_set_request_handler(res_InfoOnOff_3, OC_GET, get_InfoOnOff_3, NULL);
-  oc_resource_set_request_handler(res_InfoOnOff_3, OC_POST, post_InfoOnOff_3, NULL); 
   oc_add_resource(res_InfoOnOff_3);
   PRINT("Register Resource 'OnOff_4' with local path \"/p/7\"\n");
   oc_resource_t *res_OnOff_4 =
@@ -1213,7 +1076,7 @@ register_resources(void)
   oc_resource_bind_resource_type(res_InfoOnOff_4, "urn:knx:dpa.417.51");
   oc_resource_bind_resource_type(res_InfoOnOff_4, "DPT_Switch");
   oc_resource_bind_content_type(res_InfoOnOff_4, APPLICATION_CBOR);
-  oc_resource_bind_resource_interface(res_InfoOnOff_4, OC_IF_A); /* if.a */ 
+  oc_resource_bind_resource_interface(res_InfoOnOff_4, OC_IF_S); /* if.s */ 
   oc_resource_set_function_block_instance(res_InfoOnOff_4, 4); /* instance 4 */ 
   oc_resource_set_discoverable(res_InfoOnOff_4, true);
   /* periodic observable
@@ -1226,7 +1089,6 @@ register_resources(void)
     an interrupt when something is read from the hardware. */
   oc_resource_set_observable(res_InfoOnOff_4, true);
   oc_resource_set_request_handler(res_InfoOnOff_4, OC_GET, get_InfoOnOff_4, NULL);
-  oc_resource_set_request_handler(res_InfoOnOff_4, OC_POST, post_InfoOnOff_4, NULL); 
   oc_add_resource(res_InfoOnOff_4);
 }
 

@@ -31,12 +31,12 @@ https://www.perl.org/get.html
 
 ### knx_iot_virtual_pb
 
-push button
+Push Button
 
 - serial number :  0003000
 
 ### knx_iot_virtual_sa
 
-switch actuator
+Switch Actuator
 
 - serial number : 0004000
