@@ -123,9 +123,17 @@ void MyFrame::OnExit(wxCommandEvent& event)
 }
 void MyFrame::OnAbout(wxCommandEvent& event)
 {
-    wxMessageBox("This is tool is KNX-IOT virtual for push button\n (c) Cascoda Ltd\n (c) KNX.org",
-                 "KNX-IOT virtual Push Button",
-      wxOK | wxICON_INFORMATION);
+  char text[500];
+
+  strcpy(text, "KNX-IOT virtual for push button\n");
+  strcat(text, "\nDevice Serial Number: ");
+  oc_device_info_t* device = oc_core_get_device_info(0);
+  strcat(text, oc_string(device->serialnumber));
+
+  strcat(text, "\n\n (c) Cascoda Ltd\n (c) KNX.org");
+
+  wxMessageBox(text, "KNX-IOT virtual Push Button",
+    wxOK | wxICON_NONE);
 }
 
 void MyFrame::OnPressed1(wxCommandEvent& event)
