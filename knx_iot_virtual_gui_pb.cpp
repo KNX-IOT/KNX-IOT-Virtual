@@ -71,12 +71,13 @@ wxIMPLEMENT_APP(MyApp);
 bool MyApp::OnInit()
 {
     MyFrame *frame = new MyFrame();
-    frame->Fit();
+    //frame->Fit();
+    frame->SetSize(wxSize(400, 250));  // length x height
     frame->Show(true);
     return true;
 }
 MyFrame::MyFrame()
-    : wxFrame(NULL, wxID_ANY, "KNX virtual Push Button")
+    : wxFrame(NULL, wxID_ANY, "KNX-IOT virtual Push Button")
 {
     wxMenu *menuFile = new wxMenu;
     menuFile->Append(wxID_EXIT);
@@ -219,7 +220,7 @@ void MyFrame::OnPressed4(wxCommandEvent& event)
   app_set_bool_variable(url, p7);
   oc_do_s_mode_with_scope(2, url, "t");
   oc_do_s_mode_with_scope(5, url, "t");
-  sprintf(my_text, "Button 4 pressed: %d", (int)p7);
+  sprintf(my_text, "Button 4 ('%s') pressed: %d", url, (int)p7);
   SetStatusText(my_text);
 }
 

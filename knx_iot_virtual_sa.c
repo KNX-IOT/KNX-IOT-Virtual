@@ -71,6 +71,7 @@
 /* this file should be externally supplied */
 #include "external_header.h"
 #endif
+#include "knx_iot_virtual_sa.h"
 
 #ifdef __linux__
 /** linux specific code */
@@ -190,17 +191,6 @@ bool app_retrieve_fault_variable(char* url) {
   }
   return false;
 }
-
-typedef void (*oc_post_cb_t)(char* url);
-
-/**
- * @brief The post callback
- *
- */
-typedef struct oc_post_struct_t
-{
-  oc_post_cb_t cb; /**< the post callback, e.g. when something has changed */
-} oc_post_struct_t;
 
 static oc_post_struct_t app_post = { NULL };
 
@@ -1222,8 +1212,9 @@ int app_initialize_stack()
    the folder is created in the makefile, with $target as name with _cred as
    post fix.
   */
-  PRINT("\tstorage at './knx_iot_device_creds' \n");
-  oc_storage_config("./knx_iot_device_creds");
+  PRINT("\tstorage at 'knx_iot_virtual_sa' \n");
+  oc_storage_config("./knx_iot_virtual_sa");
+
 
   /*initialize the variables */
   initialize_variables();
