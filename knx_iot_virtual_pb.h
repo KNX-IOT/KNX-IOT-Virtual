@@ -25,7 +25,6 @@
 extern "C" {
 #endif
 
-
 /**
  * Callback invoked by the stack when a successfull post is done
  *
@@ -43,19 +42,57 @@ typedef struct oc_post_struct_t
   oc_post_cb_t cb; /**< the post callback, e.g. when something has changed */
 } oc_post_struct_t;
 
+/**
+ * @brief set the post callback (on appliation level)
+ * 
+ * @param cb the callback
+ */
 void app_set_post_cb(oc_post_cb_t cb);
 
+/**
+ * @brief initialize the stack
+ * 
+ * @return int 0 == success
+ */
 int app_initialize_stack();
 
+/**
+ * @brief retrieve the boolean variable of the url/data point
+ * the caller needs to know if the resource/data point is conveying a boolean 
+ * 
+ * @param url the url of the resource/data point
+ * @return true value is true
+ * @return false value is false or error.
+ */
 bool app_retrieve_bool_variable(char* url);
 
+/**
+ * @brief set the boolean varialbe that belongs to the url 
+ * The caller needs to know if the resource/data point is conveying a boolean 
+ * 
+ * @param url the url of the resource/data point
+ * @param value the boolean value to be set
+ */
 void app_set_bool_variable(char* url, bool value);
 
-
+/**
+ * @brief retrieve the fault state of the url/data point
+ * the caller needs to know if the resource/data point implements a fault situation
+ * 
+ * @param url the url of the resource/data point
+ * @return true value is true
+ * @return false value is false or error.
+ */
 bool app_retrieve_fault_variable(char* url);
 
+/**
+ * @brief sets the fault state of the url/data point 
+ * the caller needs to know if the resource/data point implements a fault situation
+ * 
+ * @param url the url of the resource/data point
+ * @param value the boolean fault value to be set
+ */
 void app_set_fault_variable(char* url, bool value);
-
 
 
 #ifdef __cplusplus
