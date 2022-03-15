@@ -103,19 +103,19 @@ STATIC CRITICAL_SECTION cs;   /**< event loop variable */
 volatile int quit = 0;  /**< stop variable, used by handle_signal */
 bool g_reset = false;   /**< reset variable, set by commandline arguments */
 
-bool g_OnOff_1;   /**< global variable for OnOff_1 */
-bool g_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
-bool g_OnOff_2;   /**< global variable for OnOff_2 */
-bool g_InfoOnOff_2;   /**< global variable for InfoOnOff_2 */
-bool g_OnOff_3;   /**< global variable for OnOff_3 */
-bool g_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */
-bool g_OnOff_4;   /**< global variable for OnOff_4 */
-bool g_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
+volatile bool g_OnOff_1;   /**< global variable for OnOff_1 */
+volatile bool g_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
+volatile bool g_OnOff_2;   /**< global variable for OnOff_2 */
+volatile bool g_InfoOnOff_2;   /**< global variable for InfoOnOff_2 */
+volatile bool g_OnOff_3;   /**< global variable for OnOff_3 */
+volatile bool g_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */
+volatile bool g_OnOff_4;   /**< global variable for OnOff_4 */
+volatile bool g_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
  
-bool g_fault_OnOff_1;   /**< global variable for fault OnOff_1 */ 
-bool g_fault_OnOff_2;   /**< global variable for fault OnOff_2 */ 
-bool g_fault_OnOff_3;   /**< global variable for fault OnOff_3 */ 
-bool g_fault_OnOff_4;   /**< global variable for fault OnOff_4 */
+volatile bool g_fault_OnOff_1;   /**< global variable for fault OnOff_1 */ 
+volatile bool g_fault_OnOff_2;   /**< global variable for fault OnOff_2 */ 
+volatile bool g_fault_OnOff_3;   /**< global variable for fault OnOff_3 */ 
+volatile bool g_fault_OnOff_4;   /**< global variable for fault OnOff_4 */
 
 void app_set_bool_variable(char* url, bool value) {
 if ( strcmp(url, "/p/1") == 0) { 

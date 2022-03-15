@@ -161,8 +161,8 @@ void MyFrame::OnPressed1(wxCommandEvent& event)
     p1 = true;
   }
   app_set_bool_variable(url, p1);
-  oc_do_s_mode_with_scope(2, url, "t");
-  oc_do_s_mode_with_scope(5, url, "t");
+  oc_do_s_mode_with_scope(2, url, "w");
+  oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text,"Button 1 ('%s') pressed: %d", url, (int)p1);
   SetStatusText(my_text);
 }
@@ -180,8 +180,8 @@ void MyFrame::OnPressed2(wxCommandEvent& event)
     p7 = true;
   }
   app_set_bool_variable(url, p7);
-  oc_do_s_mode_with_scope(2, url, "t");
-  oc_do_s_mode_with_scope(5, url, "t");
+  oc_do_s_mode_with_scope(2, url, "w");
+  oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "Button 2 ('%s') pressed: %d", url, (int)p7);
   SetStatusText(my_text);
 }
@@ -199,8 +199,8 @@ void MyFrame::OnPressed3(wxCommandEvent& event)
     p7 = true;
   }
   app_set_bool_variable(url, p7);
-  oc_do_s_mode_with_scope(2, url, "t");
-  oc_do_s_mode_with_scope(5, url, "t");
+  oc_do_s_mode_with_scope(2, url, "w");
+  oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "Button 3 ('%s') pressed: %d", url, (int)p7);
   SetStatusText(my_text);
 }
@@ -218,8 +218,8 @@ void MyFrame::OnPressed4(wxCommandEvent& event)
     p7 = true;
   }
   app_set_bool_variable(url, p7);
-  oc_do_s_mode_with_scope(2, url, "t");
-  oc_do_s_mode_with_scope(5, url, "t");
+  oc_do_s_mode_with_scope(2, url, "w");
+  oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "Button 4 ('%s') pressed: %d", url, (int)p7);
   SetStatusText(my_text);
 }
