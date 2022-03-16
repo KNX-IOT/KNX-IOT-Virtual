@@ -284,6 +284,10 @@ void MyFrame::OnFault1(wxCommandEvent& event)
   bool p1 = m_fault_1->GetValue();
   app_set_fault_variable(url, p1);
 
+  // there is a fault: update the info
+  oc_do_s_mode_with_scope(2, url, "w");
+  oc_do_s_mode_with_scope(5, url, "w");
+
   sprintf(my_text,"Actuator 1 Fault: %d", (int)p1);
   SetStatusText(my_text);
 }
@@ -295,6 +299,10 @@ void MyFrame::OnFault2(wxCommandEvent& event)
   bool p1 = m_fault_1->GetValue();
   app_set_fault_variable(url, p1);
 
+  // there is a fault: update the info
+  oc_do_s_mode_with_scope(2, url, "w");
+  oc_do_s_mode_with_scope(5, url, "w");
+  
   sprintf(my_text, "Actuator 2 Fault: %d", (int)p1);
   SetStatusText(my_text);
 }
@@ -307,6 +315,10 @@ void MyFrame::OnFault3(wxCommandEvent& event)
 
   app_set_fault_variable(url, p1);
 
+  // there is a fault: update the info
+  oc_do_s_mode_with_scope(2, url, "w");
+  oc_do_s_mode_with_scope(5, url, "w");
+
   sprintf(my_text, "Actuator 3 Fault: %d", (int)p1);
   SetStatusText(my_text);
 }
@@ -317,6 +329,11 @@ void MyFrame::OnFault4(wxCommandEvent& event)
   char my_text[100];
   bool p1 = m_fault_1->GetValue();
   app_set_fault_variable(url, p1);
+
+  // there is a fault: update the info
+  oc_do_s_mode_with_scope(2, url, "w");
+  oc_do_s_mode_with_scope(5, url, "w");
+
   sprintf(my_text, "Actuator 4 Fault: %d", (int)p1);
   SetStatusText(my_text);
 }
