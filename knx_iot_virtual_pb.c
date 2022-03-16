@@ -158,7 +158,6 @@ if ( strcmp(url, "/p/1") == 0) {
   return false;
 }
 
-
 void app_set_fault_variable(char* url, bool value){
  
   if ( strcmp(url, "/p/2") == 0) { 
@@ -190,6 +189,15 @@ bool app_retrieve_fault_variable(char* url) {
     return g_fault_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
   }
   return false;
+}
+
+bool app_is_secure()
+{
+#ifdef OC_OSCORE
+  return true;
+#else
+  return false;
+#endif /* OC_OSCORE */
 }
 
 static oc_post_struct_t app_post = { NULL };

@@ -43,7 +43,8 @@ enum
   IID_TEXT = IA_TEXT + 1,// ID for installation id text 
   PM_TEXT = IID_TEXT + 1,// ID for programming mode text 
   LS_TEXT = PM_TEXT + 1,// ID for load status text 
-  HOSTNAME_TEXT = LS_TEXT + 1// ID for hostname text 
+  HOSTNAME_TEXT = LS_TEXT + 1,// ID for hostname text 
+  SECURED_TEXT = HOSTNAME_TEXT + 1 // ID for secured text 
 
 };
 
@@ -82,6 +83,7 @@ private:
     wxTextCtrl* m_pm_text; // text control for programming mode
     wxTextCtrl* m_ls_text; // text control for load state
     wxTextCtrl* m_hostname_text; // text control for host name
+    wxTextCtrl* m_secured_text; // text for secured/not secured
 };
 
 wxIMPLEMENT_APP(MyApp);
@@ -167,6 +169,17 @@ MyFrame::MyFrame()
     sprintf(text, "host name: %s", oc_string(device->hostname));
     m_hostname_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10 , 10 + 175), wxSize(140, 25), 0);
     m_hostname_text->SetEditable(false);
+
+    if (app_is_secure()) {
+      strcpy(text, "secured");
+    } else {
+      strcpy(text, "unsecured");
+    }
+    m_secured_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10 + 140 , 10 + 175), wxSize(140, 25), wxTE_RICH);
+    m_secured_text->SetEditable(false);
+    if (app_is_secure() == false) {
+      m_secured_text->SetStyle(0, 100, (wxTextAttr(*wxRED)));
+    }
 
     this->updateInfoCheckBoxes();
     this->updateTextButtons();

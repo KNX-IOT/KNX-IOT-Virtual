@@ -94,6 +94,14 @@ bool app_retrieve_fault_variable(char* url);
  */
 void app_set_fault_variable(char* url, bool value);
 
+/**
+ * @brief function to report if the (oscore) security is turn on for this instance
+ * 
+ * @return true is secure
+ * @return false is not secure
+ */
+bool app_is_secure();
+
 
 #ifdef __cplusplus
 }

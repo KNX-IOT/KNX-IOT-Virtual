@@ -158,7 +158,6 @@ if ( strcmp(url, "/p/1") == 0) {
   return false;
 }
 
-
 void app_set_fault_variable(char* url, bool value){
  
   if ( strcmp(url, "/p/1") == 0) { 
@@ -190,6 +189,15 @@ bool app_retrieve_fault_variable(char* url) {
     return g_fault_OnOff_4;   /**< global variable for OnOff_4 */
   }
   return false;
+}
+
+bool app_is_secure()
+{
+#ifdef OC_OSCORE
+  return true;
+#else
+  return false;
+#endif /* OC_OSCORE */
 }
 
 static oc_post_struct_t app_post = { NULL };
@@ -383,10 +391,10 @@ post_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
       PRINT("  Fault'\n");
       g_InfoOnOff_1 = false;
     }
-    /* send the status information to '/p/2' with flag 't'*/
-    PRINT("  Send status to '/p/2' with flag: 't'\n");
-    oc_do_s_mode_with_scope(2, "/p/2", "t");
-    oc_do_s_mode_with_scope(5, "/p/2", "t");
+    /* send the status information to '/p/2' with flag 'w'*/
+    PRINT("  Send status to '/p/2' with flag: 'w'\n");
+    oc_do_s_mode_with_scope(2, "/p/2", "w");
+    oc_do_s_mode_with_scope(5, "/p/2", "w");
 
     do_post_cb("/p/1");
   
@@ -536,10 +544,10 @@ post_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
       PRINT("  Fault'\n");
       g_InfoOnOff_2 = false;
     }
-    /* send the status information to '/p/4' with flag 't'*/
-    PRINT("  Send status to '/p/4' with flag: 't'\n");
-    oc_do_s_mode_with_scope(2, "/p/4", "t");
-    oc_do_s_mode_with_scope(5, "/p/4", "t");
+    /* send the status information to '/p/4' with flag 'w'*/
+    PRINT("  Send status to '/p/4' with flag: 'w'\n");
+    oc_do_s_mode_with_scope(2, "/p/4", "w");
+    oc_do_s_mode_with_scope(5, "/p/4", "w");
 
     do_post_cb("/p/3");
   
@@ -689,10 +697,10 @@ post_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
       PRINT("  Fault'\n");
       g_InfoOnOff_3 = false;
     }
-    /* send the status information to '/p/6' with flag 't'*/
-    PRINT("  Send status to '/p/6' with flag: 't'\n");
-    oc_do_s_mode_with_scope(2, "/p/6", "t");
-    oc_do_s_mode_with_scope(5, "/p/6", "t");
+    /* send the status information to '/p/6' with flag 'w'*/
+    PRINT("  Send status to '/p/6' with flag: 'w'\n");
+    oc_do_s_mode_with_scope(2, "/p/6", "w");
+    oc_do_s_mode_with_scope(5, "/p/6", "w");
 
     do_post_cb("/p/5");
   
@@ -842,10 +850,10 @@ post_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
       PRINT("  Fault'\n");
       g_InfoOnOff_4 = false;
     }
-    /* send the status information to '/p/8' with flag 't'*/
-    PRINT("  Send status to '/p/8' with flag: 't'\n");
-    oc_do_s_mode_with_scope(2, "/p/8", "t");
-    oc_do_s_mode_with_scope(5, "/p/8", "t");
+    /* send the status information to '/p/8' with flag 'w'*/
+    PRINT("  Send status to '/p/8' with flag: 'w'\n");
+    oc_do_s_mode_with_scope(2, "/p/8", "w");
+    oc_do_s_mode_with_scope(5, "/p/8", "w");
 
     do_post_cb("/p/7");
   
