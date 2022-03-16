@@ -167,23 +167,19 @@ MyFrame::MyFrame()
     sprintf(text, "IA: %d", device->ia);
     m_ia_text = new wxTextCtrl(this, IA_TEXT, text, wxPoint(10, 10 + 125), wxSize(140, 25), 0);
     m_ia_text->SetEditable(false);
-
     // installation id
     sprintf(text, "IID: %d", device->iid);
     m_iid_text = new wxTextCtrl(this, IID_TEXT, text, wxPoint(10 + 140, 10 + 125), wxSize(140, 25), 0);
     m_iid_text->SetEditable(false);
-
     // programming mode
     sprintf(text, "Programming Mode: %d", device->pm);
     m_pm_text = new wxTextCtrl(this, PM_TEXT, text, wxPoint(10, 10 + 150), wxSize(140, 25), 0);
     m_pm_text->SetEditable(false);
-
     // installation id
     sprintf(text, "LoadState: %s", oc_core_get_lsm_state_as_string(device->lsm_s));
     m_ls_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10 + 140, 10 + 150), wxSize(140, 25), 0);
     m_ls_text->SetEditable(false);
-
-    // hostname
+    // host name
     sprintf(text, "host name: %s", oc_string(device->hostname));
     m_hostname_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10, 10 + 175), wxSize(140, 25), 0);
     m_hostname_text->SetEditable(false);
@@ -194,7 +190,7 @@ MyFrame::MyFrame()
     this->updateInfoCheckBoxes();
 
     m_timer.Bind(wxEVT_TIMER, &MyFrame::OnTimer, this);
-    m_timer.Start(1, wxTIMER_CONTINUOUS);  // 1 mili interval
+    m_timer.Start(1, wxTIMER_CONTINUOUS);  // 1 millisecond interval
 
 }
 void MyFrame::OnExit(wxCommandEvent& event)
@@ -301,8 +297,6 @@ void MyFrame::OnTimer(wxTimerEvent& event)
   // do whatever you want to do every millisecond here
   oc_clock_time_t next_event;
   next_event = oc_main_poll();
-  //wxLogMessage("on pressed 4!");
-  //SetStatusText(".");
   this->updateInfoCheckBoxes();
   this->updateInfoButtons(); 
   this->updateTextButtons();
@@ -324,7 +318,6 @@ void  MyFrame::updateInfoCheckBoxes()
 
 void MyFrame::bool2text(bool on_off, char* text)
 {
-  //strcpy(text, "Button 1 ");
   if (on_off) {
     strcat(text, " On");
   }
