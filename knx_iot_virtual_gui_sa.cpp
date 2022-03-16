@@ -25,6 +25,7 @@
 #define NO_MAIN
 #include "knx_iot_virtual_pb.h"
 #include "api/oc_knx_dev.h"
+#include "api/oc_knx_fp.h"
 
 enum
 {
@@ -252,9 +253,40 @@ void MyFrame::OnReset(wxCommandEvent& event)
 void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
 {
   int device_index = 0;
+  char text[1024 * 5];
+  char line[200];
+  char line2[200];
 
+  strcpy(text, "");
 
+  int total = oc_core_get_group_object_table_total_size();
+  for (int index = 0; index < total; index++) {
+    oc_group_object_table_t* entry = oc_core_get_group_object_table_entry(index);
 
+    sprintf(line, "Index %d \n", index);
+    strcat(text, line);
+    if (entry->ga_len > 0) {
+      sprintf(line, "  id: '%d'  ", entry->id);
+      strcat(text, line);
+      sprintf(line, "  url: '%s' ", oc_string(entry->href));
+      strcat(text, line);
+      sprintf(line, "  cflags : '%d' ", entry->cflags);
+      strcat(text, line);
+      //oc_cflags_as_string(line, entry->cflags);
+      strcat(text, line);
+      strcpy(line,"  ga : [");
+      for (int i = 0; i < entry->ga_len; i++) {
+        sprintf(line2," %d", entry->ga[i]);
+        strcat(line, line2);
+      }
+      strcat(line," ]\n");
+      strcat(text, line);
+    }
+
+  }
+
+  wxMessageBox(text, "Group Object Table",
+    wxOK | wxICON_NONE);
 
   SetStatusText("List Group Object Table");
 
