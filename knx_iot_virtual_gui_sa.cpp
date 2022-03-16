@@ -24,6 +24,7 @@
 
 #define NO_MAIN
 #include "knx_iot_virtual_pb.h"
+#include "api/oc_knx_dev.h"
 
 enum
 {
@@ -39,7 +40,13 @@ enum
   FAULT_1 = CHECK_4 + 1,
   FAULT_2 = FAULT_1 + 1,
   FAULT_3 = FAULT_2 + 1,
-  FAULT_4 = FAULT_3 + 1
+  FAULT_4 = FAULT_3 + 1,
+  RESET = FAULT_4 + 1,  // ID for reset button in the menu
+  IA_TEXT = RESET + 1, // ID for internal address text 
+  IID_TEXT = IA_TEXT + 1,// ID for installation id text 
+  PM_TEXT = IID_TEXT + 1,// ID for programming mode text 
+  LS_TEXT = PM_TEXT + 1,// ID for load status text 
+  HOSTNAME_TEXT = LS_TEXT + 1// ID for hostname text 
 
 };
 
@@ -56,6 +63,7 @@ public:
 private:
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
+    void OnReset(wxCommandEvent& event);
     void OnFault1(wxCommandEvent& event);
     void OnFault2(wxCommandEvent& event);
     void OnFault3(wxCommandEvent& event);
@@ -64,6 +72,7 @@ private:
 
     void updateInfoCheckBoxes();
     void updateInfoButtons();
+    void updateTextButtons();
     void bool2text(bool on_off, char* text);
 
     wxTimer m_timer;
@@ -82,6 +91,12 @@ private:
     wxCheckBox* m_fault_2;
     wxCheckBox* m_fault_3;
     wxCheckBox* m_fault_4;
+
+    wxTextCtrl* m_ia_text;   // text control for internal address
+    wxTextCtrl* m_iid_text; // text control for installation id
+    wxTextCtrl* m_pm_text; // text control for programming mode
+    wxTextCtrl* m_ls_text; // text control for load state
+    wxTextCtrl* m_hostname_text; // text control for host name
 };
 
 wxIMPLEMENT_APP(MyApp);
@@ -96,6 +111,7 @@ MyFrame::MyFrame()
     : wxFrame(NULL, wxID_ANY, "KNX-IOT virtual Switch Actuator")
 {
     wxMenu *menuFile = new wxMenu;
+    menuFile->Append(RESET, "Reset");
     menuFile->Append(wxID_EXIT);
     wxMenu *menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
@@ -107,6 +123,7 @@ MyFrame::MyFrame()
     SetStatusText("Welcome to KNX-IOT Virtual!");
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
+    Bind(wxEVT_MENU, &MyFrame::OnReset, this, RESET);
 
     m_btn_1 = new wxButton(this, BUTTON_1, _T("Actuator 1 ('/p/1')"), wxPoint(10, 10 ), wxSize(130, 25), 0);
     m_btn_1->Enable(false);
@@ -135,18 +152,44 @@ MyFrame::MyFrame()
     m_fault_4 = new 	wxCheckBox(this, BUTTON_4, _T("Fault 4 (on '/p/7') "), wxPoint(290, 10 + 75), wxSize(130, 25), 0);
     m_fault_4->Bind(wxEVT_CHECKBOX, &MyFrame::OnFault4, this);
 
-
     app_initialize_stack();
 
+    // serial number
     char text[500];
-
     strcpy(text, "Device Serial Number: ");
     oc_device_info_t* device = oc_core_get_device_info(0);
     strcat(text, oc_string(device->serialnumber));
-
     wxTextCtrl* Statictext;
-    Statictext = new wxTextCtrl(this, wxID_ANY, text, wxPoint(10, 10 + 100), wxSize(290 + 130, 25), 0);
+    Statictext = new wxTextCtrl(this, wxID_ANY, text, wxPoint(10, 10 + 100), wxSize(150 + 130, 25), 0);
     Statictext->SetEditable(false);
+
+    // internal address
+    sprintf(text, "IA: %d", device->ia);
+    m_ia_text = new wxTextCtrl(this, IA_TEXT, text, wxPoint(10, 10 + 125), wxSize(140, 25), 0);
+    m_ia_text->SetEditable(false);
+
+    // installation id
+    sprintf(text, "IID: %d", device->iid);
+    m_iid_text = new wxTextCtrl(this, IID_TEXT, text, wxPoint(10 + 140, 10 + 125), wxSize(140, 25), 0);
+    m_iid_text->SetEditable(false);
+
+    // programming mode
+    sprintf(text, "Programming Mode: %d", device->pm);
+    m_pm_text = new wxTextCtrl(this, PM_TEXT, text, wxPoint(10, 10 + 150), wxSize(140, 25), 0);
+    m_pm_text->SetEditable(false);
+
+    // installation id
+    sprintf(text, "LoadState: %s", oc_core_get_lsm_state_as_string(device->lsm_s));
+    m_ls_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10 + 140, 10 + 150), wxSize(140, 25), 0);
+    m_ls_text->SetEditable(false);
+
+    // hostname
+    sprintf(text, "host name: %s", oc_string(device->hostname));
+    m_hostname_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10, 10 + 175), wxSize(140, 25), 0);
+    m_hostname_text->SetEditable(false);
+
+    this->updateInfoCheckBoxes();
+    this->updateTextButtons();
 
     this->updateInfoCheckBoxes();
 
@@ -158,6 +201,41 @@ void MyFrame::OnExit(wxCommandEvent& event)
 {
     Close(true);
 }
+
+
+void MyFrame::updateTextButtons()
+{
+
+  char text[500];
+  size_t device_index = 0;
+
+  // get the device data structure
+  oc_device_info_t* device = oc_core_get_device_info(device_index);
+  // update the text labels
+  sprintf(text, "IA: %d", device->ia);
+  m_ia_text->SetLabelText(text);
+  sprintf(text, "LoadState: %s", oc_core_get_lsm_state_as_string(device->lsm_s));
+  m_pm_text->SetLabelText(text);
+  sprintf(text, "Programming Mode : % d", device->pm);
+  m_ls_text->SetLabelText(text);
+  sprintf(text, "IID: %d", device->iid);
+  m_iid_text->SetLabelText(text);
+  sprintf(text, "host name: %s", oc_string(device->hostname));
+  m_hostname_text->SetLabelText(text);
+}
+
+void MyFrame::OnReset(wxCommandEvent& event)
+{
+  int device_index = 0;
+  SetStatusText("Device Reset");
+
+  // reset the device
+  oc_knx_device_storage_reset(device_index, 2);
+  // update the UI
+  this->updateTextButtons();
+}
+
+
 void MyFrame::OnAbout(wxCommandEvent& event)
 {
   char text[500];
@@ -226,7 +304,8 @@ void MyFrame::OnTimer(wxTimerEvent& event)
   //wxLogMessage("on pressed 4!");
   //SetStatusText(".");
   this->updateInfoCheckBoxes();
-  this->updateInfoButtons();
+  this->updateInfoButtons(); 
+  this->updateTextButtons();
 }
 
 
