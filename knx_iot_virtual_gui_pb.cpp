@@ -26,6 +26,7 @@
 #include "knx_iot_virtual_pb.h"
 
 #include "api/oc_knx_dev.h"
+#include "api/oc_knx_fp.h"
 
 enum
 {
@@ -44,7 +45,8 @@ enum
   PM_TEXT = IID_TEXT + 1,// ID for programming mode text 
   LS_TEXT = PM_TEXT + 1,// ID for load status text 
   HOSTNAME_TEXT = LS_TEXT + 1,// ID for hostname text 
-  SECURED_TEXT = HOSTNAME_TEXT + 1 // ID for secured text 
+  SECURED_TEXT = HOSTNAME_TEXT + 1, // ID for secured text 
+  GOT_TABLE_ID = SECURED_TEXT + 1 // ID for the Group object 
 
 };
 
@@ -63,6 +65,7 @@ private:
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnReset(wxCommandEvent& event);
+    void OnGroupObjectTable(wxCommandEvent& event);
     void OnPressed1(wxCommandEvent& event);
     void OnPressed2(wxCommandEvent& event);
     void OnPressed3(wxCommandEvent& event);
@@ -99,7 +102,7 @@ MyFrame::MyFrame()
     : wxFrame(NULL, wxID_ANY, "KNX-IOT virtual Push Button")
 {
     wxMenu *menuFile = new wxMenu;
-
+    menuFile->Append(GOT_TABLE_ID, "List Group Object Table");
     menuFile->Append(RESET, "Reset");
     menuFile->Append(wxID_EXIT);
     wxMenu *menuHelp = new wxMenu;
@@ -113,6 +116,7 @@ MyFrame::MyFrame()
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
     Bind(wxEVT_MENU, &MyFrame::OnReset, this, RESET);
+    Bind(wxEVT_MENU, &MyFrame::OnGroupObjectTable, this, GOT_TABLE_ID);
 
     wxButton* btn_1 = new wxButton(this, BUTTON_1, _T("Button 1 ('/p/1')"), wxPoint(10, 10 ), wxSize(130, 25), 0);
     btn_1->Bind(wxEVT_BUTTON, &MyFrame::OnPressed1, this);
@@ -212,6 +216,50 @@ void MyFrame::updateTextButtons()
   m_iid_text->SetLabelText(text);
   sprintf(text, "host name: %s", oc_string(device->hostname));
   m_hostname_text->SetLabelText(text);
+}
+void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
+{
+  int device_index = 0;
+  char text[1024 * 5];
+  char line[200];
+  char line2[200];
+  char windowtext[200];
+
+  strcpy(text, "");
+
+  oc_device_info_t* device = oc_core_get_device_info(device_index);
+
+  int total = oc_core_get_group_object_table_total_size();
+  for (int index = 0; index < total; index++) {
+    oc_group_object_table_t* entry = oc_core_get_group_object_table_entry(index);
+    if (entry->ga_len > 0) {
+      sprintf(line, "Index %d \n", index);
+      strcat(text, line);
+      sprintf(line, "  id: '%d'  ", entry->id);
+      strcat(text, line);
+      sprintf(line, "  url: '%s' ", oc_string(entry->href));
+      strcat(text, line);
+      sprintf(line, "  cflags : '%d' ", entry->cflags);
+      oc_cflags_as_string(line, entry->cflags);
+      strcat(text, line);
+      strcpy(line, "  ga : [");
+      for (int i = 0; i < entry->ga_len; i++) {
+        sprintf(line2, " %d", entry->ga[i]);
+        strcat(line, line2);
+      }
+      strcat(line, " ]\n");
+      strcat(text, line);
+    }
+  }
+
+  strcpy(windowtext, "Group Object Table  ");
+  strcat(windowtext, oc_string(device->serialnumber));
+
+  wxMessageBox(text, windowtext,
+    wxOK | wxICON_NONE);
+
+  SetStatusText("List Group Object Table");
+
 }
 
 void MyFrame::OnReset(wxCommandEvent& event)
