@@ -328,7 +328,7 @@ void MyFrame::OnFault2(wxCommandEvent& event)
 {
   char url[] = "/p/3";
   char my_text[100];
-  bool p1 = m_fault_1->GetValue();
+  bool p1 = m_fault_2->GetValue();
   app_set_fault_variable(url, p1);
 
   // there is a fault: update the info
@@ -343,7 +343,7 @@ void MyFrame::OnFault3(wxCommandEvent& event)
 {
   char url[] = "/p/5";
   char my_text[100];
-  bool p1 = m_fault_1->GetValue();
+  bool p1 = m_fault_3->GetValue();
 
   app_set_fault_variable(url, p1);
 
@@ -359,7 +359,7 @@ void MyFrame::OnFault4(wxCommandEvent& event)
 {
   char url[] = "/p/7";
   char my_text[100];
-  bool p1 = m_fault_1->GetValue();
+  bool p1 = m_fault_4->GetValue();
   app_set_fault_variable(url, p1);
 
   // there is a fault: update the info
