@@ -33,8 +33,9 @@ enum
   BUTTON_2 = wxID_HIGHEST + 2, // declares an id which will be used to call our button
   BUTTON_3 = wxID_HIGHEST + 3, // declares an id which will be used to call our button
   BUTTON_4 = wxID_HIGHEST + 4, // declares an id which will be used to call our button
-  TIMER_ID = BUTTON_4 + 1,
-  CHECK_1 = TIMER_ID + 1,
+  TIMER_ID = BUTTON_4 + 1, 
+  CHECK_PM = TIMER_ID + 1,   // programming mode check in menu bar
+  CHECK_1 = CHECK_PM + 1,  // ID for check 1
   CHECK_2 = CHECK_1 + 1,
   CHECK_3 = CHECK_2 + 1,
   CHECK_4 = CHECK_3 + 1,
@@ -63,10 +64,12 @@ class MyFrame : public wxFrame
 public:
     MyFrame();
 private:
+    void OnGroupObjectTable(wxCommandEvent& event);
+    void OnProgrammingMode(wxCommandEvent& event);
+    void OnReset(wxCommandEvent& event);
+
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
-    void OnReset(wxCommandEvent& event);
-    void OnGroupObjectTable(wxCommandEvent& event);
     void OnFault1(wxCommandEvent& event);
     void OnFault2(wxCommandEvent& event);
     void OnFault3(wxCommandEvent& event);
@@ -78,6 +81,7 @@ private:
     void updateTextButtons();
     void bool2text(bool on_off, char* text);
 
+    wxMenu* m_menuFile;
     wxTimer m_timer;
 
     wxButton* m_btn_1;
@@ -114,14 +118,16 @@ bool MyApp::OnInit()
 MyFrame::MyFrame()
     : wxFrame(NULL, wxID_ANY, "KNX-IOT virtual Switch Actuator")
 {
-    wxMenu *menuFile = new wxMenu;
-    menuFile->Append(GOT_TABLE_ID, "List Group Object Table");
-    menuFile->Append(RESET, "Reset Device");
-    menuFile->Append(wxID_EXIT);
+    m_menuFile = new wxMenu;
+    m_menuFile->Append(GOT_TABLE_ID, "List Group Object Table", "List the Group object table", false);
+    m_menuFile->Append(CHECK_PM, "Programming Mode", "Sets the application in programming mode", true);
+    m_menuFile->Append(RESET, "Reset", "Reset the Device", false);
+    m_menuFile->AppendSeparator();
+    m_menuFile->Append(wxID_EXIT);
     wxMenu *menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
     wxMenuBar *menuBar = new wxMenuBar;
-    menuBar->Append(menuFile, "&File");
+    menuBar->Append(m_menuFile, "&File");
     menuBar->Append(menuHelp, "&Help");
     SetMenuBar( menuBar );
     CreateStatusBar();
@@ -130,6 +136,7 @@ MyFrame::MyFrame()
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
     Bind(wxEVT_MENU, &MyFrame::OnReset, this, RESET);
     Bind(wxEVT_MENU, &MyFrame::OnGroupObjectTable, this, GOT_TABLE_ID);
+    Bind(wxEVT_MENU, &MyFrame::OnProgrammingMode, this, CHECK_PM);
 
     m_btn_1 = new wxButton(this, BUTTON_1, _T("Actuator 1 ('/p/1')"), wxPoint(10, 10 ), wxSize(130, 25), 0);
     m_btn_1->Enable(false);
@@ -214,6 +221,20 @@ MyFrame::MyFrame()
 void MyFrame::OnExit(wxCommandEvent& event)
 {
     Close(true);
+}
+
+
+void MyFrame::OnProgrammingMode(wxCommandEvent& event)
+{
+  int device_index = 0;
+  SetStatusText("Changing programming mode");
+
+  bool my_val = m_menuFile->IsChecked(CHECK_PM);
+  oc_device_info_t* device = oc_core_get_device_info(0);
+  device->pm = my_val;
+
+  // update the UI
+  this->updateTextButtons();
 }
 
 

@@ -35,7 +35,8 @@ enum
   BUTTON_3 = wxID_HIGHEST + 3, // ID for button 3
   BUTTON_4 = wxID_HIGHEST + 4, // ID for button 4
   TIMER_ID = BUTTON_4 + 1,   // ID for timer
-  CHECK_1 = TIMER_ID + 1,  // ID for check 1
+  CHECK_PM = TIMER_ID + 1,   // programming mode check in menu bar
+  CHECK_1 = CHECK_PM + 1,  // ID for check 1
   CHECK_2 = CHECK_1 + 1,  // ID for check 2
   CHECK_3 = CHECK_2 + 1,  // ID for check 3
   CHECK_4 = CHECK_3 + 1,  // ID for check 4
@@ -64,8 +65,10 @@ public:
 private:
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
-    void OnReset(wxCommandEvent& event);
     void OnGroupObjectTable(wxCommandEvent& event);
+    void OnProgrammingMode(wxCommandEvent& event);
+    void OnReset(wxCommandEvent& event);
+
     void OnPressed1(wxCommandEvent& event);
     void OnPressed2(wxCommandEvent& event);
     void OnPressed3(wxCommandEvent& event);
@@ -75,7 +78,9 @@ private:
     void updateInfoCheckBoxes();
     void updateTextButtons();
 
+    wxMenu* m_menuFile;
     wxTimer m_timer;        // timer for the oc_poll call for the stack
+    wxCheckBox* m_pm_1;  // menu toggle
     wxCheckBox* m_check_1;  // push button 1
     wxCheckBox* m_check_2;  // push button 2
     wxCheckBox* m_check_3;  // push button 3
@@ -101,14 +106,16 @@ bool MyApp::OnInit()
 MyFrame::MyFrame()
     : wxFrame(NULL, wxID_ANY, "KNX-IOT virtual Push Button")
 {
-    wxMenu *menuFile = new wxMenu;
-    menuFile->Append(GOT_TABLE_ID, "List Group Object Table");
-    menuFile->Append(RESET, "Reset");
-    menuFile->Append(wxID_EXIT);
+    m_menuFile = new wxMenu;
+    m_menuFile->Append(GOT_TABLE_ID, "List Group Object Table", "List the Group object table", false);
+    m_menuFile->Append(CHECK_PM, "Programming Mode", "Sets the application in programming mode", true);
+    m_menuFile->Append(RESET, "Reset", "Reset the Device", false);
+    m_menuFile->AppendSeparator();
+    m_menuFile->Append(wxID_EXIT);
     wxMenu *menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
     wxMenuBar *menuBar = new wxMenuBar;
-    menuBar->Append(menuFile, "&File");
+    menuBar->Append(m_menuFile, "&File");
     menuBar->Append(menuHelp, "&Help");
     SetMenuBar( menuBar );
     CreateStatusBar();
@@ -117,6 +124,7 @@ MyFrame::MyFrame()
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
     Bind(wxEVT_MENU, &MyFrame::OnReset, this, RESET);
     Bind(wxEVT_MENU, &MyFrame::OnGroupObjectTable, this, GOT_TABLE_ID);
+    Bind(wxEVT_MENU, &MyFrame::OnProgrammingMode, this, CHECK_PM);
 
     wxButton* btn_1 = new wxButton(this, BUTTON_1, _T("Button 1 ('/p/1')"), wxPoint(10, 10 ), wxSize(130, 25), 0);
     btn_1->Bind(wxEVT_BUTTON, &MyFrame::OnPressed1, this);
@@ -194,7 +202,8 @@ MyFrame::MyFrame()
 }
 void MyFrame::OnExit(wxCommandEvent& event)
 {
-    Close(true);
+  oc_main_shutdown();
+  Close(true);
 }
 
 void MyFrame::updateTextButtons()
@@ -205,6 +214,9 @@ void MyFrame::updateTextButtons()
 
   // get the device data structure
   oc_device_info_t* device = oc_core_get_device_info(device_index);
+  if (device == NULL) {
+    return;
+  }
   // update the text labels
   sprintf(text, "IA: %d", device->ia);
   m_ia_text->SetLabelText(text);
@@ -228,6 +240,9 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
   strcpy(text, "");
 
   oc_device_info_t* device = oc_core_get_device_info(device_index);
+  if (device == NULL) {
+    return;
+  }
 
   int total = oc_core_get_group_object_table_total_size();
   for (int index = 0; index < total; index++) {
@@ -262,6 +277,21 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
 
 }
 
+
+
+void MyFrame::OnProgrammingMode(wxCommandEvent& event)
+{
+  int device_index = 0;
+  SetStatusText("Changing programming mode");
+
+  bool my_val = m_menuFile->IsChecked(CHECK_PM);
+  oc_device_info_t* device = oc_core_get_device_info(0);
+  device->pm = my_val;
+
+  // update the UI
+  this->updateTextButtons();
+}
+
 void MyFrame::OnReset(wxCommandEvent& event)
 {
   int device_index = 0;
@@ -272,6 +302,7 @@ void MyFrame::OnReset(wxCommandEvent& event)
   // update the UI
   this->updateTextButtons();
 }
+
 
 void MyFrame::OnAbout(wxCommandEvent& event)
 {
