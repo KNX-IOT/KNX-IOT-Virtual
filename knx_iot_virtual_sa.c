@@ -21,6 +21,10 @@
 #endif
 
 /**
+ * @file
+ * 
+ * KNX virtual Switching Actuator
+ *
  * ## Application Design
  *
  * support functions:
@@ -284,7 +288,7 @@ app_init(void)
   oc_core_set_device_hwt(0, "Windows");
 
   /* set the programming mode */
-  oc_core_set_device_pm(0, true);
+  oc_core_set_device_pm(0, false);
 
   /* set the model */
   oc_core_set_device_model(0, "KNX virtual - SA");
@@ -316,7 +320,7 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
      returns to this function here. alternative is to have a callback from the
      hardware that sets the global variables.
   */
-  bool error_state = false; /**< the error state, the generated code */
+  bool error_state = false; /* the error state, the generated code */
 
   PRINT("-- Begin get_OnOff_1 /p/1 \n");
   /* check if the accept header is CBOR */
@@ -426,7 +430,7 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
      returns to this function here. alternative is to have a callback from the
      hardware that sets the global variables.
   */
-  bool error_state = false; /**< the error state, the generated code */
+  bool error_state = false; /* the error state, the generated code */
 
   PRINT("-- Begin get_InfoOnOff_1 /p/2 \n");
   /* check if the accept header is CBOR */
@@ -469,7 +473,7 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
      returns to this function here. alternative is to have a callback from the
      hardware that sets the global variables.
   */
-  bool error_state = false; /**< the error state, the generated code */
+  bool error_state = false; /* the error state, the generated code */
 
   PRINT("-- Begin get_OnOff_2 /p/3 \n");
   /* check if the accept header is CBOR */
@@ -579,7 +583,7 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
      returns to this function here. alternative is to have a callback from the
      hardware that sets the global variables.
   */
-  bool error_state = false; /**< the error state, the generated code */
+  bool error_state = false; /* the error state, the generated code */
 
   PRINT("-- Begin get_InfoOnOff_2 /p/4 \n");
   /* check if the accept header is CBOR */
@@ -622,7 +626,7 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
      returns to this function here. alternative is to have a callback from the
      hardware that sets the global variables.
   */
-  bool error_state = false; /**< the error state, the generated code */
+  bool error_state = false; /* the error state, the generated code */
 
   PRINT("-- Begin get_OnOff_3 /p/5 \n");
   /* check if the accept header is CBOR */
@@ -732,7 +736,7 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
      returns to this function here. alternative is to have a callback from the
      hardware that sets the global variables.
   */
-  bool error_state = false; /**< the error state, the generated code */
+  bool error_state = false; /* the error state, the generated code */
 
   PRINT("-- Begin get_InfoOnOff_3 /p/6 \n");
   /* check if the accept header is CBOR */
@@ -775,7 +779,7 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
      returns to this function here. alternative is to have a callback from the
      hardware that sets the global variables.
   */
-  bool error_state = false; /**< the error state, the generated code */
+  bool error_state = false; /* the error state, the generated code */
 
   PRINT("-- Begin get_OnOff_4 /p/7 \n");
   /* check if the accept header is CBOR */
@@ -885,7 +889,7 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
      returns to this function here. alternative is to have a callback from the
      hardware that sets the global variables.
   */
-  bool error_state = false; /**< the error state, the generated code */
+  bool error_state = false; /* the error state, the generated code */
 
   PRINT("-- Begin get_InfoOnOff_4 /p/8 \n");
   /* check if the accept header is CBOR */
@@ -1093,7 +1097,7 @@ register_resources(void)
 /**
  * @brief initiate preset for device
  * current implementation: device reset as command line argument
- * @param device the device identifier of the list of devices
+ * @param device_index the device identifier of the list of devices
  * @param data the supplied data.
  */
 STATIC void
@@ -1111,7 +1115,8 @@ factory_presets_cb(size_t device_index, void *data)
 /**
  * @brief application reset
  *
- * @param device the device identifier of the list of devices
+ * @param device_index the device identifier of the list of devices
+ * @param reset_value the knx reset value
  * @param data the supplied data.
  */
 STATIC void
@@ -1125,7 +1130,7 @@ reset_cb(size_t device_index, int reset_value, void *data)
 /**
  * @brief restart the device (application depended)
  *
- * @param device the device identifier of the list of devices
+ * @param device_index the device identifier of the list of devices
  * @param data the supplied data.
  */
 STATIC void
@@ -1141,7 +1146,7 @@ restart_cb(size_t device_index, void *data)
 /**
  * @brief set the host name on the device (application depended)
  *
- * @param device the device identifier of the list of devices
+ * @param device_index the device identifier of the list of devices
  * @param host_name the host name to be set on the device
  * @param data the supplied data.
  */
