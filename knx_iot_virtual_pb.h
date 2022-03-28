@@ -15,7 +15,15 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
+/**
+ * @file
+ *
+ * header file for the generated application.
+ * header file contains functions to use the generated application with an external main.
+ * e.g. if the c code is compiled without main then 
+ * these functions can be used to call all generated code
+ *
+ */
 
 #include "oc_api.h"
 #include "oc_core_res.h"

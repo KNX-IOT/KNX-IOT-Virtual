@@ -287,9 +287,6 @@ app_init(void)
   /* set the hardware type*/
   oc_core_set_device_hwt(0, "Windows");
 
-  /* set the programming mode */
-  oc_core_set_device_pm(0, false);
-
   /* set the model */
   oc_core_set_device_model(0, "KNX virtual - SA");
 
@@ -328,9 +325,11 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  CborError error;
-  error = cbor_encode_boolean(&g_encoder, g_OnOff_1);
-  if (error) {
+  
+  oc_rep_begin_root_object();
+  oc_rep_i_set_boolean(root, 1, g_OnOff_1);
+  oc_rep_end_root_object();
+  if (g_err) {
     error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
@@ -374,41 +373,43 @@ post_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
     /* the regular payload */
     rep = request->request_payload;
   }
-  /* handle the type of payload correctly. */
-  if ((rep != NULL) && (rep->type == OC_REP_BOOL)) {
-    PRINT("  post_OnOff_1 received : %d\n", rep->value.boolean);
-    g_OnOff_1 = rep->value.boolean;
-
-    oc_send_cbor_response(request, OC_STATUS_CHANGED);
-    /* MANUFACTORER: add here the code to talk to the HW if one implements an
-     actuator. The call to the HW needs to fill in the global variable before it
-     returns to this function here. Alternative is to have a callback from the
-     hardware that sets the global variables.
-   */
-    /* update the status information of InfoOnOff_1*/
-    if (g_fault_OnOff_1 == false) { 
-      PRINT("  No Fault update feedback to %d'\n", g_OnOff_1);
-      /* no fault hence update the feedback with the current state of the actuator */
-      g_InfoOnOff_1 = g_OnOff_1;
-    } else {
-      /* fault hence update the feedback with "false" */
-      PRINT("  Fault'\n");
-      g_InfoOnOff_1 = false;
-    }
-    /* send the status information to '/p/2' with flag 'w'*/
-    PRINT("  Send status to '/p/2' with flag: 'w'\n");
-    oc_do_s_mode_with_scope(2, "/p/2", "w");
-    oc_do_s_mode_with_scope(5, "/p/2", "w");
-
-    do_post_cb("/p/1");
   
-    PRINT("-- End post_OnOff_1\n");
-    return;
+  while (rep != NULL) {
+    /* handle the type of payload correctly. */
+    if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
+      PRINT("  post_OnOff_1 received : %d\n", rep->value.boolean);
+      g_OnOff_1 = rep->value.boolean;
+      oc_send_cbor_response(request, OC_STATUS_CHANGED);
+      /* MANUFACTORER: add here the code to talk to the HW if one implements an
+       actuator. The call to the HW needs to fill in the global variable before it
+       returns to this function here. Alternative is to have a callback from the
+       hardware that sets the global variables.
+     */
+      /* update the status information of InfoOnOff_1*/
+      if (g_fault_OnOff_1 == false) { 
+        PRINT("  No Fault update feedback to %d'\n", g_OnOff_1);
+        /* no fault hence update the feedback with the current state of the actuator */
+        g_InfoOnOff_1 = g_OnOff_1;
+      } else {
+        /* fault hence update the feedback with "false" */
+        PRINT("  Fault'\n");
+        g_InfoOnOff_1 = false;
+      }
+      /* send the status information to '/p/2' with flag 'w'*/
+      PRINT("  Send status to '/p/2' with flag: 'w'\n");
+      oc_do_s_mode_with_scope(2, "/p/2", "w");
+      oc_do_s_mode_with_scope(5, "/p/2", "w");
+      do_post_cb("/p/1");
+      PRINT("-- End post_OnOff_1\n");
+      return;
+    }
+    rep = rep->next;
   }
 
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
   PRINT("-- End post_OnOff_1\n");
-}/**
+}
+/**
  * @brief GET method for "InfoOnOff_1" resource at "/p/2".
  *
  * function is called to initialize the return values of the GET method.
@@ -438,9 +439,11 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  CborError error;
-  error = cbor_encode_boolean(&g_encoder, g_InfoOnOff_1);
-  if (error) {
+  
+  oc_rep_begin_root_object();
+  oc_rep_i_set_boolean(root, 1, g_InfoOnOff_1);
+  oc_rep_end_root_object();
+  if (g_err) {
     error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
@@ -451,6 +454,7 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   }
   PRINT("-- End get_InfoOnOff_1\n");
 }
+
 /**
  * @brief GET method for "OnOff_2" resource at "/p/3".
  *
@@ -481,9 +485,11 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  CborError error;
-  error = cbor_encode_boolean(&g_encoder, g_OnOff_2);
-  if (error) {
+  
+  oc_rep_begin_root_object();
+  oc_rep_i_set_boolean(root, 1, g_OnOff_2);
+  oc_rep_end_root_object();
+  if (g_err) {
     error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
@@ -527,41 +533,43 @@ post_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
     /* the regular payload */
     rep = request->request_payload;
   }
-  /* handle the type of payload correctly. */
-  if ((rep != NULL) && (rep->type == OC_REP_BOOL)) {
-    PRINT("  post_OnOff_2 received : %d\n", rep->value.boolean);
-    g_OnOff_2 = rep->value.boolean;
-
-    oc_send_cbor_response(request, OC_STATUS_CHANGED);
-    /* MANUFACTORER: add here the code to talk to the HW if one implements an
-     actuator. The call to the HW needs to fill in the global variable before it
-     returns to this function here. Alternative is to have a callback from the
-     hardware that sets the global variables.
-   */
-    /* update the status information of InfoOnOff_2*/
-    if (g_fault_OnOff_2 == false) { 
-      PRINT("  No Fault update feedback to %d'\n", g_OnOff_2);
-      /* no fault hence update the feedback with the current state of the actuator */
-      g_InfoOnOff_2 = g_OnOff_2;
-    } else {
-      /* fault hence update the feedback with "false" */
-      PRINT("  Fault'\n");
-      g_InfoOnOff_2 = false;
-    }
-    /* send the status information to '/p/4' with flag 'w'*/
-    PRINT("  Send status to '/p/4' with flag: 'w'\n");
-    oc_do_s_mode_with_scope(2, "/p/4", "w");
-    oc_do_s_mode_with_scope(5, "/p/4", "w");
-
-    do_post_cb("/p/3");
   
-    PRINT("-- End post_OnOff_2\n");
-    return;
+  while (rep != NULL) {
+    /* handle the type of payload correctly. */
+    if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
+      PRINT("  post_OnOff_2 received : %d\n", rep->value.boolean);
+      g_OnOff_2 = rep->value.boolean;
+      oc_send_cbor_response(request, OC_STATUS_CHANGED);
+      /* MANUFACTORER: add here the code to talk to the HW if one implements an
+       actuator. The call to the HW needs to fill in the global variable before it
+       returns to this function here. Alternative is to have a callback from the
+       hardware that sets the global variables.
+     */
+      /* update the status information of InfoOnOff_2*/
+      if (g_fault_OnOff_2 == false) { 
+        PRINT("  No Fault update feedback to %d'\n", g_OnOff_2);
+        /* no fault hence update the feedback with the current state of the actuator */
+        g_InfoOnOff_2 = g_OnOff_2;
+      } else {
+        /* fault hence update the feedback with "false" */
+        PRINT("  Fault'\n");
+        g_InfoOnOff_2 = false;
+      }
+      /* send the status information to '/p/4' with flag 'w'*/
+      PRINT("  Send status to '/p/4' with flag: 'w'\n");
+      oc_do_s_mode_with_scope(2, "/p/4", "w");
+      oc_do_s_mode_with_scope(5, "/p/4", "w");
+      do_post_cb("/p/3");
+      PRINT("-- End post_OnOff_2\n");
+      return;
+    }
+    rep = rep->next;
   }
 
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
   PRINT("-- End post_OnOff_2\n");
-}/**
+}
+/**
  * @brief GET method for "InfoOnOff_2" resource at "/p/4".
  *
  * function is called to initialize the return values of the GET method.
@@ -591,9 +599,11 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  CborError error;
-  error = cbor_encode_boolean(&g_encoder, g_InfoOnOff_2);
-  if (error) {
+  
+  oc_rep_begin_root_object();
+  oc_rep_i_set_boolean(root, 1, g_InfoOnOff_2);
+  oc_rep_end_root_object();
+  if (g_err) {
     error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
@@ -604,6 +614,7 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   }
   PRINT("-- End get_InfoOnOff_2\n");
 }
+
 /**
  * @brief GET method for "OnOff_3" resource at "/p/5".
  *
@@ -634,9 +645,11 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  CborError error;
-  error = cbor_encode_boolean(&g_encoder, g_OnOff_3);
-  if (error) {
+  
+  oc_rep_begin_root_object();
+  oc_rep_i_set_boolean(root, 1, g_OnOff_3);
+  oc_rep_end_root_object();
+  if (g_err) {
     error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
@@ -680,41 +693,43 @@ post_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
     /* the regular payload */
     rep = request->request_payload;
   }
-  /* handle the type of payload correctly. */
-  if ((rep != NULL) && (rep->type == OC_REP_BOOL)) {
-    PRINT("  post_OnOff_3 received : %d\n", rep->value.boolean);
-    g_OnOff_3 = rep->value.boolean;
-
-    oc_send_cbor_response(request, OC_STATUS_CHANGED);
-    /* MANUFACTORER: add here the code to talk to the HW if one implements an
-     actuator. The call to the HW needs to fill in the global variable before it
-     returns to this function here. Alternative is to have a callback from the
-     hardware that sets the global variables.
-   */
-    /* update the status information of InfoOnOff_3*/
-    if (g_fault_OnOff_3 == false) { 
-      PRINT("  No Fault update feedback to %d'\n", g_OnOff_3);
-      /* no fault hence update the feedback with the current state of the actuator */
-      g_InfoOnOff_3 = g_OnOff_3;
-    } else {
-      /* fault hence update the feedback with "false" */
-      PRINT("  Fault'\n");
-      g_InfoOnOff_3 = false;
-    }
-    /* send the status information to '/p/6' with flag 'w'*/
-    PRINT("  Send status to '/p/6' with flag: 'w'\n");
-    oc_do_s_mode_with_scope(2, "/p/6", "w");
-    oc_do_s_mode_with_scope(5, "/p/6", "w");
-
-    do_post_cb("/p/5");
   
-    PRINT("-- End post_OnOff_3\n");
-    return;
+  while (rep != NULL) {
+    /* handle the type of payload correctly. */
+    if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
+      PRINT("  post_OnOff_3 received : %d\n", rep->value.boolean);
+      g_OnOff_3 = rep->value.boolean;
+      oc_send_cbor_response(request, OC_STATUS_CHANGED);
+      /* MANUFACTORER: add here the code to talk to the HW if one implements an
+       actuator. The call to the HW needs to fill in the global variable before it
+       returns to this function here. Alternative is to have a callback from the
+       hardware that sets the global variables.
+     */
+      /* update the status information of InfoOnOff_3*/
+      if (g_fault_OnOff_3 == false) { 
+        PRINT("  No Fault update feedback to %d'\n", g_OnOff_3);
+        /* no fault hence update the feedback with the current state of the actuator */
+        g_InfoOnOff_3 = g_OnOff_3;
+      } else {
+        /* fault hence update the feedback with "false" */
+        PRINT("  Fault'\n");
+        g_InfoOnOff_3 = false;
+      }
+      /* send the status information to '/p/6' with flag 'w'*/
+      PRINT("  Send status to '/p/6' with flag: 'w'\n");
+      oc_do_s_mode_with_scope(2, "/p/6", "w");
+      oc_do_s_mode_with_scope(5, "/p/6", "w");
+      do_post_cb("/p/5");
+      PRINT("-- End post_OnOff_3\n");
+      return;
+    }
+    rep = rep->next;
   }
 
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
   PRINT("-- End post_OnOff_3\n");
-}/**
+}
+/**
  * @brief GET method for "InfoOnOff_3" resource at "/p/6".
  *
  * function is called to initialize the return values of the GET method.
@@ -744,9 +759,11 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  CborError error;
-  error = cbor_encode_boolean(&g_encoder, g_InfoOnOff_3);
-  if (error) {
+  
+  oc_rep_begin_root_object();
+  oc_rep_i_set_boolean(root, 1, g_InfoOnOff_3);
+  oc_rep_end_root_object();
+  if (g_err) {
     error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
@@ -757,6 +774,7 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   }
   PRINT("-- End get_InfoOnOff_3\n");
 }
+
 /**
  * @brief GET method for "OnOff_4" resource at "/p/7".
  *
@@ -787,9 +805,11 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  CborError error;
-  error = cbor_encode_boolean(&g_encoder, g_OnOff_4);
-  if (error) {
+  
+  oc_rep_begin_root_object();
+  oc_rep_i_set_boolean(root, 1, g_OnOff_4);
+  oc_rep_end_root_object();
+  if (g_err) {
     error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
@@ -833,41 +853,43 @@ post_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
     /* the regular payload */
     rep = request->request_payload;
   }
-  /* handle the type of payload correctly. */
-  if ((rep != NULL) && (rep->type == OC_REP_BOOL)) {
-    PRINT("  post_OnOff_4 received : %d\n", rep->value.boolean);
-    g_OnOff_4 = rep->value.boolean;
-
-    oc_send_cbor_response(request, OC_STATUS_CHANGED);
-    /* MANUFACTORER: add here the code to talk to the HW if one implements an
-     actuator. The call to the HW needs to fill in the global variable before it
-     returns to this function here. Alternative is to have a callback from the
-     hardware that sets the global variables.
-   */
-    /* update the status information of InfoOnOff_4*/
-    if (g_fault_OnOff_4 == false) { 
-      PRINT("  No Fault update feedback to %d'\n", g_OnOff_4);
-      /* no fault hence update the feedback with the current state of the actuator */
-      g_InfoOnOff_4 = g_OnOff_4;
-    } else {
-      /* fault hence update the feedback with "false" */
-      PRINT("  Fault'\n");
-      g_InfoOnOff_4 = false;
-    }
-    /* send the status information to '/p/8' with flag 'w'*/
-    PRINT("  Send status to '/p/8' with flag: 'w'\n");
-    oc_do_s_mode_with_scope(2, "/p/8", "w");
-    oc_do_s_mode_with_scope(5, "/p/8", "w");
-
-    do_post_cb("/p/7");
   
-    PRINT("-- End post_OnOff_4\n");
-    return;
+  while (rep != NULL) {
+    /* handle the type of payload correctly. */
+    if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
+      PRINT("  post_OnOff_4 received : %d\n", rep->value.boolean);
+      g_OnOff_4 = rep->value.boolean;
+      oc_send_cbor_response(request, OC_STATUS_CHANGED);
+      /* MANUFACTORER: add here the code to talk to the HW if one implements an
+       actuator. The call to the HW needs to fill in the global variable before it
+       returns to this function here. Alternative is to have a callback from the
+       hardware that sets the global variables.
+     */
+      /* update the status information of InfoOnOff_4*/
+      if (g_fault_OnOff_4 == false) { 
+        PRINT("  No Fault update feedback to %d'\n", g_OnOff_4);
+        /* no fault hence update the feedback with the current state of the actuator */
+        g_InfoOnOff_4 = g_OnOff_4;
+      } else {
+        /* fault hence update the feedback with "false" */
+        PRINT("  Fault'\n");
+        g_InfoOnOff_4 = false;
+      }
+      /* send the status information to '/p/8' with flag 'w'*/
+      PRINT("  Send status to '/p/8' with flag: 'w'\n");
+      oc_do_s_mode_with_scope(2, "/p/8", "w");
+      oc_do_s_mode_with_scope(5, "/p/8", "w");
+      do_post_cb("/p/7");
+      PRINT("-- End post_OnOff_4\n");
+      return;
+    }
+    rep = rep->next;
   }
 
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
   PRINT("-- End post_OnOff_4\n");
-}/**
+}
+/**
  * @brief GET method for "InfoOnOff_4" resource at "/p/8".
  *
  * function is called to initialize the return values of the GET method.
@@ -897,9 +919,11 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  CborError error;
-  error = cbor_encode_boolean(&g_encoder, g_InfoOnOff_4);
-  if (error) {
+  
+  oc_rep_begin_root_object();
+  oc_rep_i_set_boolean(root, 1, g_InfoOnOff_4);
+  oc_rep_end_root_object();
+  if (g_err) {
     error_state = true;
   }
   PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
@@ -910,6 +934,7 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
   }
   PRINT("-- End get_InfoOnOff_4\n");
 }
+
 
 
 /**
