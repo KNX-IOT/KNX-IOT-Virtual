@@ -109,7 +109,7 @@ MyFrame::MyFrame()
     m_menuFile = new wxMenu;
     m_menuFile->Append(GOT_TABLE_ID, "List Group Object Table", "List the Group object table", false);
     m_menuFile->Append(CHECK_PM, "Programming Mode", "Sets the application in programming mode", true);
-    m_menuFile->Append(RESET, "Reset", "Reset the Device", false);
+    m_menuFile->Append(RESET, "Reset (ex-factory)", "Reset the Device to ex-factory state", false);
     m_menuFile->AppendSeparator();
     m_menuFile->Append(wxID_EXIT);
     wxMenu *menuHelp = new wxMenu;
