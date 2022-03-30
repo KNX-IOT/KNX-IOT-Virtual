@@ -29,6 +29,12 @@ add_executable(knx_iot_virtual_sa
 )
 target_link_libraries(knx_iot_virtual_sa kisClientServer)
 
+
+add_executable(knx_iot_virtual_dimming_actuator
+    ${PROJECT_SOURCE_DIR}/knx_iot_virtual_dimming_actuator.c
+)
+target_link_libraries(knx_iot_virtual_dimming_actuator kisClientServer)
+
 add_executable(knx_iot_virtual_gui_pb WIN32
      ${PROJECT_SOURCE_DIR}/knx_iot_virtual_gui_pb.cpp
      ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.c)
