@@ -121,48 +121,75 @@ volatile bool g_fault_OnOff_2;   /**< global variable for fault OnOff_2 */
 volatile bool g_fault_OnOff_3;   /**< global variable for fault OnOff_3 */ 
 volatile bool g_fault_OnOff_4;   /**< global variable for fault OnOff_4 */
 
-void app_set_bool_variable(char* url, bool value) {
-if ( strcmp(url, "/p/1") == 0) { 
+void app_set_bool_variable(char* url, bool value) 
+{
+  if ( strcmp(url, "/p/1") == 0) { 
     g_OnOff_1 = value;   /**< global variable for OnOff_1 */
-  }if ( strcmp(url, "/p/2") == 0) { 
+    return;
+  } 
+  if ( strcmp(url, "/p/2") == 0) { 
     g_InfoOnOff_1 = value;   /**< global variable for InfoOnOff_1 */
-  }if ( strcmp(url, "/p/3") == 0) { 
+    return;
+  } 
+  if ( strcmp(url, "/p/3") == 0) { 
     g_OnOff_2 = value;   /**< global variable for OnOff_2 */
-  }if ( strcmp(url, "/p/4") == 0) { 
+    return;
+  } 
+  if ( strcmp(url, "/p/4") == 0) { 
     g_InfoOnOff_2 = value;   /**< global variable for InfoOnOff_2 */
-  }if ( strcmp(url, "/p/5") == 0) { 
+    return;
+  } 
+  if ( strcmp(url, "/p/5") == 0) { 
     g_OnOff_3 = value;   /**< global variable for OnOff_3 */
-  }if ( strcmp(url, "/p/6") == 0) { 
+    return;
+  } 
+  if ( strcmp(url, "/p/6") == 0) { 
     g_InfoOnOff_3 = value;   /**< global variable for InfoOnOff_3 */
-  }if ( strcmp(url, "/p/7") == 0) { 
+    return;
+  } 
+  if ( strcmp(url, "/p/7") == 0) { 
     g_OnOff_4 = value;   /**< global variable for OnOff_4 */
-  }if ( strcmp(url, "/p/8") == 0) { 
+    return;
+  } 
+  if ( strcmp(url, "/p/8") == 0) { 
     g_InfoOnOff_4 = value;   /**< global variable for InfoOnOff_4 */
-  }
+    return;
+  } 
 }
 
-bool app_retrieve_bool_variable(char* url) {
-if ( strcmp(url, "/p/1") == 0) { 
+bool app_retrieve_bool_variable(char* url) 
+{
+  if ( strcmp(url, "/p/1") == 0) { 
     return g_OnOff_1;   /**< global variable for OnOff_1 */
-  }if ( strcmp(url, "/p/2") == 0) { 
+  }
+  if ( strcmp(url, "/p/2") == 0) { 
     return g_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
-  }if ( strcmp(url, "/p/3") == 0) { 
+  }
+  if ( strcmp(url, "/p/3") == 0) { 
     return g_OnOff_2;   /**< global variable for OnOff_2 */
-  }if ( strcmp(url, "/p/4") == 0) { 
+  }
+  if ( strcmp(url, "/p/4") == 0) { 
     return g_InfoOnOff_2;   /**< global variable for InfoOnOff_2 */
-  }if ( strcmp(url, "/p/5") == 0) { 
+  }
+  if ( strcmp(url, "/p/5") == 0) { 
     return g_OnOff_3;   /**< global variable for OnOff_3 */
-  }if ( strcmp(url, "/p/6") == 0) { 
+  }
+  if ( strcmp(url, "/p/6") == 0) { 
     return g_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */
-  }if ( strcmp(url, "/p/7") == 0) { 
+  }
+  if ( strcmp(url, "/p/7") == 0) { 
     return g_OnOff_4;   /**< global variable for OnOff_4 */
-  }if ( strcmp(url, "/p/8") == 0) { 
+  }
+  if ( strcmp(url, "/p/8") == 0) { 
     return g_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
   }
   return false;
 }
 
-void app_set_fault_variable(char* url, bool value){
+
+
+void app_set_fault_variable(char* url, bool value)
+{
  
   if ( strcmp(url, "/p/1") == 0) { 
     g_fault_OnOff_1 = value;   /**< global variable for OnOff_1 */
@@ -178,7 +205,8 @@ void app_set_fault_variable(char* url, bool value){
   }
 }
 
-bool app_retrieve_fault_variable(char* url) {
+bool app_retrieve_fault_variable(char* url)
+{
  
   if ( strcmp(url, "/p/1") == 0) { 
     return g_fault_OnOff_1;   /**< global variable for OnOff_1 */
@@ -218,7 +246,8 @@ oc_get_post_cb(void)
   return &app_post;
 }
 
-void do_post_cb(char* url) {
+void do_post_cb(char* url) 
+{
   oc_post_struct_t *my_cb = oc_get_post_cb();
   if (my_cb && my_cb->cb) {
     my_cb->cb(url);

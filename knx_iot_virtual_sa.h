@@ -66,7 +66,15 @@ int app_initialize_stack();
 
 /**
  * @brief retrieve the boolean variable of the url/data point
- * the caller needs to know if the resource/data point is conveying a boolean 
+ * the caller needs to know if the resource/data point is conveying a boolean
+ * "/p/1" of OnOff_1 
+ * "/p/2" of InfoOnOff_1 
+ * "/p/3" of OnOff_2 
+ * "/p/4" of InfoOnOff_2 
+ * "/p/5" of OnOff_3 
+ * "/p/6" of InfoOnOff_3 
+ * "/p/7" of OnOff_4 
+ * "/p/8" of InfoOnOff_4 
  * 
  * @param url the url of the resource/data point
  * @return true value is true
@@ -75,13 +83,19 @@ int app_initialize_stack();
 bool app_retrieve_bool_variable(char* url);
 
 /**
- * @brief set the boolean varialbe that belongs to the url 
- * The caller needs to know if the resource/data point is conveying a boolean 
+ * @brief set the boolean variable that belongs to the url 
+ * The caller needs to know if the resource/data point is conveying a boolean
+ * "/p/1" of OnOff_1
+ * "/p/3" of OnOff_2
+ * "/p/5" of OnOff_3
+ * "/p/7" of OnOff_4
  * 
  * @param url the url of the resource/data point
  * @param value the boolean value to be set
  */
 void app_set_bool_variable(char* url, bool value);
+
+
 
 /**
  * @brief retrieve the fault state of the url/data point
