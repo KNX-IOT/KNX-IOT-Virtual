@@ -1230,7 +1230,6 @@ int app_initialize_stack()
 
   oc_device_info_t *device = oc_core_get_device_info(0);
   PRINT("serial number: %s\n", oc_string(device->serialnumber));
-  oc_device_mode_display(0);
   oc_endpoint_t *my_ep = oc_connectivity_get_endpoints(0);
   if (my_ep != NULL) {
     PRINTipaddr(*my_ep);
