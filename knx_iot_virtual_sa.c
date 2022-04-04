@@ -394,15 +394,11 @@ post_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
@@ -554,15 +550,11 @@ post_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
@@ -714,15 +706,11 @@ post_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
@@ -874,15 +862,11 @@ post_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {

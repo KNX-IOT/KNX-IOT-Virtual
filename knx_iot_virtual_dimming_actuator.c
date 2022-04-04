@@ -554,15 +554,11 @@ post_CH1_OnOff(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
@@ -654,15 +650,11 @@ post_CH1_RelDim(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_INT)) {
@@ -754,15 +746,11 @@ post_CH1_AbsDimVal(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_INT)) {
@@ -946,15 +934,11 @@ post_CH2_OnOff(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
@@ -1046,15 +1030,11 @@ post_CH2_RelDim(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_INT)) {
@@ -1146,15 +1126,11 @@ post_CH2_AbsDimVal(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_INT)) {
@@ -1338,15 +1314,11 @@ post_CH3_OnOff(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
@@ -1438,15 +1410,11 @@ post_CH3_RelDim(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_INT)) {
@@ -1538,15 +1506,11 @@ post_CH3_AbsDimVal(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_INT)) {
@@ -1730,15 +1694,11 @@ post_CH4_OnOff(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
@@ -1830,15 +1790,11 @@ post_CH4_RelDim(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_INT)) {
@@ -1930,15 +1886,11 @@ post_CH4_AbsDimVal(oc_request_t *request, oc_interface_mask_t interfaces,
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_s_mode_request(request)) {
-    PRINT(" S-MODE\n");
+  if (oc_is_redirected_request(request)) {
+    PRINT("  redirected request..\n");
     /* retrieve the value of the s-mode payload */
-    rep = oc_s_mode_get_value(request);
-  } else {
-    /* the regular payload */
-    rep = request->request_payload;
   }
-  
+  rep = request->request_payload;
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_INT)) {

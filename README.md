@@ -74,14 +74,21 @@ https://www.wxwidgets.org/downloads/
 - go to the repo (cd)
 - mkdir build
 - cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5
+  - this command retrieves the dependencies from github
 - open solution (sln) created in the build folder with visual studio
 - build the applications in visual studio
 
 ### updating KNX-IOT-Virtual
 
-please use recursive pull request, since this also updates the KNX-IOT-STACK repo as dependency.
+please use recursive pull request:
 
 git pull --recurse-submodules
+
+updating the knx-iot-stack in knx-iot virtual:
+
+- close all windows, including visual studio
+- remove (or clean) the folder build
+- redo the cmake command listed above
 
 ## knx_iot_virtual_pb
 
