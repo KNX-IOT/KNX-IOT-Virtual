@@ -121,6 +121,47 @@ volatile bool g_fault_InfoOnOff_2;   /**< global variable for fault InfoOnOff_2 
 volatile bool g_fault_InfoOnOff_3;   /**< global variable for fault InfoOnOff_3 */ 
 volatile bool g_fault_InfoOnOff_4;   /**< global variable for fault InfoOnOff_4 */
 
+/**
+ * @brief function to check if the url is represented by a boolean
+ *
+ * @param true = url value is a boolean
+ * @param false = url is not a boolean
+ */
+bool app_is_bool_url(char* url)
+{
+  if ( strcmp(url, "/p/1") == 0) { 
+    return true; /**< OnOff_1 is a boolean */
+  } 
+  if ( strcmp(url, "/p/2") == 0) { 
+    return true; /**< InfoOnOff_1 is a boolean */
+  } 
+  if ( strcmp(url, "/p/3") == 0) { 
+    return true; /**< OnOff_2 is a boolean */
+  } 
+  if ( strcmp(url, "/p/4") == 0) { 
+    return true; /**< InfoOnOff_2 is a boolean */
+  } 
+  if ( strcmp(url, "/p/5") == 0) { 
+    return true; /**< OnOff_3 is a boolean */
+  } 
+  if ( strcmp(url, "/p/6") == 0) { 
+    return true; /**< InfoOnOff_3 is a boolean */
+  } 
+  if ( strcmp(url, "/p/7") == 0) { 
+    return true; /**< OnOff_4 is a boolean */
+  } 
+  if ( strcmp(url, "/p/8") == 0) { 
+    return true; /**< InfoOnOff_4 is a boolean */
+  } 
+  return false;
+}
+
+/**
+ * @brief sets the global boolean variable at the url
+ *
+ * @param url the url indicating the global varialbe
+ * @param value the value to be set
+ */
 void app_set_bool_variable(char* url, bool value) 
 {
   if ( strcmp(url, "/p/1") == 0) { 
@@ -157,6 +198,12 @@ void app_set_bool_variable(char* url, bool value)
   } 
 }
 
+/**
+ * @brief retrieve the global boolean variable at the url
+ *
+ * @param url the url indicating the global variable
+ * @return the value of the variable
+ */
 bool app_retrieve_bool_variable(char* url) 
 {
   if ( strcmp(url, "/p/1") == 0) { 
@@ -187,27 +234,23 @@ bool app_retrieve_bool_variable(char* url)
 }
 
 
-
+/**
+ * @brief set the fault (boolean) variable at the url
+ *
+ * @param url the url indicating the fault variable
+ * @param value the value of the fault variable
+ */
 void app_set_fault_variable(char* url, bool value)
 {
- 
-  if ( strcmp(url, "/p/2") == 0) { 
-    g_fault_InfoOnOff_1 = value;   /**< global variable for InfoOnOff_1 */
-  } 
-  if ( strcmp(url, "/p/4") == 0) { 
-    g_fault_InfoOnOff_2 = value;   /**< global variable for InfoOnOff_2 */
-  } 
-  if ( strcmp(url, "/p/6") == 0) { 
-    g_fault_InfoOnOff_3 = value;   /**< global variable for InfoOnOff_3 */
-  } 
-  if ( strcmp(url, "/p/8") == 0) { 
-    g_fault_InfoOnOff_4 = value;   /**< global variable for InfoOnOff_4 */
-  }
 }
-
+/**
+ * @brief retrieve the fault (boolean) variable at the url
+ *
+ * @param url the url indicating the fault variable
+ * @return the value of the fault variable
+ */
 bool app_retrieve_fault_variable(char* url)
-{
- 
+{ 
   if ( strcmp(url, "/p/2") == 0) { 
     return g_fault_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
   } 
@@ -325,7 +368,7 @@ app_init(void)
 }
 
 /**
- * @brief GET method for "OnOff_1" resource at "/p/1".
+ * @brief CoAP GET method for "OnOff_1" resource at url "/p/1".
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -371,7 +414,7 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 }
 
 /**
- * @brief GET method for "InfoOnOff_1" resource at "/p/2".
+ * @brief CoAP GET method for "InfoOnOff_1" resource at url "/p/2".
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -417,7 +460,7 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 }
  
 /**
- * @brief POST method for "InfoOnOff_1" resource at "/p/2".
+ * @brief CoAP POST method for "InfoOnOff_1" resource at url "/p/2".
  *
  * The function has as input the request body, which are the input values of the
  * POST method.
@@ -467,7 +510,7 @@ post_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End post_InfoOnOff_1\n");
 }
 /**
- * @brief GET method for "OnOff_2" resource at "/p/3".
+ * @brief CoAP GET method for "OnOff_2" resource at url "/p/3".
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -513,7 +556,7 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 }
 
 /**
- * @brief GET method for "InfoOnOff_2" resource at "/p/4".
+ * @brief CoAP GET method for "InfoOnOff_2" resource at url "/p/4".
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -559,7 +602,7 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 }
  
 /**
- * @brief POST method for "InfoOnOff_2" resource at "/p/4".
+ * @brief CoAP POST method for "InfoOnOff_2" resource at url "/p/4".
  *
  * The function has as input the request body, which are the input values of the
  * POST method.
@@ -609,7 +652,7 @@ post_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End post_InfoOnOff_2\n");
 }
 /**
- * @brief GET method for "OnOff_3" resource at "/p/5".
+ * @brief CoAP GET method for "OnOff_3" resource at url "/p/5".
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -655,7 +698,7 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 }
 
 /**
- * @brief GET method for "InfoOnOff_3" resource at "/p/6".
+ * @brief CoAP GET method for "InfoOnOff_3" resource at url "/p/6".
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -701,7 +744,7 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 }
  
 /**
- * @brief POST method for "InfoOnOff_3" resource at "/p/6".
+ * @brief CoAP POST method for "InfoOnOff_3" resource at url "/p/6".
  *
  * The function has as input the request body, which are the input values of the
  * POST method.
@@ -751,7 +794,7 @@ post_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End post_InfoOnOff_3\n");
 }
 /**
- * @brief GET method for "OnOff_4" resource at "/p/7".
+ * @brief CoAP GET method for "OnOff_4" resource at url "/p/7".
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -797,7 +840,7 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 }
 
 /**
- * @brief GET method for "InfoOnOff_4" resource at "/p/8".
+ * @brief CoAP GET method for "InfoOnOff_4" resource at url "/p/8".
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -843,7 +886,7 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 }
  
 /**
- * @brief POST method for "InfoOnOff_4" resource at "/p/8".
+ * @brief CoAP POST method for "InfoOnOff_4" resource at url "/p/8".
  *
  * The function has as input the request body, which are the input values of the
  * POST method.
