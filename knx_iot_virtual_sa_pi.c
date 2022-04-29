@@ -17,15 +17,21 @@
 */
 
 
-#define NO_MAIN
 #include "knx_iot_virtual_sa.h"
 #include "api/oc_knx_dev.h"
 #include "api/oc_knx_fp.h"
 
 
+#include <Python.h>
+#include <signal.h>
+#include <pthread.h>
 
-volatile int quit = 0; /**< stop variable, used by handle_signal */
 
+
+static volatile int quit = 0; /**< stop variable, used by handle_signal */
+static pthread_mutex_t mutex;
+static pthread_cond_t cv;
+static struct timespec ts;
 // Python objects used for initialization
 PyObject *pModule;
 
@@ -33,7 +39,6 @@ PyObject *pModule;
 // Takes one boolean argument matching the desired state of the backlight
 PyObject *pSetBacklightFunc;
 PyObject *pSetLedFunc;
-void
 
 void
 python_binding_init(void)
@@ -135,10 +140,23 @@ set_led(int led_nr, bool value)
 
 void post_callback(char* url){
   bool my_bool = app_retrieve_bool_variable(url);
-  if (strcmp(url, "p/1") == 0) set_backlight(1, my_bool);
-  if (strcmp(url, "p/2") == 0) set_backlight(2, my_bool);
-  if (strcmp(url, "p/3") == 0) set_backlight(3, my_bool);
-  if (strcmp(url, "p/4") == 0) set_backlight(4, my_bool);
+  if (strcmp(url, "p/1") == 0) set_led(1, my_bool);
+  if (strcmp(url, "p/2") == 0) set_led(2, my_bool);
+  if (strcmp(url, "p/3") == 0) set_led(3, my_bool);
+  if (strcmp(url, "p/4") == 0) set_led(4, my_bool);
+}
+
+
+/**
+ * @brief handle Ctrl-C
+ * @param signal the captured signal
+ */
+static void
+handle_signal(int signal)
+{
+  (void)signal;
+  //signal_event_loop();
+  quit = 1;
 }
 
 /**

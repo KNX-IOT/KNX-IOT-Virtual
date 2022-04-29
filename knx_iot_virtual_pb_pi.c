@@ -17,7 +17,7 @@
 */
 
 
-#define NO_MAIN
+//#define NO_MAIN
 #include "knx_iot_virtual_pb.h"
 
 #include "api/oc_knx_dev.h"
@@ -25,16 +25,19 @@
 
 
 #include <Python.h>
+#include <signal.h>
+#include <pthread.h>
 
-/* send a multicast s-mode message */
-static void
-issue_requests_s_mode(void)
-{
-  oc_do_s_mode_with_scope(2, "p/1", "w");
-  oc_do_s_mode_with_scope(5, "p/1", "w");
-}
+static volatile int quit = 0;  /**< stop variable, used by handle_signal */
+static pthread_mutex_t mutex;
+static pthread_cond_t cv;
+static struct timespec ts;
 
 PyObject *pModule;
+PyObject *pSetBacklightFunc;
+PyObject *pSetLedFunc;
+
+
 // Action to take on left button press "p/1"
 // This is exposed in the corresponding Python script
 // as the knx.handle_left() function
@@ -204,6 +207,55 @@ PyInit_knx(void)
   return PyModule_Create(&KnxModule);
 }
 
+void
+python_binding_init(void)
+{
+  Py_Initialize();
+
+  // Import the Python module that talks to the Displayotron HAT
+  PyObject *pName = PyUnicode_DecodeFSDefault("pi_hat");
+
+  // Add current directory to Python path, so that we may import the module
+  // located in the same folder as the executable
+  PyRun_SimpleString("import sys");
+  PyRun_SimpleString("import os");
+  PyRun_SimpleString("sys.path.append(os.getcwd())");
+
+  pModule = PyImport_Import(pName);
+  Py_DECREF(pName);
+
+  if (pModule) {
+    // Import the test function, to check the import is successful
+    // & that we are importing the right script
+    PyObject *pPrintInPythonFunc =
+      PyObject_GetAttrString(pModule, "print_in_python");
+
+    if (pPrintInPythonFunc && PyCallable_Check(pPrintInPythonFunc)) {
+      // Ensure that the Python embedding is successful
+      PyObject *pValue = PyObject_CallObject(pPrintInPythonFunc, NULL);
+    }
+    // Do not need the test function anymore, so we decrement the reference
+    // counter so that the memory for this object can be garbage-collected
+    Py_DECREF(pPrintInPythonFunc);
+
+    // Import the rest of the Python API
+    pSetBacklightFunc = PyObject_GetAttrString(pModule, "set_backlight");
+    pSetLedFunc = PyObject_GetAttrString(pModule, "set_led");
+
+    // Initialize the state of the LCD
+    PyRun_SimpleString("import pi_hat");
+    PyRun_SimpleString("pi_hat.init()");
+
+  } else {
+    PyErr_Print();
+    fprintf(stderr, "Failed to load pi_hat\n");
+    fprintf(stderr, "Please ensure that pi_hat.py is in the directory "
+                    "you are running this executable from!\n");
+    exit(1);
+  }
+}
+
+
 static void *
 poll_python(void *data)
 {
@@ -215,6 +267,17 @@ poll_python(void *data)
   }
 }
 
+/**
+ * @brief handle Ctrl-C
+ * @param signal the captured signal
+ */
+static void
+handle_signal(int signal)
+{
+  (void)signal;
+  //signal_event_loop();
+  quit = 1;
+}
 
 /**
  * main application.
