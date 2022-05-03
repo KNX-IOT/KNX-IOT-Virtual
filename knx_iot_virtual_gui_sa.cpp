@@ -195,7 +195,7 @@ MyFrame::MyFrame(char* str_serial_number)
 
     // serial number
     char text[500];
-    strcpy(text, "Device Serial Number: ");
+    strcpy(text, "Device Serial Number: -sn ");
     oc_device_info_t* device = oc_core_get_device_info(0);
     strcat(text, oc_string(device->serialnumber));
     wxTextCtrl* Statictext;
