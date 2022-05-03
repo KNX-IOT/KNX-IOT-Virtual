@@ -15,10 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-#ifndef DOXYGEN
-/* Force Doxygen to document static inline */
-#define STATIC static
-#endif
+
 
 /**
  * @file
@@ -69,13 +66,17 @@
 #include <signal.h>
 /* test purpose only; commandline reset */
 #include "api/oc_knx_dev.h"
-
+#ifdef OC_SPAKE
+#include "security/oc_spake2plus.h"
+#endif
 #ifdef INCLUDE_EXTERNAL
 /* import external definitions from header file*/
 /* this file should be externally supplied */
 #include "external_header.h"
 #endif
 #include "knx_iot_virtual_pb.h"
+
+#include <stdlib.h>
 
 #ifdef __linux__
 /** linux specific code */
@@ -94,8 +95,8 @@ static struct timespec ts;
 #ifdef WIN32
 /** windows specific code */
 #include <windows.h>
-STATIC CONDITION_VARIABLE cv; /**< event loop variable */
-STATIC CRITICAL_SECTION cs;   /**< event loop variable */
+static CONDITION_VARIABLE cv; /**< event loop variable */
+static CRITICAL_SECTION cs;   /**< event loop variable */
 #include <direct.h>
 #define GetCurrentDir _getcwd
 #else
@@ -106,6 +107,8 @@ STATIC CRITICAL_SECTION cs;   /**< event loop variable */
 #define btoa(x) ((x) ? "true" : "false")
 volatile int quit = 0;  /**< stop variable, used by handle_signal */
 bool g_reset = false;   /**< reset variable, set by commandline arguments */
+char g_serial_number[20] = "0003000";
+
 
 volatile bool g_OnOff_1;   /**< global variable for OnOff_1 */
 volatile bool g_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
@@ -159,7 +162,7 @@ bool app_is_bool_url(char* url)
 /**
  * @brief sets the global boolean variable at the url
  *
- * @param url the url indicating the global varialbe
+ * @param url the url indicating the global variable
  * @param value the value to be set
  */
 void app_set_bool_variable(char* url, bool value) 
@@ -316,7 +319,7 @@ int app_init(void);
  * @param rep the full response
  * @param rep_value the parsed value of the response
  */
-STATIC void
+void
 oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
 {
   (void)rep;
@@ -339,13 +342,16 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
  * - device model
  *
  */
-STATIC int
+int
 app_init(void)
 {
   int ret = oc_init_platform("cascoda", NULL, NULL);
 
   /* set the application name, version, base url, device serial number */
-  ret |= oc_add_device(MY_NAME, "1.0.0", "//", "0003000", NULL, NULL);
+  
+  
+  
+  ret |= oc_add_device(MY_NAME, "1.0.0", "//", g_serial_number, NULL, NULL);
 
   oc_device_info_t *device = oc_core_get_device_info(0);
   PRINT("Serial Number: %s\n", oc_string(device->serialnumber));
@@ -363,6 +369,12 @@ app_init(void)
   oc_core_set_device_model(0, "KNX virtual - PB");
 
   oc_set_s_mode_response_cb(oc_add_s_mode_response_cb);
+  
+#ifdef OC_SPAKE
+#define PASSWORD "LETTUCE"
+  oc_spake_set_password(PASSWORD);
+  PRINT(" SPAKE password %s\n", PASSWORD);
+#endif
 
   return ret;
 }
@@ -378,7 +390,7 @@ app_init(void)
  * @param interfaces the interface used for this call
  * @param user_data the user data.
  */
-STATIC void
+void
 get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
                void *user_data)
 {
@@ -424,7 +436,7 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param interfaces the interface used for this call
  * @param user_data the user data.
  */
-STATIC void
+void
 get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
                void *user_data)
 {
@@ -472,7 +484,7 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param interfaces the used interfaces during the request.
  * @param user_data the supplied user data.
  */
-STATIC void
+void
 post_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
                 void *user_data)
 {
@@ -520,7 +532,7 @@ post_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param interfaces the interface used for this call
  * @param user_data the user data.
  */
-STATIC void
+void
 get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
                void *user_data)
 {
@@ -566,7 +578,7 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param interfaces the interface used for this call
  * @param user_data the user data.
  */
-STATIC void
+void
 get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
                void *user_data)
 {
@@ -614,7 +626,7 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param interfaces the used interfaces during the request.
  * @param user_data the supplied user data.
  */
-STATIC void
+void
 post_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
                 void *user_data)
 {
@@ -662,7 +674,7 @@ post_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param interfaces the interface used for this call
  * @param user_data the user data.
  */
-STATIC void
+void
 get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
                void *user_data)
 {
@@ -708,7 +720,7 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param interfaces the interface used for this call
  * @param user_data the user data.
  */
-STATIC void
+void
 get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
                void *user_data)
 {
@@ -756,7 +768,7 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param interfaces the used interfaces during the request.
  * @param user_data the supplied user data.
  */
-STATIC void
+void
 post_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
                 void *user_data)
 {
@@ -804,7 +816,7 @@ post_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param interfaces the interface used for this call
  * @param user_data the user data.
  */
-STATIC void
+void
 get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
                void *user_data)
 {
@@ -850,7 +862,7 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param interfaces the interface used for this call
  * @param user_data the user data.
  */
-STATIC void
+void
 get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
                void *user_data)
 {
@@ -898,7 +910,7 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param interfaces the used interfaces during the request.
  * @param user_data the supplied user data.
  */
-STATIC void
+void
 post_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
                 void *user_data)
 {
@@ -950,7 +962,7 @@ post_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
  *      - xxx : function block number
  *      - yyy : data point function number
  */
-STATIC void
+void
 register_resources(void)
 {
   PRINT("Register Resource 'OnOff_1' with local path \"/p/1\"\n");
@@ -1125,7 +1137,7 @@ register_resources(void)
  * @param device_index the device identifier of the list of devices
  * @param data the supplied data.
  */
-STATIC void
+void
 factory_presets_cb(size_t device_index, void *data)
 {
   (void)device_index;
@@ -1144,7 +1156,7 @@ factory_presets_cb(size_t device_index, void *data)
  * @param reset_value the knx reset value
  * @param data the supplied data.
  */
-STATIC void
+void
 reset_cb(size_t device_index, int reset_value, void *data)
 {
   (void)device_index;
@@ -1158,7 +1170,7 @@ reset_cb(size_t device_index, int reset_value, void *data)
  * @param device_index the device identifier of the list of devices
  * @param data the supplied data.
  */
-STATIC void
+void
 restart_cb(size_t device_index, void *data)
 {
   (void)device_index;
@@ -1175,7 +1187,7 @@ restart_cb(size_t device_index, void *data)
  * @param host_name the host name to be set on the device
  * @param data the supplied data.
  */
-STATIC void
+void
 hostname_cb(size_t device_index, oc_string_t host_name, void *data)
 {
   (void)device_index;
@@ -1193,7 +1205,7 @@ hostname_cb(size_t device_index, oc_string_t host_name, void *data)
  * @param len the length of the image data
  * @param data the user data
  */
-STATIC void
+void
 swu_cb(size_t device_index, size_t offset, uint8_t *payload, size_t len,
        void *data)
 {
@@ -1214,7 +1226,7 @@ swu_cb(size_t device_index, size_t offset, uint8_t *payload, size_t len,
  * @brief initializes the global variables
  * registers and starts the handler
  */
-STATIC void
+void
 initialize_variables(void)
 {
   /* initialize global variables for resources */
@@ -1229,6 +1241,13 @@ initialize_variables(void)
   g_OnOff_4 = true;   /**< global variable for OnOff_4 */ 
   g_InfoOnOff_4 = true;   /**< global variable for InfoOnOff_4 */ 
 }
+
+int app_set_serial_number(char* serial_number)
+{
+  strncpy(g_serial_number, serial_number, 20);
+  return 0;
+}
+
 
 int app_initialize_stack()
 {
@@ -1250,15 +1269,23 @@ int app_initialize_stack()
    the folder is created in the makefile, with $target as name with _cred as
    post fix.
   */
-  PRINT("\tstorage at 'knx_iot_virtual_pb' \n");
-  oc_storage_config("./knx_iot_virtual_pb");
+#ifdef WIN32
+  char storage[40];
+  sprintf(storage,"'./knx_iot_virtual_pb_%s",g_serial_number);  
+  PRINT("\tstorage at '%s' \n",storage);
+  oc_storage_config(storage);
+#else
+  PRINT("\tstorage at 'knx_iot_virtual_pb_creds' \n");
+  oc_storage_config("./knx_iot_virtual_pb_creds");
+#endif
+  
 
 
   /*initialize the variables */
   initialize_variables();
 
   /* initializes the handlers structure */
-  STATIC oc_handler_t handler = { .init = app_init,
+  static oc_handler_t handler = { .init = app_init,
                                   .signal_event_loop = signal_event_loop,
                                   .register_resources = register_resources,
                                   .requests_entry = NULL };
@@ -1302,7 +1329,7 @@ int app_initialize_stack()
  * @brief signal the event loop (windows version)
  * wakes up the main function to handle the next callback
  */
-STATIC void
+void
 signal_event_loop(void)
 {
 
@@ -1312,27 +1339,30 @@ signal_event_loop(void)
 }
 #endif /* WIN32 */
 
-#ifndef NO_MAIN
-
 #ifdef __linux__
 /**
  * @brief signal the event loop (Linux)
  * wakes up the main function to handle the next callback
  */
-STATIC void
+void
 signal_event_loop(void)
 {
+#ifndef NO_MAIN
   pthread_mutex_lock(&mutex);
   pthread_cond_signal(&cv);
   pthread_mutex_unlock(&mutex);
+#endif /* NO_MAIN */
 }
 #endif /* __linux__ */
+
+
+#ifndef NO_MAIN
 
 /**
  * @brief handle Ctrl-C
  * @param signal the captured signal
  */
-STATIC void
+static void
 handle_signal(int signal)
 {
   (void)signal;
@@ -1344,7 +1374,7 @@ handle_signal(int signal)
  * @brief print usage and quits
  *
  */
-STATIC void
+static void
 print_usage()
 {
   PRINT("Usage:\n");

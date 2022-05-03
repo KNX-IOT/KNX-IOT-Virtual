@@ -142,3 +142,13 @@ The application implements:
 - Button (readonly) to visualize the received on/off
 - Toggle for Info (readonly) shows the received info, the toggle is for viewing only
 - Toggle for Fault info, e.g. allows sending the received status back or always false (e.g. not active).
+
+## override the serial number
+
+the serial number can be overridden with the command line argument -s.
+
+example (from the folder where the executable resides):
+
+```bash
+.\knx_iot_virtual_gui_pb.exe -s 0000333
+```
