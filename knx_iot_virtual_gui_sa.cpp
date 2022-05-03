@@ -18,6 +18,7 @@
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
+#include <wx/cmdline.h>
 #ifndef WX_PRECOMP
     #include <wx/wx.h>
 #endif
@@ -53,6 +54,14 @@ enum
 
 };
 
+static const wxCmdLineEntryDesc g_cmdLineDesc[] =
+{
+    { wxCMD_LINE_OPTION, "s", "serialnumber", "serial number", wxCMD_LINE_VAL_STRING },
+    { wxCMD_LINE_NONE }
+};
+
+wxCmdLineParser* g_cmd;
+
 class MyApp : public wxApp
 {
 public:
@@ -62,7 +71,7 @@ public:
 class MyFrame : public wxFrame
 {
 public:
-    MyFrame();
+    MyFrame(char* serial_number);
 private:
     void OnGroupObjectTable(wxCommandEvent& event);
     void OnProgrammingMode(wxCommandEvent& event);
@@ -110,12 +119,25 @@ private:
 wxIMPLEMENT_APP(MyApp);
 bool MyApp::OnInit()
 {
-    MyFrame *frame = new MyFrame();
+    int argc = wxAppConsole::argc;
+    wxChar** argv = wxAppConsole::argv;
+
+    g_cmd = new wxCmdLineParser(argc, argv);
+    g_cmd->SetDesc(g_cmdLineDesc);
+    g_cmd->Parse(true);
+
+    wxString serial_number;
+    if (g_cmd->Found("s", &serial_number)) {
+
+    }
+
+    MyFrame* frame = new MyFrame((char*)(serial_number.c_str()).AsChar());
+
     frame->Fit();
     frame->Show(true);
     return true;
 }
-MyFrame::MyFrame()
+MyFrame::MyFrame(char* str_serial_number)
     : wxFrame(NULL, wxID_ANY, "KNX-IOT virtual Switch Actuator")
 {
     m_menuFile = new wxMenu;
@@ -165,6 +187,10 @@ MyFrame::MyFrame()
     m_fault_4 = new 	wxCheckBox(this, BUTTON_4, _T("Fault 4 (on '/p/7') "), wxPoint(290, 10 + 75), wxSize(130, 25), 0);
     m_fault_4->Bind(wxEVT_CHECKBOX, &MyFrame::OnFault4, this);
 
+
+    if (strlen(str_serial_number) > 1) {
+      app_set_serial_number(str_serial_number);
+    }
     app_initialize_stack();
 
     // serial number
