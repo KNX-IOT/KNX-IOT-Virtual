@@ -324,7 +324,7 @@ main(void)
   python_binding_init();
   // Set the backlight to the initial value
   // set_backlight(g_mystate);
-  //set_backlight(false);
+  // set_backlight(true);
 
   /* Linux specific loop */
   while (quit != 1) {

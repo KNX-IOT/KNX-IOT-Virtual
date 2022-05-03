@@ -9,10 +9,6 @@ FetchContent_Declare(
     GIT_TAG master
 )
 
-find_package(wxWidgets REQUIRED COMPONENTS net core base)
-include(${wxWidgets_USE_FILE})
-
-
 if(NOT knx-iot-stack_POPULATED)
     FetchContent_Populate(knx-iot-stack)
     add_subdirectory(${knx-iot-stack_SOURCE_DIR} ${knx-iot-stack_BINARY_DIR})
@@ -35,16 +31,20 @@ add_executable(knx_iot_virtual_dimming_actuator
 )
 target_link_libraries(knx_iot_virtual_dimming_actuator kisClientServer)
 
-add_executable(knx_iot_virtual_gui_pb WIN32
-     ${PROJECT_SOURCE_DIR}/knx_iot_virtual_gui_pb.cpp
-     ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.c)
-target_link_libraries(knx_iot_virtual_gui_pb ${wxWidgets_LIBRARIES} kisClientServer)
+if(WIN32)
+	find_package(wxWidgets REQUIRED COMPONENTS net core base)
+	include(${wxWidgets_USE_FILE})
+    add_executable(knx_iot_virtual_gui_pb WIN32
+        ${PROJECT_SOURCE_DIR}/knx_iot_virtual_gui_pb.cpp
+        ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.c)
+    target_link_libraries(knx_iot_virtual_gui_pb ${wxWidgets_LIBRARIES} kisClientServer)
 
-add_executable(knx_iot_virtual_gui_sa WIN32
-     ${PROJECT_SOURCE_DIR}/knx_iot_virtual_gui_sa.cpp
-     ${PROJECT_SOURCE_DIR}/knx_iot_virtual_sa.c)
-target_link_libraries(knx_iot_virtual_gui_sa ${wxWidgets_LIBRARIES} kisClientServer)
+    add_executable(knx_iot_virtual_gui_sa WIN32
+        ${PROJECT_SOURCE_DIR}/knx_iot_virtual_gui_sa.cpp
+        ${PROJECT_SOURCE_DIR}/knx_iot_virtual_sa.c)
+    target_link_libraries(knx_iot_virtual_gui_sa ${wxWidgets_LIBRARIES} kisClientServer)
 
+endif()
 
 if(UNIX)
 
@@ -68,11 +68,9 @@ if(UNIX)
             kisClientServer
             Python3::Python
         )
-    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/knx_iot_virtual_sa)
+    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/knx_iot_virtual_sa_creds)
     add_dependencies(knx_iot_virtual_sa_pi pi_hat_py)
-
-    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/knx_iot_virtual_sa)
-    add_dependencies(knx_iot_virtual_sa_pi pi_hat_py)
+    target_compile_definitions(knx_iot_virtual_sa_pi PUBLIC NO_MAIN)
 
     # [o demo: push button (e.g. sending command)
     add_executable(knx_iot_virtual_pb_pi
@@ -83,7 +81,7 @@ if(UNIX)
             kisClientServer
             Python3::Python
         )
-    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/knx_iot_virtual_pb)
+    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/knx_iot_virtual_pb_creds)
     add_dependencies(knx_iot_virtual_pb_pi pi_hat_py)
-
+    target_compile_definitions(knx_iot_virtual_pb_pi PUBLIC NO_MAIN)
 endif()

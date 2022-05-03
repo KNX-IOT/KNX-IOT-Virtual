@@ -456,7 +456,7 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
  * - device model
  *
  */
-STATIC int
+int
 app_init(void)
 {
   int ret = oc_init_platform("cascoda", NULL, NULL);
@@ -2019,7 +2019,7 @@ get_CH4_InfoAbsDimVal(oc_request_t *request, oc_interface_mask_t interfaces,
  *      - xxx : function block number
  *      - yyy : data point function number
  */
-STATIC void
+void
 register_resources(void)
 {
   PRINT("Register Resource 'CH1_OnOff' with local path \"/p/1\"\n");
@@ -2648,7 +2648,7 @@ signal_event_loop(void)
  * @brief signal the event loop (Linux)
  * wakes up the main function to handle the next callback
  */
-STATIC void
+void
 signal_event_loop(void)
 {
   pthread_mutex_lock(&mutex);
