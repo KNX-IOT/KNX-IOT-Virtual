@@ -70,8 +70,8 @@ knx_handle_mid(PyObject *self, PyObject *args)
   // don't care about args, so don't check them
   (void)self;
   (void)args;
-  printf("Mid from C!  (/p/3)\n");  
-  char url[] = "/p/3";
+  printf("Mid from C!  (/p/2)\n");  
+  char url[] = "/p/2";
   bool p1 = app_retrieve_bool_variable(url);
   if (p1 == true) {
     p1 = false;
@@ -93,8 +93,8 @@ knx_handle_right(PyObject *self, PyObject *args)
   // don't care about args, so don't check them
   (void)self;
   (void)args;
-  printf("Right from C! (/p/5)\n");
-  char url[] = "/p/5";
+  printf("Right from C! (/p/3)\n");
+  char url[] = "/p/3";
   bool p1 = app_retrieve_bool_variable(url);
   if (p1 == true) {
     p1 = false;
@@ -116,8 +116,8 @@ knx_handle_up(PyObject *self, PyObject *args)
   // don't care about args, so don't check them
   (void)self;
   (void)args;
-  printf("UP from C! (/p/7)\n");
-  char url[] = "/p/7";
+  printf("UP from C! (/p/4)\n");
+  char url[] = "/p/4";
   bool p1 = app_retrieve_bool_variable(url);
   if (p1 == true) {
     p1 = false;
@@ -140,8 +140,8 @@ knx_handle_down(PyObject *self, PyObject *args)
   // don't care about args, so don't check them
   (void)self;
   (void)args;
-  printf("Down from C! (/p/9)\n");
-  char url[] = "/p/9";
+  printf("Down from C! (/p/5)\n");
+  char url[] = "/p/5";
   bool p1 = app_retrieve_bool_variable(url);
   if (p1 == true) {
     p1 = false;
@@ -163,8 +163,8 @@ knx_handle_cancel(PyObject *self, PyObject *args)
   // don't care about args, so don't check them
   (void)self;
   (void)args;
-  printf("Cancel from C! (/p/11)\n");
-  char url[] = "/p/11";
+  printf("Cancel from C! (/p/6)\n");
+  char url[] = "/p/6";
   bool p1 = app_retrieve_bool_variable(url);
   if (p1 == true) {
     p1 = false;
