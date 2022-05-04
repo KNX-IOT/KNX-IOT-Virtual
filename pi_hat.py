@@ -40,8 +40,9 @@ import dothat.touch as touch
 import fcntl
 import socket
 import struct
+from time import sleep
 
-
+import knx
 
 IDLE_BL = (128, 128, 128)
 DARK_BL = (0, 0, 0)

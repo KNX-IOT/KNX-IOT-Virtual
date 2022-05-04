@@ -212,8 +212,6 @@ python_binding_init(void)
 {
   Py_Initialize();
 
-  PyImport_AppendInittab("knx", PyInit_knx);
-
   // Import the Python module that talks to the Displayotron HAT
   PyObject *pName = PyUnicode_DecodeFSDefault("pi_hat");
 
@@ -302,6 +300,7 @@ main(void)
   /* install Ctrl-C */
   sigaction(SIGINT, &sa, NULL);
 
+  PyImport_AppendInittab("knx", PyInit_knx);
 
   Py_Initialize();
   PyObject *pName = PyUnicode_DecodeFSDefault("pi_hat");
