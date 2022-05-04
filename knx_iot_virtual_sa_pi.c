@@ -180,8 +180,6 @@ main(void)
   /* install Ctrl-C */
   sigaction(SIGINT, &sa, NULL);
 
-  PyImport_AppendInittab("knx", PyInit_knx);
-
   app_set_post_cb(post_callback);
 
   app_initialize_stack();

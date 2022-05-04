@@ -42,7 +42,11 @@ import socket
 import struct
 from time import sleep
 
-import knx
+try:
+    import knx
+except:
+    print("Could not find KNX Module - may be a programmer error")
+    pass
 
 IDLE_BL = (128, 128, 128)
 DARK_BL = (0, 0, 0)
