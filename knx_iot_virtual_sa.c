@@ -107,6 +107,8 @@ static CRITICAL_SECTION cs;   /**< event loop variable */
 #define btoa(x) ((x) ? "true" : "false")
 volatile int quit = 0;  /**< stop variable, used by handle_signal */
 bool g_reset = false;   /**< reset variable, set by commandline arguments */
+char g_serial_number[20] = "0004000";
+
 
 volatile bool g_OnOff_1;   /**< global variable for OnOff_1 */
 volatile bool g_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
@@ -160,7 +162,7 @@ bool app_is_bool_url(char* url)
 /**
  * @brief sets the global boolean variable at the url
  *
- * @param url the url indicating the global varialbe
+ * @param url the url indicating the global variable
  * @param value the value to be set
  */
 void app_set_bool_variable(char* url, bool value) 
@@ -390,7 +392,10 @@ app_init(void)
   int ret = oc_init_platform("cascoda", NULL, NULL);
 
   /* set the application name, version, base url, device serial number */
-  ret |= oc_add_device(MY_NAME, "1.0.0", "//", "0004000", NULL, NULL);
+  
+  
+  
+  ret |= oc_add_device(MY_NAME, "1.0.0", "//", g_serial_number, NULL, NULL);
 
   oc_device_info_t *device = oc_core_get_device_info(0);
   PRINT("Serial Number: %s\n", oc_string(device->serialnumber));
@@ -1337,6 +1342,13 @@ initialize_variables(void)
   g_InfoOnOff_4 = true;   /**< global variable for InfoOnOff_4 */ 
 }
 
+int app_set_serial_number(char* serial_number)
+{
+  strncpy(g_serial_number, serial_number, 20);
+  return 0;
+}
+
+
 int app_initialize_stack()
 {
   int init;
@@ -1357,9 +1369,17 @@ int app_initialize_stack()
    the folder is created in the makefile, with $target as name with _cred as
    post fix.
   */
+
+#ifdef WIN32
+  char storage[40];
+  sprintf(storage,"'./knx_iot_virtual_sa_%s",g_serial_number);  
+  PRINT("\tstorage at '%s' \n",storage);
+  oc_storage_config(storage);
+#else
   PRINT("\tstorage at 'knx_iot_virtual_sa_creds' \n");
   oc_storage_config("./knx_iot_virtual_sa_creds");
-
+#endif
+  
 
   /*initialize the variables */
   initialize_variables();

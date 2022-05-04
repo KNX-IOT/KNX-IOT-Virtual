@@ -51,7 +51,7 @@ typedef struct oc_post_struct_t
 } oc_post_struct_t;
 
 /**
- * @brief set the post callback (on appliation level)
+ * @brief set the post callback (on application level)
  * 
  * @param cb the callback
  */
@@ -63,6 +63,16 @@ void app_set_post_cb(oc_post_cb_t cb);
  * @return int 0 == success
  */
 int app_initialize_stack();
+
+/**
+ * @brief sets the serial number
+ * should be called before app_initialize_stack()
+ * 
+ * @param serial_number the serial number as string
+ * @return int 0 == success
+ */
+int app_set_serial_number(char* serial_number);
+
 
 /**
  * @brief retrieve the boolean variable of the url/data point
