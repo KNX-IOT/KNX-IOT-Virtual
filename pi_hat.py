@@ -45,7 +45,7 @@ from time import sleep
 try:
     import knx
 except:
-    print("Could not find KNX Module - may be a programmer error")
+    print("Could not find KNX Module")
     pass
 
 IDLE_BL = (128, 128, 128)
