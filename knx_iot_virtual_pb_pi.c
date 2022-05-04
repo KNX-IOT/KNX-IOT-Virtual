@@ -212,6 +212,8 @@ python_binding_init(void)
 {
   Py_Initialize();
 
+  PyImport_AppendInittab("knx", PyInit_knx);
+
   // Import the Python module that talks to the Displayotron HAT
   PyObject *pName = PyUnicode_DecodeFSDefault("pi_hat");
 

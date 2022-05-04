@@ -42,6 +42,7 @@ import socket
 import struct
 
 
+
 IDLE_BL = (128, 128, 128)
 DARK_BL = (0, 0, 0)
 FULL_BL = (0, 255, 0)
