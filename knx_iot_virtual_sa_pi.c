@@ -29,8 +29,6 @@
 
 
 static volatile int quit = 0; /**< stop variable, used by handle_signal */
-static pthread_mutex_t mutex;
-static pthread_cond_t cv;
 static struct timespec ts;
 // Python objects used for initialization
 PyObject *pModule;
@@ -194,16 +192,7 @@ main(void)
 
   /* Linux specific loop */
   while (quit != 1) {
-    next_event = oc_main_poll();
-    pthread_mutex_lock(&mutex);
-    if (next_event == 0) {
-      pthread_cond_wait(&cv, &mutex);
-    } else {
-      ts.tv_sec = (next_event / OC_CLOCK_SECOND);
-      ts.tv_nsec = (next_event % OC_CLOCK_SECOND) * 1.e09 / OC_CLOCK_SECOND;
-      pthread_cond_timedwait(&cv, &mutex, &ts);
-    }
-    pthread_mutex_unlock(&mutex);
+    oc_main_poll();
   }
 
   /* shut down the stack */
