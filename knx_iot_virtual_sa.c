@@ -1369,6 +1369,7 @@ int app_initialize_stack()
    the folder is created in the makefile, with $target as name with _cred as
    post fix.
   */
+
 #ifdef WIN32
   char storage[40];
   sprintf(storage,"'./knx_iot_virtual_sa_%s",g_serial_number);  
@@ -1379,7 +1380,6 @@ int app_initialize_stack()
   oc_storage_config("./knx_iot_virtual_sa_creds");
 #endif
   
-
 
   /*initialize the variables */
   initialize_variables();
