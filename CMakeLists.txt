@@ -60,28 +60,28 @@ if(UNIX)
     )
 
     # pi demo: switch actuator (e.g. receiving command)
-    add_executable(knx_iot_virtual_sa_pi
+    add_executable(knx_iot_sa_pi
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_sa.c
-        ${PROJECT_SOURCE_DIR}/knx_iot_virtual_sa_pi.c
+        ${PROJECT_SOURCE_DIR}/knx_iot_sa_pi.c
     )
-    target_link_libraries(knx_iot_virtual_sa_pi
+    target_link_libraries(knx_iot_sa_pi
             kisClientServer
             Python3::Python
         )
     file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/knx_iot_virtual_sa_creds)
-    add_dependencies(knx_iot_virtual_sa_pi pi_hat_py)
-    target_compile_definitions(knx_iot_virtual_sa_pi PUBLIC NO_MAIN)
+    add_dependencies(knx_iot_sa_pi pi_hat_py)
+    target_compile_definitions(knx_iot_sa_pi PUBLIC NO_MAIN)
 
     # [o demo: push button (e.g. sending command)
-    add_executable(knx_iot_virtual_pb_pi
+    add_executable(knx_iot_pb_pi
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.c
-        ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb_pi.c
+        ${PROJECT_SOURCE_DIR}/knx_iot_pb_pi.c
     )
-    target_link_libraries(knx_iot_virtual_pb_pi
+    target_link_libraries(knx_iot_pb_pi
             kisClientServer
             Python3::Python
         )
     file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/knx_iot_virtual_pb_creds)
-    add_dependencies(knx_iot_virtual_pb_pi pi_hat_py)
-    target_compile_definitions(knx_iot_virtual_pb_pi PUBLIC NO_MAIN)
+    add_dependencies(knx_iot_pb_pi pi_hat_py)
+    target_compile_definitions(knx_iot_pb_pi PUBLIC NO_MAIN)
 endif()

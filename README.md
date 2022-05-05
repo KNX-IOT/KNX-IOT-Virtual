@@ -216,12 +216,12 @@ make -j4
 
 ### Running the demo applications
 
-The Raspberry Pi Push Button application is called `knx_iot_virtual_pb_pi`. You
+The Raspberry Pi Push Button application is called `knx_iot_pb_pi`. You
 should see the backlight of the Displayotron HAT turn on as soon as the
 application starts. The KNX functionality is identical to the
 `knx_iot_virtual_pb` application, except the push button resources correspond to
 the touch buttons on the Displayotron HAT.
 
-The Switching Actuator application is called `knx_iot_virtual_sa_pi`. The KNX
+The Switching Actuator application is called `knx_iot_sa_pi`. The KNX
 resources are equivalent to `knx_iot_virtual_sa` and likewise the actuators
 control the status of the six LEDs on the side of the display.
