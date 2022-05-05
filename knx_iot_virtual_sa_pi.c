@@ -142,8 +142,6 @@ void post_callback(char* url){
   if (strcmp(url, "/p/2") == 0) set_led(2, my_bool);
   if (strcmp(url, "/p/3") == 0) set_led(3, my_bool);
   if (strcmp(url, "/p/4") == 0) set_led(4, my_bool);
-  if (strcmp(url, "/p/5") == 0) set_led(5, my_bool);
-  if (strcmp(url, "/p/6") == 0) set_led(6, my_bool);
 }
 
 
