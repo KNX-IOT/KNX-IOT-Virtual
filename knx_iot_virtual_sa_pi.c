@@ -16,7 +16,6 @@
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
-
 #include "knx_iot_virtual_sa.h"
 #include "api/oc_knx_dev.h"
 #include "api/oc_knx_fp.h"
@@ -25,8 +24,6 @@
 #include <Python.h>
 #include <signal.h>
 #include <pthread.h>
-
-
 
 static volatile int quit = 0; /**< stop variable, used by handle_signal */
 static struct timespec ts;
@@ -139,9 +136,10 @@ set_led(int led_nr, bool value)
 void post_callback(char* url){
   bool my_bool = app_retrieve_bool_variable(url);
   if (strcmp(url, "/p/1") == 0) set_led(1, my_bool);
-  if (strcmp(url, "/p/2") == 0) set_led(2, my_bool);
-  if (strcmp(url, "/p/3") == 0) set_led(3, my_bool);
-  if (strcmp(url, "/p/4") == 0) set_led(4, my_bool);
+  if (strcmp(url, "/p/3") == 0) set_led(2, my_bool);
+  if (strcmp(url, "/p/5") == 0) set_led(3, my_bool);
+  if (strcmp(url, "/p/7") == 0) set_led(4, my_bool);
+  // other 2 not yet mapped
 }
 
 

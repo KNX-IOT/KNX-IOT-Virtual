@@ -38,7 +38,7 @@ PyObject *pSetBacklightFunc;
 PyObject *pSetLedFunc;
 
 
-// Action to take on left button press "p/1"
+// Action to take on left button press "/p/1" OnOff_1
 // This is exposed in the corresponding Python script
 // as the knx.handle_left() function
 static PyObject *
@@ -61,9 +61,9 @@ knx_handle_left(PyObject *self, PyObject *args)
   Py_RETURN_NONE;
 }
 
-// Action to take on left button press
+// Action to take on mid button press "/p/3" OnOff_2
 // This is exposed in the corresponding Python script
-// as the knx.handle_left() function
+// as the knx.handle_mid() function
 static PyObject *
 knx_handle_mid(PyObject *self, PyObject *args)
 {
@@ -84,9 +84,9 @@ knx_handle_mid(PyObject *self, PyObject *args)
   Py_RETURN_NONE;
 }
 
-// Action to take on left button press
+// Action to take on right button press "/p/5" of OnOff_3 
 // This is exposed in the corresponding Python script
-// as the knx.handle_left() function
+// as the knx.handle_right() function
 static PyObject *
 knx_handle_right(PyObject *self, PyObject *args)
 {
@@ -107,9 +107,9 @@ knx_handle_right(PyObject *self, PyObject *args)
   Py_RETURN_NONE;
 }
 
-// Action to take on left button press
+// Action to take on up button press "/p/7" of OnOff_4 
 // This is exposed in the corresponding Python script
-// as the knx.handle_left() function
+// as the knx.handle_up() function
 static PyObject *
 knx_handle_up(PyObject *self, PyObject *args)
 {
@@ -131,9 +131,9 @@ knx_handle_up(PyObject *self, PyObject *args)
 }
 
 
-// Action to take on left button press
+// Action to take on down button press (not yet mapped)
 // This is exposed in the corresponding Python script
-// as the knx.handle_left() function
+// as the knx.handle_down() function
 static PyObject *
 knx_handle_down(PyObject *self, PyObject *args)
 {
@@ -154,9 +154,9 @@ knx_handle_down(PyObject *self, PyObject *args)
   Py_RETURN_NONE;
 }
 
-// Action to take on left button press
+// Action to take on cancel button press(not yet mapped)
 // This is exposed in the corresponding Python script
-// as the knx.handle_left() function
+// as the knx.handle_cancel() function
 static PyObject *
 knx_handle_cancel(PyObject *self, PyObject *args)
 {
