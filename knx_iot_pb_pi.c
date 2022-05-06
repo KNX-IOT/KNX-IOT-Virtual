@@ -255,6 +255,40 @@ python_binding_init(void)
   }
 }
 
+void
+set_led(int led_nr, bool value)
+{
+  if (pSetLedFunc && PyCallable_Check(pSetLedFunc)) {
+    // When called from C, Python functions expect a single tuple argument
+    // containing the arguments defined in the API
+    PyObject *pArgs = PyTuple_New(2);
+    PyObject *pArgTheZeroth = PyLong_FromLong(led_nr);
+    PyObject *pArgTheFirst = PyBool_FromLong(value);
+    PyTuple_SetItem(pArgs, 0, pArgTheZeroth);
+    PyTuple_SetItem(pArgs, 1, pArgTheFirst);
+
+    PyObject *pReturn = PyObject_Call(pSetLedFunc, pArgs, NULL);
+    PyErr_Print();
+
+    // cleanup - must free every temporary Python object
+    Py_DECREF(pArgs);
+    Py_DECREF(pArgTheZeroth);
+    Py_DECREF(pArgTheFirst);
+    Py_DECREF(pReturn);
+  } else {
+    PyErr_Print();
+    fprintf(stderr, "set_led was not called successfully!");
+  }
+}
+
+void post_callback(char* url){
+  bool my_bool = app_retrieve_bool_variable(url);
+  if (strcmp(url, "/p/2") == 0) set_led(1, my_bool);
+  if (strcmp(url, "/p/4") == 0) set_led(2, my_bool);
+  if (strcmp(url, "/p/6") == 0) set_led(3, my_bool);
+  if (strcmp(url, "/p/8") == 0) set_led(4, my_bool);
+  // other 2 not yet mapped
+}
 
 static void *
 poll_python(void *data)
@@ -316,7 +350,8 @@ main(void)
   PyRun_SimpleString("import pi_hat");
   PyRun_SimpleString("pi_hat.init_client()");
 
-  //app_set_post_cb(post_callback);
+  // needed to for the info data points
+  app_set_post_cb(post_callback);
 
   app_initialize_stack();
 
