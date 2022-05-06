@@ -42,6 +42,7 @@ import socket
 import struct
 from time import sleep
 
+
 try:
     import knx
 except:
@@ -53,6 +54,20 @@ DARK_BL = (0, 0, 0)
 FULL_BL = (0, 255, 0)
 BLINK_TIME_S = 0.03
 
+def on_release(buttons, bounce=-1):
+    """
+    Decorator. Use with @on_release(UP)
+    Args:
+      buttons (list): List, or single instance of cap touch button constant
+      bounce (int): Maintained for compatibility with Dot3k joystick, unused
+    """
+    buttons = buttons if isinstance(buttons, list) else [buttons]
+    
+    def register(handler):
+        for button in buttons:
+            touch._cap1166.on(channel=button, event='release', handler=handler)
+    
+    return register
 
 def get_addr(ifname):
     try:
