@@ -48,7 +48,8 @@ enum
   LS_TEXT = PM_TEXT + 1,// ID for load status text 
   HOSTNAME_TEXT = LS_TEXT + 1,// ID for hostname text 
   SECURED_TEXT = HOSTNAME_TEXT + 1, // ID for secured text 
-  GOT_TABLE_ID = SECURED_TEXT + 1 // ID for the Group object 
+  GOT_TABLE_ID = SECURED_TEXT + 1, // ID for the Group object window button
+  PARAMETER_LIST_ID = GOT_TABLE_ID + 1 // ID for the parameter list window button
 
 };
 
@@ -67,6 +68,7 @@ private:
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnGroupObjectTable(wxCommandEvent& event);
+    void OnParameterList(wxCommandEvent& event);
     void OnProgrammingMode(wxCommandEvent& event);
     void OnReset(wxCommandEvent& event);
 
@@ -130,6 +132,7 @@ MyFrame::MyFrame(char* str_serial_number)
 {
     m_menuFile = new wxMenu;
     m_menuFile->Append(GOT_TABLE_ID, "List Group Object Table", "List the Group object table", false);
+    m_menuFile->Append(PARAMETER_LIST_ID, "List Parameters", "List the parameters of the device", false);
     m_menuFile->Append(CHECK_PM, "Programming Mode", "Sets the application in programming mode", true);
     m_menuFile->Append(RESET, "Reset (ex-factory)", "Reset the Device to ex-factory state", false);
     m_menuFile->AppendSeparator();
@@ -146,6 +149,7 @@ MyFrame::MyFrame(char* str_serial_number)
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
     Bind(wxEVT_MENU, &MyFrame::OnReset, this, RESET);
     Bind(wxEVT_MENU, &MyFrame::OnGroupObjectTable, this, GOT_TABLE_ID);
+    Bind(wxEVT_MENU, &MyFrame::OnParameterList, this, PARAMETER_LIST_ID);
     Bind(wxEVT_MENU, &MyFrame::OnProgrammingMode, this, CHECK_PM);
 
     wxButton* btn_1 = new wxButton(this, BUTTON_1, _T("Button 1 ('/p/1')"), wxPoint(10, 10 ), wxSize(130, 25), 0);
@@ -298,6 +302,58 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
     wxOK | wxICON_NONE);
 
   SetStatusText("List Group Object Table");
+
+}
+
+
+void MyFrame::OnParameterList(wxCommandEvent& event)
+{
+  int device_index = 0;
+  char text[1024 * 5];
+  char line[200];
+  char line2[200];
+  char windowtext[200];
+
+  strcpy(text, "");
+
+  oc_device_info_t* device = oc_core_get_device_info(device_index);
+  if (device == NULL) {
+    return;
+  }
+
+  int index = 1;
+  char* url = app_get_parameter_url(index);
+  while (url)
+  {
+    sprintf(line, "Index %d \n", index);
+    strcat(text, line);
+    sprintf(line, "  name: '%s'  ", app_get_parameter_name(index));
+    strcat(text, line);
+    sprintf(line, "  url : '%s'  ", url);
+    strcat(text, line);
+    if (app_is_bool_url(url)) {
+      sprintf(line, "  value : '%d'  ", app_retrieve_bool_variable(url));
+      strcat(text, line);
+    }
+    if (app_is_int_url(url)) {
+      sprintf(line, "  value : '%d'  ", app_retrieve_int_variable(url));
+      strcat(text, line);
+    }
+    if (app_is_string_url(url)) {
+      sprintf(line, "  value : '%s'  ", app_retrieve_string_variable(url));
+      strcat(text, line);
+    }
+    index++;
+    url = app_get_parameter_url(index);
+  }
+
+  strcpy(windowtext, "Parameter List ");
+  strcat(windowtext, oc_string(device->serialnumber));
+
+  wxMessageBox(text, windowtext,
+    wxOK | wxICON_NONE);
+
+  SetStatusText("List Parameters and their current set values");
 
 }
 

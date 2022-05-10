@@ -16,7 +16,6 @@
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
-
 /**
  * @file
  * 
@@ -91,6 +90,7 @@ static struct timespec ts;
 #include <stdio.h> /* defines FILENAME_MAX */
 
 #define MY_NAME "KNX virtual Push Button" /**< The name of the application */
+#define APP_MAX_STRING 30
 
 #ifdef WIN32
 /** windows specific code */
@@ -109,6 +109,18 @@ volatile int quit = 0;  /**< stop variable, used by handle_signal */
 bool g_reset = false;   /**< reset variable, set by commandline arguments */
 char g_serial_number[20] = "0003000";
 
+/* list all object urls as defines */
+#define CH1_URL_ONOFF_1 "/p/1"   /**< define for url /p/1 of OnOff_1 */
+#define CH1_URL_INFOONOFF_1 "/p/2"   /**< define for url /p/2 of InfoOnOff_1 */
+#define CH2_URL_ONOFF_2 "/p/3"   /**< define for url /p/3 of OnOff_2 */
+#define CH2_URL_INFOONOFF_2 "/p/4"   /**< define for url /p/4 of InfoOnOff_2 */
+#define CH3_URL_ONOFF_3 "/p/5"   /**< define for url /p/5 of OnOff_3 */
+#define CH3_URL_INFOONOFF_3 "/p/6"   /**< define for url /p/6 of InfoOnOff_3 */
+#define CH4_URL_ONOFF_4 "/p/7"   /**< define for url /p/7 of OnOff_4 */
+#define CH4_URL_INFOONOFF_4 "/p/8"   /**< define for url /p/8 of InfoOnOff_4 */
+
+/* list all parameter urls as defines */
+
 
 volatile bool g_OnOff_1;   /**< global variable for OnOff_1 */
 volatile bool g_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
@@ -124,6 +136,8 @@ volatile bool g_fault_InfoOnOff_2;   /**< global variable for fault InfoOnOff_2 
 volatile bool g_fault_InfoOnOff_3;   /**< global variable for fault InfoOnOff_3 */ 
 volatile bool g_fault_InfoOnOff_4;   /**< global variable for fault InfoOnOff_4 */
 
+
+
 /**
  * @brief function to check if the url is represented by a boolean
  *
@@ -132,28 +146,28 @@ volatile bool g_fault_InfoOnOff_4;   /**< global variable for fault InfoOnOff_4 
  */
 bool app_is_bool_url(char* url)
 {
-  if ( strcmp(url, "/p/1") == 0) { 
+  if ( strcmp(url, CH1_URL_ONOFF_1) == 0) { 
     return true; /**< OnOff_1 is a boolean */
   } 
-  if ( strcmp(url, "/p/2") == 0) { 
+  if ( strcmp(url, CH1_URL_INFOONOFF_1) == 0) { 
     return true; /**< InfoOnOff_1 is a boolean */
   } 
-  if ( strcmp(url, "/p/3") == 0) { 
+  if ( strcmp(url, CH2_URL_ONOFF_2) == 0) { 
     return true; /**< OnOff_2 is a boolean */
   } 
-  if ( strcmp(url, "/p/4") == 0) { 
+  if ( strcmp(url, CH2_URL_INFOONOFF_2) == 0) { 
     return true; /**< InfoOnOff_2 is a boolean */
   } 
-  if ( strcmp(url, "/p/5") == 0) { 
+  if ( strcmp(url, CH3_URL_ONOFF_3) == 0) { 
     return true; /**< OnOff_3 is a boolean */
   } 
-  if ( strcmp(url, "/p/6") == 0) { 
+  if ( strcmp(url, CH3_URL_INFOONOFF_3) == 0) { 
     return true; /**< InfoOnOff_3 is a boolean */
   } 
-  if ( strcmp(url, "/p/7") == 0) { 
+  if ( strcmp(url, CH4_URL_ONOFF_4) == 0) { 
     return true; /**< OnOff_4 is a boolean */
   } 
-  if ( strcmp(url, "/p/8") == 0) { 
+  if ( strcmp(url, CH4_URL_INFOONOFF_4) == 0) { 
     return true; /**< InfoOnOff_4 is a boolean */
   } 
   return false;
@@ -167,35 +181,35 @@ bool app_is_bool_url(char* url)
  */
 void app_set_bool_variable(char* url, bool value) 
 {
-  if ( strcmp(url, "/p/1") == 0) { 
+  if ( strcmp(url, CH1_URL_ONOFF_1) == 0) { 
     g_OnOff_1 = value;   /**< global variable for OnOff_1 */
     return;
   } 
-  if ( strcmp(url, "/p/2") == 0) { 
+  if ( strcmp(url, CH1_URL_INFOONOFF_1) == 0) { 
     g_InfoOnOff_1 = value;   /**< global variable for InfoOnOff_1 */
     return;
   } 
-  if ( strcmp(url, "/p/3") == 0) { 
+  if ( strcmp(url, CH2_URL_ONOFF_2) == 0) { 
     g_OnOff_2 = value;   /**< global variable for OnOff_2 */
     return;
   } 
-  if ( strcmp(url, "/p/4") == 0) { 
+  if ( strcmp(url, CH2_URL_INFOONOFF_2) == 0) { 
     g_InfoOnOff_2 = value;   /**< global variable for InfoOnOff_2 */
     return;
   } 
-  if ( strcmp(url, "/p/5") == 0) { 
+  if ( strcmp(url, CH3_URL_ONOFF_3) == 0) { 
     g_OnOff_3 = value;   /**< global variable for OnOff_3 */
     return;
   } 
-  if ( strcmp(url, "/p/6") == 0) { 
+  if ( strcmp(url, CH3_URL_INFOONOFF_3) == 0) { 
     g_InfoOnOff_3 = value;   /**< global variable for InfoOnOff_3 */
     return;
   } 
-  if ( strcmp(url, "/p/7") == 0) { 
+  if ( strcmp(url, CH4_URL_ONOFF_4) == 0) { 
     g_OnOff_4 = value;   /**< global variable for OnOff_4 */
     return;
   } 
-  if ( strcmp(url, "/p/8") == 0) { 
+  if ( strcmp(url, CH4_URL_INFOONOFF_4) == 0) { 
     g_InfoOnOff_4 = value;   /**< global variable for InfoOnOff_4 */
     return;
   } 
@@ -209,33 +223,94 @@ void app_set_bool_variable(char* url, bool value)
  */
 bool app_retrieve_bool_variable(char* url) 
 {
-  if ( strcmp(url, "/p/1") == 0) { 
+  if ( strcmp(url, CH1_URL_ONOFF_1) == 0) { 
     return g_OnOff_1;   /**< global variable for OnOff_1 */
   }
-  if ( strcmp(url, "/p/2") == 0) { 
+  if ( strcmp(url, CH1_URL_INFOONOFF_1) == 0) { 
     return g_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
   }
-  if ( strcmp(url, "/p/3") == 0) { 
+  if ( strcmp(url, CH2_URL_ONOFF_2) == 0) { 
     return g_OnOff_2;   /**< global variable for OnOff_2 */
   }
-  if ( strcmp(url, "/p/4") == 0) { 
+  if ( strcmp(url, CH2_URL_INFOONOFF_2) == 0) { 
     return g_InfoOnOff_2;   /**< global variable for InfoOnOff_2 */
   }
-  if ( strcmp(url, "/p/5") == 0) { 
+  if ( strcmp(url, CH3_URL_ONOFF_3) == 0) { 
     return g_OnOff_3;   /**< global variable for OnOff_3 */
   }
-  if ( strcmp(url, "/p/6") == 0) { 
+  if ( strcmp(url, CH3_URL_INFOONOFF_3) == 0) { 
     return g_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */
   }
-  if ( strcmp(url, "/p/7") == 0) { 
+  if ( strcmp(url, CH4_URL_ONOFF_4) == 0) { 
     return g_OnOff_4;   /**< global variable for OnOff_4 */
   }
-  if ( strcmp(url, "/p/8") == 0) { 
+  if ( strcmp(url, CH4_URL_INFOONOFF_4) == 0) { 
     return g_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
   }
   return false;
 }
 
+/**
+ * @brief function to check if the url is represented by a integer
+ *
+ * @param true = url value is a integer
+ * @param false = url is not a integer
+ */
+bool app_is_int_url(char* url)
+{
+  return false;
+}
+/**
+ * @brief sets the global int variable at the url
+ *
+ * @param url the url indicating the global variable
+ * @param value the value to be set
+ */
+void app_set_integer_variable(char* url, int value)
+{
+}
+/**
+ * @brief retrieve the global integer variable at the url
+ *
+ * @param url the url indicating the global variable
+ * @return the value of the variable
+ */
+int app_retrieve_int_variable(char* url)
+{
+  return -1;
+}
+
+/**
+ * @brief function to check if the url is represented by a string
+ *
+ * @param true = url value is a string
+ * @param false = url is not a string
+ */
+bool app_is_string_url(char* url)
+{
+  return false;
+}
+
+/**
+ * @brief sets the global string variable at the url
+ *
+ * @param url the url indicating the global variable
+ * @param value the value to be set
+ */
+void app_set_string_variable(char* url, char* value)
+{
+}
+
+/**
+ * @brief retrieve the global string variable at the url
+ *
+ * @param url the url indicating the global variable
+ * @return the value of the variable
+ */
+char* app_retrieve_string_variable(char* url)
+{
+  return -1;
+}
 
 /**
  * @brief set the fault (boolean) variable at the url
@@ -246,6 +321,7 @@ bool app_retrieve_bool_variable(char* url)
 void app_set_fault_variable(char* url, bool value)
 {
 }
+
 /**
  * @brief retrieve the fault (boolean) variable at the url
  *
@@ -254,19 +330,35 @@ void app_set_fault_variable(char* url, bool value)
  */
 bool app_retrieve_fault_variable(char* url)
 { 
-  if ( strcmp(url, "/p/2") == 0) { 
+  if ( strcmp(url, CH1_URL_INFOONOFF_1) == 0) { 
     return g_fault_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
   } 
-  if ( strcmp(url, "/p/4") == 0) { 
+  if ( strcmp(url, CH2_URL_INFOONOFF_2) == 0) { 
     return g_fault_InfoOnOff_2;   /**< global variable for InfoOnOff_2 */
   } 
-  if ( strcmp(url, "/p/6") == 0) { 
+  if ( strcmp(url, CH3_URL_INFOONOFF_3) == 0) { 
     return g_fault_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */
   } 
-  if ( strcmp(url, "/p/8") == 0) { 
+  if ( strcmp(url, CH4_URL_INFOONOFF_4) == 0) { 
     return g_fault_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
   }
   return false;
+}
+
+bool app_is_url_parameter(char* url)
+{
+  return false;
+}
+
+char* app_get_parameter_url(int index)
+{
+  return NULL;
+}
+
+
+char* app_get_parameter_name(int index)
+{
+  return NULL;
 }
 
 bool app_is_secure()
@@ -348,9 +440,6 @@ app_init(void)
   int ret = oc_init_platform("cascoda", NULL, NULL);
 
   /* set the application name, version, base url, device serial number */
-  
-  
-  
   ret |= oc_add_device(MY_NAME, "1.0.0", "//", g_serial_number, NULL, NULL);
 
   oc_device_info_t *device = oc_core_get_device_info(0);
@@ -379,8 +468,11 @@ app_init(void)
   return ret;
 }
 
+
+// data point (objects) handling
+
 /**
- * @brief CoAP GET method for "OnOff_1" resource at url "/p/1".
+ * @brief CoAP GET method for "OnOff_1" resource at url CH1_URL_ONOFF_1 ("/p/1").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -403,7 +495,7 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   */
   bool error_state = false; /* the error state, the generated code */
 
-  PRINT("-- Begin get_OnOff_1 /p/1 \n");
+  PRINT("-- Begin get_OnOff_1 %s \n", CH1_URL_ONOFF_1);
   /* check if the accept header is CBOR */
   if (request->accept != APPLICATION_CBOR) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
@@ -425,8 +517,9 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End get_OnOff_1\n");
 }
 
+
 /**
- * @brief CoAP GET method for "InfoOnOff_1" resource at url "/p/2".
+ * @brief CoAP GET method for "InfoOnOff_1" resource at url CH1_URL_INFOONOFF_1 ("/p/2").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -449,7 +542,7 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   */
   bool error_state = false; /* the error state, the generated code */
 
-  PRINT("-- Begin get_InfoOnOff_1 /p/2 \n");
+  PRINT("-- Begin get_InfoOnOff_1 %s \n", CH1_URL_INFOONOFF_1);
   /* check if the accept header is CBOR */
   if (request->accept != APPLICATION_CBOR) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
@@ -470,6 +563,7 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   }
   PRINT("-- End get_InfoOnOff_1\n");
 }
+
  
 /**
  * @brief CoAP POST method for "InfoOnOff_1" resource at url "/p/2".
@@ -511,7 +605,7 @@ post_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
        returns to this function here. Alternative is to have a callback from the
        hardware that sets the global variables.
      */
-      do_post_cb("/p/2");
+      do_post_cb(CH1_URL_INFOONOFF_1);
       PRINT("-- End post_InfoOnOff_1\n");
       return;
     }
@@ -522,7 +616,7 @@ post_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End post_InfoOnOff_1\n");
 }
 /**
- * @brief CoAP GET method for "OnOff_2" resource at url "/p/3".
+ * @brief CoAP GET method for "OnOff_2" resource at url CH2_URL_ONOFF_2 ("/p/3").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -545,7 +639,7 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   */
   bool error_state = false; /* the error state, the generated code */
 
-  PRINT("-- Begin get_OnOff_2 /p/3 \n");
+  PRINT("-- Begin get_OnOff_2 %s \n", CH2_URL_ONOFF_2);
   /* check if the accept header is CBOR */
   if (request->accept != APPLICATION_CBOR) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
@@ -567,8 +661,9 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End get_OnOff_2\n");
 }
 
+
 /**
- * @brief CoAP GET method for "InfoOnOff_2" resource at url "/p/4".
+ * @brief CoAP GET method for "InfoOnOff_2" resource at url CH2_URL_INFOONOFF_2 ("/p/4").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -591,7 +686,7 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   */
   bool error_state = false; /* the error state, the generated code */
 
-  PRINT("-- Begin get_InfoOnOff_2 /p/4 \n");
+  PRINT("-- Begin get_InfoOnOff_2 %s \n", CH2_URL_INFOONOFF_2);
   /* check if the accept header is CBOR */
   if (request->accept != APPLICATION_CBOR) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
@@ -612,6 +707,7 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   }
   PRINT("-- End get_InfoOnOff_2\n");
 }
+
  
 /**
  * @brief CoAP POST method for "InfoOnOff_2" resource at url "/p/4".
@@ -653,7 +749,7 @@ post_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
        returns to this function here. Alternative is to have a callback from the
        hardware that sets the global variables.
      */
-      do_post_cb("/p/4");
+      do_post_cb(CH2_URL_INFOONOFF_2);
       PRINT("-- End post_InfoOnOff_2\n");
       return;
     }
@@ -664,7 +760,7 @@ post_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End post_InfoOnOff_2\n");
 }
 /**
- * @brief CoAP GET method for "OnOff_3" resource at url "/p/5".
+ * @brief CoAP GET method for "OnOff_3" resource at url CH3_URL_ONOFF_3 ("/p/5").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -687,7 +783,7 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   */
   bool error_state = false; /* the error state, the generated code */
 
-  PRINT("-- Begin get_OnOff_3 /p/5 \n");
+  PRINT("-- Begin get_OnOff_3 %s \n", CH3_URL_ONOFF_3);
   /* check if the accept header is CBOR */
   if (request->accept != APPLICATION_CBOR) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
@@ -709,8 +805,9 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End get_OnOff_3\n");
 }
 
+
 /**
- * @brief CoAP GET method for "InfoOnOff_3" resource at url "/p/6".
+ * @brief CoAP GET method for "InfoOnOff_3" resource at url CH3_URL_INFOONOFF_3 ("/p/6").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -733,7 +830,7 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   */
   bool error_state = false; /* the error state, the generated code */
 
-  PRINT("-- Begin get_InfoOnOff_3 /p/6 \n");
+  PRINT("-- Begin get_InfoOnOff_3 %s \n", CH3_URL_INFOONOFF_3);
   /* check if the accept header is CBOR */
   if (request->accept != APPLICATION_CBOR) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
@@ -754,6 +851,7 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   }
   PRINT("-- End get_InfoOnOff_3\n");
 }
+
  
 /**
  * @brief CoAP POST method for "InfoOnOff_3" resource at url "/p/6".
@@ -795,7 +893,7 @@ post_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
        returns to this function here. Alternative is to have a callback from the
        hardware that sets the global variables.
      */
-      do_post_cb("/p/6");
+      do_post_cb(CH3_URL_INFOONOFF_3);
       PRINT("-- End post_InfoOnOff_3\n");
       return;
     }
@@ -806,7 +904,7 @@ post_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End post_InfoOnOff_3\n");
 }
 /**
- * @brief CoAP GET method for "OnOff_4" resource at url "/p/7".
+ * @brief CoAP GET method for "OnOff_4" resource at url CH4_URL_ONOFF_4 ("/p/7").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -829,7 +927,7 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
   */
   bool error_state = false; /* the error state, the generated code */
 
-  PRINT("-- Begin get_OnOff_4 /p/7 \n");
+  PRINT("-- Begin get_OnOff_4 %s \n", CH4_URL_ONOFF_4);
   /* check if the accept header is CBOR */
   if (request->accept != APPLICATION_CBOR) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
@@ -851,8 +949,9 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End get_OnOff_4\n");
 }
 
+
 /**
- * @brief CoAP GET method for "InfoOnOff_4" resource at url "/p/8".
+ * @brief CoAP GET method for "InfoOnOff_4" resource at url CH4_URL_INFOONOFF_4 ("/p/8").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -875,7 +974,7 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
   */
   bool error_state = false; /* the error state, the generated code */
 
-  PRINT("-- Begin get_InfoOnOff_4 /p/8 \n");
+  PRINT("-- Begin get_InfoOnOff_4 %s \n", CH4_URL_INFOONOFF_4);
   /* check if the accept header is CBOR */
   if (request->accept != APPLICATION_CBOR) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
@@ -896,6 +995,7 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
   }
   PRINT("-- End get_InfoOnOff_4\n");
 }
+
  
 /**
  * @brief CoAP POST method for "InfoOnOff_4" resource at url "/p/8".
@@ -937,7 +1037,7 @@ post_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
        returns to this function here. Alternative is to have a callback from the
        hardware that sets the global variables.
      */
-      do_post_cb("/p/8");
+      do_post_cb(CH4_URL_INFOONOFF_4);
       PRINT("-- End post_InfoOnOff_4\n");
       return;
     }
@@ -947,6 +1047,10 @@ post_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
   PRINT("-- End post_InfoOnOff_4\n");
 }
+
+
+// parameters handling
+
 
 
 /**
@@ -965,9 +1069,9 @@ post_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 void
 register_resources(void)
 {
-  PRINT("Register Resource 'OnOff_1' with local path \"/p/1\"\n");
+  PRINT("Register Resource 'OnOff_1' with local path \"%s\"\n", CH1_URL_ONOFF_1);
   oc_resource_t *res_OnOff_1 =
-    oc_new_resource("OnOff_1", "/p/1", 2, 0);
+    oc_new_resource("OnOff_1", CH1_URL_ONOFF_1, 2, 0);
   oc_resource_bind_resource_type(res_OnOff_1, "urn:knx:dpa.421.61");
   oc_resource_bind_resource_type(res_OnOff_1, "DPT_Switch");
   oc_resource_bind_content_type(res_OnOff_1, APPLICATION_CBOR);
@@ -985,9 +1089,9 @@ register_resources(void)
   oc_resource_set_observable(res_OnOff_1, true);
   oc_resource_set_request_handler(res_OnOff_1, OC_GET, get_OnOff_1, NULL);
   oc_add_resource(res_OnOff_1);
-  PRINT("Register Resource 'InfoOnOff_1' with local path \"/p/2\"\n");
+  PRINT("Register Resource 'InfoOnOff_1' with local path \"%s\"\n", CH1_URL_INFOONOFF_1);
   oc_resource_t *res_InfoOnOff_1 =
-    oc_new_resource("InfoOnOff_1", "/p/2", 2, 0);
+    oc_new_resource("InfoOnOff_1", CH1_URL_INFOONOFF_1, 2, 0);
   oc_resource_bind_resource_type(res_InfoOnOff_1, "urn:knx:dpa.421.51");
   oc_resource_bind_resource_type(res_InfoOnOff_1, "DPT_Switch");
   oc_resource_bind_content_type(res_InfoOnOff_1, APPLICATION_CBOR);
@@ -1006,9 +1110,9 @@ register_resources(void)
   oc_resource_set_request_handler(res_InfoOnOff_1, OC_GET, get_InfoOnOff_1, NULL);
   oc_resource_set_request_handler(res_InfoOnOff_1, OC_POST, post_InfoOnOff_1, NULL); 
   oc_add_resource(res_InfoOnOff_1);
-  PRINT("Register Resource 'OnOff_2' with local path \"/p/3\"\n");
+  PRINT("Register Resource 'OnOff_2' with local path \"%s\"\n", CH2_URL_ONOFF_2);
   oc_resource_t *res_OnOff_2 =
-    oc_new_resource("OnOff_2", "/p/3", 2, 0);
+    oc_new_resource("OnOff_2", CH2_URL_ONOFF_2, 2, 0);
   oc_resource_bind_resource_type(res_OnOff_2, "urn:knx:dpa.421.61");
   oc_resource_bind_resource_type(res_OnOff_2, "DPT_Switch");
   oc_resource_bind_content_type(res_OnOff_2, APPLICATION_CBOR);
@@ -1026,9 +1130,9 @@ register_resources(void)
   oc_resource_set_observable(res_OnOff_2, true);
   oc_resource_set_request_handler(res_OnOff_2, OC_GET, get_OnOff_2, NULL);
   oc_add_resource(res_OnOff_2);
-  PRINT("Register Resource 'InfoOnOff_2' with local path \"/p/4\"\n");
+  PRINT("Register Resource 'InfoOnOff_2' with local path \"%s\"\n", CH2_URL_INFOONOFF_2);
   oc_resource_t *res_InfoOnOff_2 =
-    oc_new_resource("InfoOnOff_2", "/p/4", 2, 0);
+    oc_new_resource("InfoOnOff_2", CH2_URL_INFOONOFF_2, 2, 0);
   oc_resource_bind_resource_type(res_InfoOnOff_2, "urn:knx:dpa.421.51");
   oc_resource_bind_resource_type(res_InfoOnOff_2, "DPT_Switch");
   oc_resource_bind_content_type(res_InfoOnOff_2, APPLICATION_CBOR);
@@ -1047,9 +1151,9 @@ register_resources(void)
   oc_resource_set_request_handler(res_InfoOnOff_2, OC_GET, get_InfoOnOff_2, NULL);
   oc_resource_set_request_handler(res_InfoOnOff_2, OC_POST, post_InfoOnOff_2, NULL); 
   oc_add_resource(res_InfoOnOff_2);
-  PRINT("Register Resource 'OnOff_3' with local path \"/p/5\"\n");
+  PRINT("Register Resource 'OnOff_3' with local path \"%s\"\n", CH3_URL_ONOFF_3);
   oc_resource_t *res_OnOff_3 =
-    oc_new_resource("OnOff_3", "/p/5", 2, 0);
+    oc_new_resource("OnOff_3", CH3_URL_ONOFF_3, 2, 0);
   oc_resource_bind_resource_type(res_OnOff_3, "urn:knx:dpa.421.61");
   oc_resource_bind_resource_type(res_OnOff_3, "DPT_Switch");
   oc_resource_bind_content_type(res_OnOff_3, APPLICATION_CBOR);
@@ -1067,9 +1171,9 @@ register_resources(void)
   oc_resource_set_observable(res_OnOff_3, true);
   oc_resource_set_request_handler(res_OnOff_3, OC_GET, get_OnOff_3, NULL);
   oc_add_resource(res_OnOff_3);
-  PRINT("Register Resource 'InfoOnOff_3' with local path \"/p/6\"\n");
+  PRINT("Register Resource 'InfoOnOff_3' with local path \"%s\"\n", CH3_URL_INFOONOFF_3);
   oc_resource_t *res_InfoOnOff_3 =
-    oc_new_resource("InfoOnOff_3", "/p/6", 2, 0);
+    oc_new_resource("InfoOnOff_3", CH3_URL_INFOONOFF_3, 2, 0);
   oc_resource_bind_resource_type(res_InfoOnOff_3, "urn:knx:dpa.421.51");
   oc_resource_bind_resource_type(res_InfoOnOff_3, "DPT_Switch");
   oc_resource_bind_content_type(res_InfoOnOff_3, APPLICATION_CBOR);
@@ -1088,9 +1192,9 @@ register_resources(void)
   oc_resource_set_request_handler(res_InfoOnOff_3, OC_GET, get_InfoOnOff_3, NULL);
   oc_resource_set_request_handler(res_InfoOnOff_3, OC_POST, post_InfoOnOff_3, NULL); 
   oc_add_resource(res_InfoOnOff_3);
-  PRINT("Register Resource 'OnOff_4' with local path \"/p/7\"\n");
+  PRINT("Register Resource 'OnOff_4' with local path \"%s\"\n", CH4_URL_ONOFF_4);
   oc_resource_t *res_OnOff_4 =
-    oc_new_resource("OnOff_4", "/p/7", 2, 0);
+    oc_new_resource("OnOff_4", CH4_URL_ONOFF_4, 2, 0);
   oc_resource_bind_resource_type(res_OnOff_4, "urn:knx:dpa.421.61");
   oc_resource_bind_resource_type(res_OnOff_4, "DPT_Switch");
   oc_resource_bind_content_type(res_OnOff_4, APPLICATION_CBOR);
@@ -1108,9 +1212,9 @@ register_resources(void)
   oc_resource_set_observable(res_OnOff_4, true);
   oc_resource_set_request_handler(res_OnOff_4, OC_GET, get_OnOff_4, NULL);
   oc_add_resource(res_OnOff_4);
-  PRINT("Register Resource 'InfoOnOff_4' with local path \"/p/8\"\n");
+  PRINT("Register Resource 'InfoOnOff_4' with local path \"%s\"\n", CH4_URL_INFOONOFF_4);
   oc_resource_t *res_InfoOnOff_4 =
-    oc_new_resource("InfoOnOff_4", "/p/8", 2, 0);
+    oc_new_resource("InfoOnOff_4", CH4_URL_INFOONOFF_4, 2, 0);
   oc_resource_bind_resource_type(res_InfoOnOff_4, "urn:knx:dpa.421.51");
   oc_resource_bind_resource_type(res_InfoOnOff_4, "DPT_Switch");
   oc_resource_bind_content_type(res_InfoOnOff_4, APPLICATION_CBOR);
@@ -1129,6 +1233,7 @@ register_resources(void)
   oc_resource_set_request_handler(res_InfoOnOff_4, OC_GET, get_InfoOnOff_4, NULL);
   oc_resource_set_request_handler(res_InfoOnOff_4, OC_POST, post_InfoOnOff_4, NULL); 
   oc_add_resource(res_InfoOnOff_4);
+
 }
 
 /**
@@ -1231,7 +1336,6 @@ initialize_variables(void)
 {
   /* initialize global variables for resources */
   /* if wanted read them from persistent storage */
-
   g_OnOff_1 = true;   /**< global variable for OnOff_1 */ 
   g_InfoOnOff_1 = true;   /**< global variable for InfoOnOff_1 */ 
   g_OnOff_2 = true;   /**< global variable for OnOff_2 */ 
@@ -1240,6 +1344,7 @@ initialize_variables(void)
   g_InfoOnOff_3 = true;   /**< global variable for InfoOnOff_3 */ 
   g_OnOff_4 = true;   /**< global variable for OnOff_4 */ 
   g_InfoOnOff_4 = true;   /**< global variable for InfoOnOff_4 */ 
+
 }
 
 int app_set_serial_number(char* serial_number)
@@ -1247,7 +1352,6 @@ int app_set_serial_number(char* serial_number)
   strncpy(g_serial_number, serial_number, 20);
   return 0;
 }
-
 
 int app_initialize_stack()
 {
@@ -1269,7 +1373,6 @@ int app_initialize_stack()
    the folder is created in the makefile, with $target as name with _cred as
    post fix.
   */
-
 #ifdef WIN32
   char storage[40];
   sprintf(storage,"'./knx_iot_virtual_pb_%s",g_serial_number);  
@@ -1463,7 +1566,6 @@ main(int argc, char *argv[])
 #endif
 
   /* shut down the stack */
-
   oc_main_shutdown();
   return 0;
 }

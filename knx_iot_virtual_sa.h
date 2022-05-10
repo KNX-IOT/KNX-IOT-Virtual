@@ -74,17 +74,20 @@ int app_initialize_stack();
 int app_set_serial_number(char* serial_number);
 
 
+
+bool app_is_bool_url(char* url);
+
 /**
  * @brief retrieve the boolean variable of the url/data point
  * the caller needs to know if the resource/data point is conveying a boolean
- * "/p/1" of OnOff_1 
- * "/p/2" of InfoOnOff_1 
- * "/p/3" of OnOff_2 
- * "/p/4" of InfoOnOff_2 
- * "/p/5" of OnOff_3 
- * "/p/6" of InfoOnOff_3 
- * "/p/7" of OnOff_4 
- * "/p/8" of InfoOnOff_4 
+ * "/p/o_1" of OnOff_1 
+ * "/p/o_2" of InfoOnOff_1 
+ * "/p/o_3" of OnOff_2 
+ * "/p/o_4" of InfoOnOff_2 
+ * "/p/o_5" of OnOff_3 
+ * "/p/o_6" of InfoOnOff_3 
+ * "/p/o_7" of OnOff_4 
+ * "/p/o_8" of InfoOnOff_4 
  * 
  * @param url the url of the resource/data point
  * @return true value is true
@@ -95,15 +98,72 @@ bool app_retrieve_bool_variable(char* url);
 /**
  * @brief set the boolean variable that belongs to the url 
  * The caller needs to know if the resource/data point is conveying a boolean
- * "/p/1" of OnOff_1
- * "/p/3" of OnOff_2
- * "/p/5" of OnOff_3
- * "/p/7" of OnOff_4
+ * "/p/o_1" of OnOff_1
+ * "/p/o_3" of OnOff_2
+ * "/p/o_5" of OnOff_3
+ * "/p/o_7" of OnOff_4
  * 
  * @param url the url of the resource/data point
  * @param value the boolean value to be set
  */
 void app_set_bool_variable(char* url, bool value);
+
+bool app_is_int_url(char* url);
+
+/**
+ * @brief retrieve the int variable of the url/data point
+ * the caller needs to know if the resource/data point is conveying a integer
+ * 
+ * @param url the url of the resource/data point
+ * @return true value is true
+ * @return false value is false or error.
+ */
+int app_retrieve_int_variable(char* url);
+
+/**
+ * @brief set the integer variable that belongs to the url 
+ * The caller needs to know if the resource/data point is conveying a integer
+ * 
+ * @param url the url of the resource/data point
+ * @param value the boolean value to be set
+ */
+void app_set_integer_variable(char* url, int value);
+
+/**
+ * @brief function to check if the url is represented by a string
+ *
+ * @param true = url value is a string
+ * @param false = url is not a string
+ */
+
+bool app_is_string_url(char* url);
+/**
+ * @brief sets the global string variable at the url
+ *
+ * @param url the url indicating the global variable
+ * @param value the value to be set
+ */
+ 
+void app_set_string_variable(char* url, char* value);
+/**
+ * @brief retrieve the global string variable at the url
+ *
+ * @param url the url indicating the global variable
+ * @return the value of the variable
+ */
+char* app_retrieve_string_variable(char* url);
+
+/**
+ * @brief checks if the url represents a parameter
+ *
+ * @param url the url
+ * @return true the url represents a parameter
+ */
+bool app_is_url_parameter(char* url);
+
+char* app_get_parameter_url(int index);
+
+char* app_get_parameter_name(int index);
 
 
 
