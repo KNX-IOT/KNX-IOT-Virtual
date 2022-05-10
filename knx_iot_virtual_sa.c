@@ -19,7 +19,7 @@
 /**
  * @file
  * 
- * KNX virtual Switching Actuator with parameters
+ * KNX virtual Switching Actuator
  *
  * ## Application Design
  *
@@ -89,7 +89,7 @@ static struct timespec ts;
 
 #include <stdio.h> /* defines FILENAME_MAX */
 
-#define MY_NAME "KNX virtual Switching Actuator with parameters" /**< The name of the application */
+#define MY_NAME "KNX virtual Switching Actuator" /**< The name of the application */
 #define APP_MAX_STRING 30
 
 #ifdef WIN32
@@ -107,23 +107,19 @@ static CRITICAL_SECTION cs;   /**< event loop variable */
 #define btoa(x) ((x) ? "true" : "false")
 volatile int quit = 0;  /**< stop variable, used by handle_signal */
 bool g_reset = false;   /**< reset variable, set by commandline arguments */
-char g_serial_number[20] = "0004100";
+char g_serial_number[20] = "0004000";
 
 /* list all object urls as defines */
-#define CH1_URL_ONOFF_1 "/p/o_1"   /**< define for url /p/o_1 of OnOff_1 */
-#define CH1_URL_INFOONOFF_1 "/p/o_2"   /**< define for url /p/o_2 of InfoOnOff_1 */
-#define CH2_URL_ONOFF_2 "/p/o_3"   /**< define for url /p/o_3 of OnOff_2 */
-#define CH2_URL_INFOONOFF_2 "/p/o_4"   /**< define for url /p/o_4 of InfoOnOff_2 */
-#define CH3_URL_ONOFF_3 "/p/o_5"   /**< define for url /p/o_5 of OnOff_3 */
-#define CH3_URL_INFOONOFF_3 "/p/o_6"   /**< define for url /p/o_6 of InfoOnOff_3 */
-#define CH4_URL_ONOFF_4 "/p/o_7"   /**< define for url /p/o_7 of OnOff_4 */
-#define CH4_URL_INFOONOFF_4 "/p/o_8"   /**< define for url /p/o_8 of InfoOnOff_4 */
+#define CH1_URL_ONOFF_1 "/p/1"   /**< define for url /p/1 of OnOff_1 */
+#define CH1_URL_INFOONOFF_1 "/p/2"   /**< define for url /p/2 of InfoOnOff_1 */
+#define CH2_URL_ONOFF_2 "/p/3"   /**< define for url /p/3 of OnOff_2 */
+#define CH2_URL_INFOONOFF_2 "/p/4"   /**< define for url /p/4 of InfoOnOff_2 */
+#define CH3_URL_ONOFF_3 "/p/5"   /**< define for url /p/5 of OnOff_3 */
+#define CH3_URL_INFOONOFF_3 "/p/6"   /**< define for url /p/6 of InfoOnOff_3 */
+#define CH4_URL_ONOFF_4 "/p/7"   /**< define for url /p/7 of OnOff_4 */
+#define CH4_URL_INFOONOFF_4 "/p/8"   /**< define for url /p/8 of InfoOnOff_4 */
 
 /* list all parameter urls as defines */
-#define CH1_URL_TIMER_1 "/p/p_1"   /**< define for url /p/p_1 of Timer_1 */
-#define CH2_URL_TIMER_2 "/p/p_2"   /**< define for url /p/p_2 of Timer_2 */
-#define CH3_URL_TIMER_3 "/p/p_3"   /**< define for url /p/p_3 of Timer_3 */
-#define CH4_URL_TIMER_4 "/p/p_4"   /**< define for url /p/p_4 of Timer_4 */
 
 
 volatile bool g_OnOff_1;   /**< global variable for OnOff_1 */
@@ -141,10 +137,8 @@ volatile bool g_fault_OnOff_3;   /**< global variable for fault OnOff_3 */
 volatile bool g_fault_OnOff_4;   /**< global variable for fault OnOff_4 */
 
 
-volatile char g_Timer_1[(APP_MAX_STRING)+1];   /**< global variable for Timer_1 */
-volatile char g_Timer_2[(APP_MAX_STRING)+1];   /**< global variable for Timer_2 */
-volatile char g_Timer_3[(APP_MAX_STRING)+1];   /**< global variable for Timer_3 */
-volatile char g_Timer_4[(APP_MAX_STRING)+1];   /**< global variable for Timer_4 */
+
+// BOOLEAN code
 
 /**
  * @brief function to check if the url is represented by a boolean
@@ -258,6 +252,8 @@ bool app_retrieve_bool_variable(char* url)
   return false;
 }
 
+// INTEGER code
+
 /**
  * @brief function to check if the url is represented by a integer
  *
@@ -288,6 +284,40 @@ int app_retrieve_int_variable(char* url)
   return -1;
 }
 
+// DOUBLE code
+
+/**
+ * @brief function to check if the url is represented by a double
+ *
+ * @param true = url value is a double
+ * @param false = url is not a double
+ */
+bool app_is_double_url(char* url)
+{
+  return false;
+}
+/**
+ * @brief sets the global double variable at the url
+ *
+ * @param url the url indicating the global variable
+ * @param value the value to be set
+ */
+void app_set_double_variable(char* url, double value)
+{
+}
+/**
+ * @brief retrieve the global double variable at the url
+ *
+ * @param url the url indicating the global variable
+ * @return the value of the variable
+ */
+int app_retrieve_double_variable(char* url)
+{
+  return -1;
+}
+
+// STRING code
+
 /**
  * @brief function to check if the url is represented by a string
  *
@@ -296,18 +326,6 @@ int app_retrieve_int_variable(char* url)
  */
 bool app_is_string_url(char* url)
 {
-  if ( strcmp(url, CH1_URL_TIMER_1) == 0) { 
-    return true; /**< Timer_1 is an string */
-  } 
-  if ( strcmp(url, CH2_URL_TIMER_2) == 0) { 
-    return true; /**< Timer_2 is an string */
-  } 
-  if ( strcmp(url, CH3_URL_TIMER_3) == 0) { 
-    return true; /**< Timer_3 is an string */
-  } 
-  if ( strcmp(url, CH4_URL_TIMER_4) == 0) { 
-    return true; /**< Timer_4 is an string */
-  } 
   return false;
 }
 
@@ -319,22 +337,6 @@ bool app_is_string_url(char* url)
  */
 void app_set_string_variable(char* url, char* value)
 {
-  if ( strcmp(url, CH1_URL_TIMER_1) == 0) { 
-    strncpy(g_Timer_1, value, APP_MAX_STRING);   /**< global variable for Timer_1 */
-    return;
-  } 
-  if ( strcmp(url, CH2_URL_TIMER_2) == 0) { 
-    strncpy(g_Timer_2, value, APP_MAX_STRING);   /**< global variable for Timer_2 */
-    return;
-  } 
-  if ( strcmp(url, CH3_URL_TIMER_3) == 0) { 
-    strncpy(g_Timer_3, value, APP_MAX_STRING);   /**< global variable for Timer_3 */
-    return;
-  } 
-  if ( strcmp(url, CH4_URL_TIMER_4) == 0) { 
-    strncpy(g_Timer_4, value, APP_MAX_STRING);   /**< global variable for Timer_4 */
-    return;
-  } 
 }
 
 /**
@@ -345,20 +347,10 @@ void app_set_string_variable(char* url, char* value)
  */
 char* app_retrieve_string_variable(char* url)
 {
-  if ( strcmp(url, CH1_URL_TIMER_1) == 0) { 
-    return (char*)g_Timer_1;   /**< global variable for Timer_1 */
-  }
-  if ( strcmp(url, CH2_URL_TIMER_2) == 0) { 
-    return (char*)g_Timer_2;   /**< global variable for Timer_2 */
-  }
-  if ( strcmp(url, CH3_URL_TIMER_3) == 0) { 
-    return (char*)g_Timer_3;   /**< global variable for Timer_3 */
-  }
-  if ( strcmp(url, CH4_URL_TIMER_4) == 0) { 
-    return (char*)g_Timer_4;   /**< global variable for Timer_4 */
-  }
-  return -1;
+  return NULL;
 }
+
+// FAULT code
 
 /**
  * @brief set the fault (boolean) variable at the url
@@ -437,55 +429,20 @@ bool app_retrieve_fault_variable(char* url)
   return false;
 }
 
+// PARAMETER code
+
 bool app_is_url_parameter(char* url)
 {
-  if ( strcmp(url, CH1_URL_TIMER_1) == 0) { 
-    return true; /**< parameter name Timer_1 */
-  }
-  if ( strcmp(url, CH2_URL_TIMER_2) == 0) { 
-    return true; /**< parameter name Timer_2 */
-  }
-  if ( strcmp(url, CH3_URL_TIMER_3) == 0) { 
-    return true; /**< parameter name Timer_3 */
-  }
-  if ( strcmp(url, CH4_URL_TIMER_4) == 0) { 
-    return true; /**< parameter name Timer_4 */
-  }
   return false;
 }
 
 char* app_get_parameter_url(int index)
 {
-  if ( 1 == index) { 
-    return CH1_URL_TIMER_1; /**< parameter name Timer_1 */
-  }
-  if ( 2 == index) { 
-    return CH2_URL_TIMER_2; /**< parameter name Timer_2 */
-  }
-  if ( 3 == index) { 
-    return CH3_URL_TIMER_3; /**< parameter name Timer_3 */
-  }
-  if ( 4 == index) { 
-    return CH4_URL_TIMER_4; /**< parameter name Timer_4 */
-  }
   return NULL;
 }
 
-
 char* app_get_parameter_name(int index)
 {
-  if ( 1 == index) { 
-    return "Timer_1"; /**< parameter name Timer_1 */
-  }
-  if ( 2 == index) { 
-    return "Timer_2"; /**< parameter name Timer_2 */
-  }
-  if ( 3 == index) { 
-    return "Timer_3"; /**< parameter name Timer_3 */
-  }
-  if ( 4 == index) { 
-    return "Timer_4"; /**< parameter name Timer_4 */
-  }
   return NULL;
 }
 
@@ -552,8 +509,8 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
  * @brief function to set up the device.
  *
  * sets the:
- * - manufacturer  : Cascoda
- * - serial number : 0004100
+ * - manufacturer  : cascoda
+ * - serial number : 0004000
  * - base path
  * - knx spec version
  * - hardware version
@@ -565,7 +522,7 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
 int
 app_init(void)
 {
-  int ret = oc_init_platform("Cascoda", NULL, NULL);
+  int ret = oc_init_platform("cascoda", NULL, NULL);
 
   /* set the application name, version, base url, device serial number */
   ret |= oc_add_device(MY_NAME, "1.0.0", "//", g_serial_number, NULL, NULL);
@@ -600,7 +557,7 @@ app_init(void)
 // data point (objects) handling
 
 /**
- * @brief CoAP GET method for "OnOff_1" resource at url CH1_URL_ONOFF_1 ("/p/o_1").
+ * @brief CoAP GET method for "OnOff_1" resource at url CH1_URL_ONOFF_1 ("/p/1").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -647,7 +604,7 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 
  
 /**
- * @brief CoAP POST method for "OnOff_1" resource at url "/p/o_1".
+ * @brief CoAP POST method for "OnOff_1" resource at url "/p/1".
  *
  * The function has as input the request body, which are the input values of the
  * POST method.
@@ -696,8 +653,8 @@ post_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
         PRINT("  Fault'\n");
         g_InfoOnOff_1 = false;
       }
-      /* send the status information InfoOnOff_1 to '/p/o_2' with flag 'w' */
-      PRINT("  Send status to '/p/o_2' with flag: 'w'\n");
+      /* send the status information InfoOnOff_1 to '/p/2' with flag 'w' */
+      PRINT("  Send status to '/p/2' with flag: 'w'\n");
       oc_do_s_mode_with_scope(2, CH1_URL_INFOONOFF_1, "w");
       oc_do_s_mode_with_scope(5, CH1_URL_INFOONOFF_1, "w");
       do_post_cb(CH1_URL_ONOFF_1);
@@ -711,7 +668,7 @@ post_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End post_OnOff_1\n");
 }
 /**
- * @brief CoAP GET method for "InfoOnOff_1" resource at url CH1_URL_INFOONOFF_1 ("/p/o_2").
+ * @brief CoAP GET method for "InfoOnOff_1" resource at url CH1_URL_INFOONOFF_1 ("/p/2").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -758,7 +715,7 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 
 
 /**
- * @brief CoAP GET method for "OnOff_2" resource at url CH2_URL_ONOFF_2 ("/p/o_3").
+ * @brief CoAP GET method for "OnOff_2" resource at url CH2_URL_ONOFF_2 ("/p/3").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -805,7 +762,7 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 
  
 /**
- * @brief CoAP POST method for "OnOff_2" resource at url "/p/o_3".
+ * @brief CoAP POST method for "OnOff_2" resource at url "/p/3".
  *
  * The function has as input the request body, which are the input values of the
  * POST method.
@@ -854,8 +811,8 @@ post_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
         PRINT("  Fault'\n");
         g_InfoOnOff_2 = false;
       }
-      /* send the status information InfoOnOff_2 to '/p/o_4' with flag 'w' */
-      PRINT("  Send status to '/p/o_4' with flag: 'w'\n");
+      /* send the status information InfoOnOff_2 to '/p/4' with flag 'w' */
+      PRINT("  Send status to '/p/4' with flag: 'w'\n");
       oc_do_s_mode_with_scope(2, CH2_URL_INFOONOFF_2, "w");
       oc_do_s_mode_with_scope(5, CH2_URL_INFOONOFF_2, "w");
       do_post_cb(CH2_URL_ONOFF_2);
@@ -869,7 +826,7 @@ post_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End post_OnOff_2\n");
 }
 /**
- * @brief CoAP GET method for "InfoOnOff_2" resource at url CH2_URL_INFOONOFF_2 ("/p/o_4").
+ * @brief CoAP GET method for "InfoOnOff_2" resource at url CH2_URL_INFOONOFF_2 ("/p/4").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -916,7 +873,7 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 
 
 /**
- * @brief CoAP GET method for "OnOff_3" resource at url CH3_URL_ONOFF_3 ("/p/o_5").
+ * @brief CoAP GET method for "OnOff_3" resource at url CH3_URL_ONOFF_3 ("/p/5").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -963,7 +920,7 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 
  
 /**
- * @brief CoAP POST method for "OnOff_3" resource at url "/p/o_5".
+ * @brief CoAP POST method for "OnOff_3" resource at url "/p/5".
  *
  * The function has as input the request body, which are the input values of the
  * POST method.
@@ -1012,8 +969,8 @@ post_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
         PRINT("  Fault'\n");
         g_InfoOnOff_3 = false;
       }
-      /* send the status information InfoOnOff_3 to '/p/o_6' with flag 'w' */
-      PRINT("  Send status to '/p/o_6' with flag: 'w'\n");
+      /* send the status information InfoOnOff_3 to '/p/6' with flag 'w' */
+      PRINT("  Send status to '/p/6' with flag: 'w'\n");
       oc_do_s_mode_with_scope(2, CH3_URL_INFOONOFF_3, "w");
       oc_do_s_mode_with_scope(5, CH3_URL_INFOONOFF_3, "w");
       do_post_cb(CH3_URL_ONOFF_3);
@@ -1027,7 +984,7 @@ post_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End post_OnOff_3\n");
 }
 /**
- * @brief CoAP GET method for "InfoOnOff_3" resource at url CH3_URL_INFOONOFF_3 ("/p/o_6").
+ * @brief CoAP GET method for "InfoOnOff_3" resource at url CH3_URL_INFOONOFF_3 ("/p/6").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -1074,7 +1031,7 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 
 
 /**
- * @brief CoAP GET method for "OnOff_4" resource at url CH4_URL_ONOFF_4 ("/p/o_7").
+ * @brief CoAP GET method for "OnOff_4" resource at url CH4_URL_ONOFF_4 ("/p/7").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -1121,7 +1078,7 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 
  
 /**
- * @brief CoAP POST method for "OnOff_4" resource at url "/p/o_7".
+ * @brief CoAP POST method for "OnOff_4" resource at url "/p/7".
  *
  * The function has as input the request body, which are the input values of the
  * POST method.
@@ -1170,8 +1127,8 @@ post_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
         PRINT("  Fault'\n");
         g_InfoOnOff_4 = false;
       }
-      /* send the status information InfoOnOff_4 to '/p/o_8' with flag 'w' */
-      PRINT("  Send status to '/p/o_8' with flag: 'w'\n");
+      /* send the status information InfoOnOff_4 to '/p/8' with flag 'w' */
+      PRINT("  Send status to '/p/8' with flag: 'w'\n");
       oc_do_s_mode_with_scope(2, CH4_URL_INFOONOFF_4, "w");
       oc_do_s_mode_with_scope(5, CH4_URL_INFOONOFF_4, "w");
       do_post_cb(CH4_URL_ONOFF_4);
@@ -1185,7 +1142,7 @@ post_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
   PRINT("-- End post_OnOff_4\n");
 }
 /**
- * @brief CoAP GET method for "InfoOnOff_4" resource at url CH4_URL_INFOONOFF_4 ("/p/o_8").
+ * @brief CoAP GET method for "InfoOnOff_4" resource at url CH4_URL_INFOONOFF_4 ("/p/8").
  *
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
@@ -1235,394 +1192,6 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 
 // parameters handling
 
-/**
- * @brief CoAP GET method for parameter "Timer_1" resource at url CH1_URL_TIMER_1 ("/p/p_1").
- *
- * function is called to initialize the return values of the GET method.
- * initialization of the returned values are done from the global property
- * values. 
- *
- * @param request the request representation.
- * @param interfaces the interface used for this call
- * @param user_data the user data.
- */
-void
-get_Timer_1(oc_request_t *request, oc_interface_mask_t interfaces,
-               void *user_data)
-{
-  (void)user_data; /* variable not used */
-
-  /* MANUFACTORER: SENSOR add here the code to talk to the HW if one implements a
-     sensor. the call to the HW needs to fill in the global variable before it
-     returns to this function here. alternative is to have a callback from the
-     hardware that sets the global variables.
-  */
-  bool error_state = false; /* the error state, the generated code */
-
-  PRINT("-- Begin get_Timer_1 %s \n", CH1_URL_TIMER_1);
-  /* check if the accept header is CBOR */
-  if (request->accept != APPLICATION_CBOR) {
-    oc_send_response(request, OC_STATUS_BAD_OPTION);
-    return;
-  }
-  
-  oc_rep_begin_root_object();
-  oc_rep_i_set_text_string(root, 1, g_Timer_1);
-  oc_rep_end_root_object();
-  if (g_err) {
-    error_state = true;
-  }
-  PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
-  if (error_state == false) {
-    oc_send_cbor_response(request, OC_STATUS_OK);
-  } else {
-    oc_send_response(request, OC_STATUS_BAD_OPTION);
-  }
-  PRINT("-- End get_Timer_1\n");
-}
-
-/**
- * @brief CoAP POST method for parameter "Timer_1" resource at url "/p/p_1".
- *
- * The function has as input the request body, which are the input values of the
- * POST method.
- * The input values (as a set) are checked if all supplied values are correct.
- * If the input values are correct, they will be assigned to the global property
- * values. 
- *
- * @param request the request representation.
- * @param interfaces the used interfaces during the request.
- * @param user_data the supplied user data.
- */
-void
-post_Timer_1(oc_request_t *request, oc_interface_mask_t interfaces,
-                void *user_data)
-{
-  (void)interfaces;
-  (void)user_data;
-  bool error_state = false;
-  PRINT("-- Begin post_Timer_1:\n");
-
-  oc_rep_t *rep = NULL;
-  /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_redirected_request(request)) {
-    PRINT("  redirected request..\n");
-    /* retrieve the value of the s-mode payload */
-  }
-  rep = request->request_payload;
-  while (rep != NULL) {
-    /* handle the type of payload correctly. */
-    if ((rep->iname == 1) && (rep->type == OC_REP_STRING)) {
-      char* my_val = oc_string(rep->value.string);
-      PRINT("  post_Timer_1 received : %s\n", my_val);
-      strncpy(g_Timer_1, my_val, APP_MAX_STRING);
-      oc_send_cbor_response(request, OC_STATUS_CHANGED);
-      /* MANUFACTORER: add here the code to talk to the HW if one implements an
-       actuator. The call to the HW needs to fill in the global variable before it
-       returns to this function here. Alternative is to have a callback from the
-       hardware that sets the global variables.
-     */
-      //do_post_cb(CH1_URL_TIMER_1);
-      PRINT("-- End post_Timer_1\n");
-      return;
-    }
-    rep = rep->next;
-  }
-
-  oc_send_response(request, OC_STATUS_BAD_REQUEST);
-  PRINT("-- End post_Timer_1\n");
-}
-/**
- * @brief CoAP GET method for parameter "Timer_2" resource at url CH2_URL_TIMER_2 ("/p/p_2").
- *
- * function is called to initialize the return values of the GET method.
- * initialization of the returned values are done from the global property
- * values. 
- *
- * @param request the request representation.
- * @param interfaces the interface used for this call
- * @param user_data the user data.
- */
-void
-get_Timer_2(oc_request_t *request, oc_interface_mask_t interfaces,
-               void *user_data)
-{
-  (void)user_data; /* variable not used */
-
-  /* MANUFACTORER: SENSOR add here the code to talk to the HW if one implements a
-     sensor. the call to the HW needs to fill in the global variable before it
-     returns to this function here. alternative is to have a callback from the
-     hardware that sets the global variables.
-  */
-  bool error_state = false; /* the error state, the generated code */
-
-  PRINT("-- Begin get_Timer_2 %s \n", CH2_URL_TIMER_2);
-  /* check if the accept header is CBOR */
-  if (request->accept != APPLICATION_CBOR) {
-    oc_send_response(request, OC_STATUS_BAD_OPTION);
-    return;
-  }
-  
-  oc_rep_begin_root_object();
-  oc_rep_i_set_text_string(root, 1, g_Timer_2);
-  oc_rep_end_root_object();
-  if (g_err) {
-    error_state = true;
-  }
-  PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
-  if (error_state == false) {
-    oc_send_cbor_response(request, OC_STATUS_OK);
-  } else {
-    oc_send_response(request, OC_STATUS_BAD_OPTION);
-  }
-  PRINT("-- End get_Timer_2\n");
-}
-
-/**
- * @brief CoAP POST method for parameter "Timer_2" resource at url "/p/p_2".
- *
- * The function has as input the request body, which are the input values of the
- * POST method.
- * The input values (as a set) are checked if all supplied values are correct.
- * If the input values are correct, they will be assigned to the global property
- * values. 
- *
- * @param request the request representation.
- * @param interfaces the used interfaces during the request.
- * @param user_data the supplied user data.
- */
-void
-post_Timer_2(oc_request_t *request, oc_interface_mask_t interfaces,
-                void *user_data)
-{
-  (void)interfaces;
-  (void)user_data;
-  bool error_state = false;
-  PRINT("-- Begin post_Timer_2:\n");
-
-  oc_rep_t *rep = NULL;
-  /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_redirected_request(request)) {
-    PRINT("  redirected request..\n");
-    /* retrieve the value of the s-mode payload */
-  }
-  rep = request->request_payload;
-  while (rep != NULL) {
-    /* handle the type of payload correctly. */
-    if ((rep->iname == 1) && (rep->type == OC_REP_STRING)) {
-      char* my_val = oc_string(rep->value.string);
-      PRINT("  post_Timer_2 received : %s\n", my_val);
-      strncpy(g_Timer_2, my_val, APP_MAX_STRING);
-      oc_send_cbor_response(request, OC_STATUS_CHANGED);
-      /* MANUFACTORER: add here the code to talk to the HW if one implements an
-       actuator. The call to the HW needs to fill in the global variable before it
-       returns to this function here. Alternative is to have a callback from the
-       hardware that sets the global variables.
-     */
-      //do_post_cb(CH2_URL_TIMER_2);
-      PRINT("-- End post_Timer_2\n");
-      return;
-    }
-    rep = rep->next;
-  }
-
-  oc_send_response(request, OC_STATUS_BAD_REQUEST);
-  PRINT("-- End post_Timer_2\n");
-}
-/**
- * @brief CoAP GET method for parameter "Timer_3" resource at url CH3_URL_TIMER_3 ("/p/p_3").
- *
- * function is called to initialize the return values of the GET method.
- * initialization of the returned values are done from the global property
- * values. 
- *
- * @param request the request representation.
- * @param interfaces the interface used for this call
- * @param user_data the user data.
- */
-void
-get_Timer_3(oc_request_t *request, oc_interface_mask_t interfaces,
-               void *user_data)
-{
-  (void)user_data; /* variable not used */
-
-  /* MANUFACTORER: SENSOR add here the code to talk to the HW if one implements a
-     sensor. the call to the HW needs to fill in the global variable before it
-     returns to this function here. alternative is to have a callback from the
-     hardware that sets the global variables.
-  */
-  bool error_state = false; /* the error state, the generated code */
-
-  PRINT("-- Begin get_Timer_3 %s \n", CH3_URL_TIMER_3);
-  /* check if the accept header is CBOR */
-  if (request->accept != APPLICATION_CBOR) {
-    oc_send_response(request, OC_STATUS_BAD_OPTION);
-    return;
-  }
-  
-  oc_rep_begin_root_object();
-  oc_rep_i_set_text_string(root, 1, g_Timer_3);
-  oc_rep_end_root_object();
-  if (g_err) {
-    error_state = true;
-  }
-  PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
-  if (error_state == false) {
-    oc_send_cbor_response(request, OC_STATUS_OK);
-  } else {
-    oc_send_response(request, OC_STATUS_BAD_OPTION);
-  }
-  PRINT("-- End get_Timer_3\n");
-}
-
-/**
- * @brief CoAP POST method for parameter "Timer_3" resource at url "/p/p_3".
- *
- * The function has as input the request body, which are the input values of the
- * POST method.
- * The input values (as a set) are checked if all supplied values are correct.
- * If the input values are correct, they will be assigned to the global property
- * values. 
- *
- * @param request the request representation.
- * @param interfaces the used interfaces during the request.
- * @param user_data the supplied user data.
- */
-void
-post_Timer_3(oc_request_t *request, oc_interface_mask_t interfaces,
-                void *user_data)
-{
-  (void)interfaces;
-  (void)user_data;
-  bool error_state = false;
-  PRINT("-- Begin post_Timer_3:\n");
-
-  oc_rep_t *rep = NULL;
-  /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_redirected_request(request)) {
-    PRINT("  redirected request..\n");
-    /* retrieve the value of the s-mode payload */
-  }
-  rep = request->request_payload;
-  while (rep != NULL) {
-    /* handle the type of payload correctly. */
-    if ((rep->iname == 1) && (rep->type == OC_REP_STRING)) {
-      char* my_val = oc_string(rep->value.string);
-      PRINT("  post_Timer_3 received : %s\n", my_val);
-      strncpy(g_Timer_3, my_val, APP_MAX_STRING);
-      oc_send_cbor_response(request, OC_STATUS_CHANGED);
-      /* MANUFACTORER: add here the code to talk to the HW if one implements an
-       actuator. The call to the HW needs to fill in the global variable before it
-       returns to this function here. Alternative is to have a callback from the
-       hardware that sets the global variables.
-     */
-      //do_post_cb(CH3_URL_TIMER_3);
-      PRINT("-- End post_Timer_3\n");
-      return;
-    }
-    rep = rep->next;
-  }
-
-  oc_send_response(request, OC_STATUS_BAD_REQUEST);
-  PRINT("-- End post_Timer_3\n");
-}
-/**
- * @brief CoAP GET method for parameter "Timer_4" resource at url CH4_URL_TIMER_4 ("/p/p_4").
- *
- * function is called to initialize the return values of the GET method.
- * initialization of the returned values are done from the global property
- * values. 
- *
- * @param request the request representation.
- * @param interfaces the interface used for this call
- * @param user_data the user data.
- */
-void
-get_Timer_4(oc_request_t *request, oc_interface_mask_t interfaces,
-               void *user_data)
-{
-  (void)user_data; /* variable not used */
-
-  /* MANUFACTORER: SENSOR add here the code to talk to the HW if one implements a
-     sensor. the call to the HW needs to fill in the global variable before it
-     returns to this function here. alternative is to have a callback from the
-     hardware that sets the global variables.
-  */
-  bool error_state = false; /* the error state, the generated code */
-
-  PRINT("-- Begin get_Timer_4 %s \n", CH4_URL_TIMER_4);
-  /* check if the accept header is CBOR */
-  if (request->accept != APPLICATION_CBOR) {
-    oc_send_response(request, OC_STATUS_BAD_OPTION);
-    return;
-  }
-  
-  oc_rep_begin_root_object();
-  oc_rep_i_set_text_string(root, 1, g_Timer_4);
-  oc_rep_end_root_object();
-  if (g_err) {
-    error_state = true;
-  }
-  PRINT("CBOR encoder size %d\n", oc_rep_get_encoded_payload_size());
-  if (error_state == false) {
-    oc_send_cbor_response(request, OC_STATUS_OK);
-  } else {
-    oc_send_response(request, OC_STATUS_BAD_OPTION);
-  }
-  PRINT("-- End get_Timer_4\n");
-}
-
-/**
- * @brief CoAP POST method for parameter "Timer_4" resource at url "/p/p_4".
- *
- * The function has as input the request body, which are the input values of the
- * POST method.
- * The input values (as a set) are checked if all supplied values are correct.
- * If the input values are correct, they will be assigned to the global property
- * values. 
- *
- * @param request the request representation.
- * @param interfaces the used interfaces during the request.
- * @param user_data the supplied user data.
- */
-void
-post_Timer_4(oc_request_t *request, oc_interface_mask_t interfaces,
-                void *user_data)
-{
-  (void)interfaces;
-  (void)user_data;
-  bool error_state = false;
-  PRINT("-- Begin post_Timer_4:\n");
-
-  oc_rep_t *rep = NULL;
-  /* handle the different requests e.g. via s-mode or normal CoAP call*/
-  if (oc_is_redirected_request(request)) {
-    PRINT("  redirected request..\n");
-    /* retrieve the value of the s-mode payload */
-  }
-  rep = request->request_payload;
-  while (rep != NULL) {
-    /* handle the type of payload correctly. */
-    if ((rep->iname == 1) && (rep->type == OC_REP_STRING)) {
-      char* my_val = oc_string(rep->value.string);
-      PRINT("  post_Timer_4 received : %s\n", my_val);
-      strncpy(g_Timer_4, my_val, APP_MAX_STRING);
-      oc_send_cbor_response(request, OC_STATUS_CHANGED);
-      /* MANUFACTORER: add here the code to talk to the HW if one implements an
-       actuator. The call to the HW needs to fill in the global variable before it
-       returns to this function here. Alternative is to have a callback from the
-       hardware that sets the global variables.
-     */
-      //do_post_cb(CH4_URL_TIMER_4);
-      PRINT("-- End post_Timer_4\n");
-      return;
-    }
-    rep = rep->next;
-  }
-
-  oc_send_response(request, OC_STATUS_BAD_REQUEST);
-  PRINT("-- End post_Timer_4\n");
-}
 
 
 /**
@@ -1805,42 +1374,6 @@ register_resources(void)
   oc_resource_set_observable(res_InfoOnOff_4, true);
   oc_resource_set_request_handler(res_InfoOnOff_4, OC_GET, get_InfoOnOff_4, NULL);
   oc_add_resource(res_InfoOnOff_4);
-  PRINT("Register Resource (parameter)'Timer_1' with local path \"%s\"\n", CH1_URL_TIMER_1);
-  oc_resource_t *res_Timer_1 =
-    oc_new_resource("Timer_1", CH1_URL_TIMER_1, 0, 0);
-  oc_resource_bind_content_type(res_Timer_1, APPLICATION_CBOR);
-  oc_resource_bind_resource_interface(res_Timer_1, OC_IF_A); /* if.a */ 
-  oc_resource_set_function_block_instance(res_Timer_1, 1); /* instance 1 */ 
-  oc_resource_set_request_handler(res_Timer_1, OC_GET, get_Timer_1, NULL);
-  oc_resource_set_request_handler(res_Timer_1, OC_POST, post_Timer_1, NULL); 
-  oc_add_resource(res_Timer_1);
-  PRINT("Register Resource (parameter)'Timer_2' with local path \"%s\"\n", CH2_URL_TIMER_2);
-  oc_resource_t *res_Timer_2 =
-    oc_new_resource("Timer_2", CH2_URL_TIMER_2, 0, 0);
-  oc_resource_bind_content_type(res_Timer_2, APPLICATION_CBOR);
-  oc_resource_bind_resource_interface(res_Timer_2, OC_IF_A); /* if.a */ 
-  oc_resource_set_function_block_instance(res_Timer_2, 2); /* instance 2 */ 
-  oc_resource_set_request_handler(res_Timer_2, OC_GET, get_Timer_2, NULL);
-  oc_resource_set_request_handler(res_Timer_2, OC_POST, post_Timer_2, NULL); 
-  oc_add_resource(res_Timer_2);
-  PRINT("Register Resource (parameter)'Timer_3' with local path \"%s\"\n", CH3_URL_TIMER_3);
-  oc_resource_t *res_Timer_3 =
-    oc_new_resource("Timer_3", CH3_URL_TIMER_3, 0, 0);
-  oc_resource_bind_content_type(res_Timer_3, APPLICATION_CBOR);
-  oc_resource_bind_resource_interface(res_Timer_3, OC_IF_A); /* if.a */ 
-  oc_resource_set_function_block_instance(res_Timer_3, 3); /* instance 3 */ 
-  oc_resource_set_request_handler(res_Timer_3, OC_GET, get_Timer_3, NULL);
-  oc_resource_set_request_handler(res_Timer_3, OC_POST, post_Timer_3, NULL); 
-  oc_add_resource(res_Timer_3);
-  PRINT("Register Resource (parameter)'Timer_4' with local path \"%s\"\n", CH4_URL_TIMER_4);
-  oc_resource_t *res_Timer_4 =
-    oc_new_resource("Timer_4", CH4_URL_TIMER_4, 0, 0);
-  oc_resource_bind_content_type(res_Timer_4, APPLICATION_CBOR);
-  oc_resource_bind_resource_interface(res_Timer_4, OC_IF_A); /* if.a */ 
-  oc_resource_set_function_block_instance(res_Timer_4, 4); /* instance 4 */ 
-  oc_resource_set_request_handler(res_Timer_4, OC_GET, get_Timer_4, NULL);
-  oc_resource_set_request_handler(res_Timer_4, OC_POST, post_Timer_4, NULL); 
-  oc_add_resource(res_Timer_4);
 
 }
 
@@ -1953,10 +1486,6 @@ initialize_variables(void)
   g_OnOff_4 = true;   /**< global variable for OnOff_4 */ 
   g_InfoOnOff_4 = true;   /**< global variable for InfoOnOff_4 */ 
 
-  strcpy(g_Timer_1,"");   /**< global variable for Timer_1 */ 
-  strcpy(g_Timer_2,"");   /**< global variable for Timer_2 */ 
-  strcpy(g_Timer_3,"");   /**< global variable for Timer_3 */ 
-  strcpy(g_Timer_4,"");   /**< global variable for Timer_4 */ 
 }
 
 int app_set_serial_number(char* serial_number)

@@ -73,21 +73,25 @@ int app_initialize_stack();
  */
 int app_set_serial_number(char* serial_number);
 
-
-
+/**
+ * @brief checks if the url depicts an boolean
+ * 
+ * @param url the url to check
+ * @return true: url conveys a boolean
+ */
 bool app_is_bool_url(char* url);
 
 /**
  * @brief retrieve the boolean variable of the url/data point
  * the caller needs to know if the resource/data point is conveying a boolean
- * "/p/o_1" of OnOff_1 
- * "/p/o_2" of InfoOnOff_1 
- * "/p/o_3" of OnOff_2 
- * "/p/o_4" of InfoOnOff_2 
- * "/p/o_5" of OnOff_3 
- * "/p/o_6" of InfoOnOff_3 
- * "/p/o_7" of OnOff_4 
- * "/p/o_8" of InfoOnOff_4 
+ * "/p/1" of OnOff_1 
+ * "/p/2" of InfoOnOff_1 
+ * "/p/3" of OnOff_2 
+ * "/p/4" of InfoOnOff_2 
+ * "/p/5" of OnOff_3 
+ * "/p/6" of InfoOnOff_3 
+ * "/p/7" of OnOff_4 
+ * "/p/8" of InfoOnOff_4 
  * 
  * @param url the url of the resource/data point
  * @return true value is true
@@ -98,16 +102,22 @@ bool app_retrieve_bool_variable(char* url);
 /**
  * @brief set the boolean variable that belongs to the url 
  * The caller needs to know if the resource/data point is conveying a boolean
- * "/p/o_1" of OnOff_1
- * "/p/o_3" of OnOff_2
- * "/p/o_5" of OnOff_3
- * "/p/o_7" of OnOff_4
+ * "/p/1" of OnOff_1
+ * "/p/3" of OnOff_2
+ * "/p/5" of OnOff_3
+ * "/p/7" of OnOff_4
  * 
  * @param url the url of the resource/data point
  * @param value the boolean value to be set
  */
 void app_set_bool_variable(char* url, bool value);
 
+/**
+ * @brief checks if the url depicts an int
+ * 
+ * @param url the url to check
+ * @return true: url conveys a int
+ */
 bool app_is_int_url(char* url);
 
 /**
@@ -130,13 +140,40 @@ int app_retrieve_int_variable(char* url);
 void app_set_integer_variable(char* url, int value);
 
 /**
+ * @brief checks if the url depicts an double
+ * 
+ * @param url the url to check
+ * @return true: url conveys a int
+ */
+bool app_is_double_url(char* url);
+
+/**
+ * @brief retrieve the double variable of the url/data point
+ * the caller needs to know if the resource/data point is conveying a integer
+ * 
+ * @param url the url of the resource/data point
+ * @return true value is true
+ * @return false value is false or error.
+ */
+double app_retrieve_doube_variable(char* url);
+
+/**
+ * @brief set the double variable that belongs to the url 
+ * The caller needs to know if the resource/data point is conveying a double
+ * 
+ * @param url the url of the resource/data point
+ * @param value the boolean value to be set
+ */
+void app_set_double_variable(char* url, double value);
+
+/**
  * @brief function to check if the url is represented by a string
  *
  * @param true = url value is a string
  * @param false = url is not a string
  */
-
 bool app_is_string_url(char* url);
+
 /**
  * @brief sets the global string variable at the url
  *
@@ -161,8 +198,20 @@ char* app_retrieve_string_variable(char* url);
  */
 bool app_is_url_parameter(char* url);
 
+/**
+ * @brief retrieves the url of a parameter
+ * index starts at 1
+ * @param index the index to retrieve the url from
+ * @return the url or NULL
+ */
 char* app_get_parameter_url(int index);
 
+/**
+ * @brief retrieves the name of a parameter
+ * index starts at 1
+ * @param index the index to retrieve the parameter name from
+ * @return the name or NULL
+ */
 char* app_get_parameter_name(int index);
 
 

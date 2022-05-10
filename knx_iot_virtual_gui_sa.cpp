@@ -144,7 +144,7 @@ MyFrame::MyFrame(char* str_serial_number)
 {
     m_menuFile = new wxMenu;
     m_menuFile->Append(GOT_TABLE_ID, "List Group Object Table", "List the Group object table", false);
-    m_menuFile->Append(PARAMETER_LIST_ID, "List Parameters", "List the parameters of the device", false);
+    //m_menuFile->Append(PARAMETER_LIST_ID, "List Parameters", "List the parameters of the device", false);
     m_menuFile->Append(CHECK_PM, "Programming Mode", "Sets the application in programming mode", true);
     m_menuFile->Append(RESET, "Reset (ex-factory)", "Reset the Device to ex-factory state", false);
     m_menuFile->AppendSeparator();
@@ -352,7 +352,6 @@ void MyFrame::OnParameterList(wxCommandEvent& event)
   int device_index = 0;
   char text[1024 * 5];
   char line[200];
-  char line2[200];
   char windowtext[200];
 
   strcpy(text, "");

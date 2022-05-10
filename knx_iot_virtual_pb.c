@@ -138,6 +138,8 @@ volatile bool g_fault_InfoOnOff_4;   /**< global variable for fault InfoOnOff_4 
 
 
 
+// BOOLEAN code
+
 /**
  * @brief function to check if the url is represented by a boolean
  *
@@ -250,6 +252,8 @@ bool app_retrieve_bool_variable(char* url)
   return false;
 }
 
+// INTEGER code
+
 /**
  * @brief function to check if the url is represented by a integer
  *
@@ -280,6 +284,40 @@ int app_retrieve_int_variable(char* url)
   return -1;
 }
 
+// DOUBLE code
+
+/**
+ * @brief function to check if the url is represented by a double
+ *
+ * @param true = url value is a double
+ * @param false = url is not a double
+ */
+bool app_is_double_url(char* url)
+{
+  return false;
+}
+/**
+ * @brief sets the global double variable at the url
+ *
+ * @param url the url indicating the global variable
+ * @param value the value to be set
+ */
+void app_set_double_variable(char* url, double value)
+{
+}
+/**
+ * @brief retrieve the global double variable at the url
+ *
+ * @param url the url indicating the global variable
+ * @return the value of the variable
+ */
+int app_retrieve_double_variable(char* url)
+{
+  return -1;
+}
+
+// STRING code
+
 /**
  * @brief function to check if the url is represented by a string
  *
@@ -309,8 +347,10 @@ void app_set_string_variable(char* url, char* value)
  */
 char* app_retrieve_string_variable(char* url)
 {
-  return -1;
+  return NULL;
 }
+
+// FAULT code
 
 /**
  * @brief set the fault (boolean) variable at the url
@@ -345,6 +385,8 @@ bool app_retrieve_fault_variable(char* url)
   return false;
 }
 
+// PARAMETER code
+
 bool app_is_url_parameter(char* url)
 {
   return false;
@@ -354,7 +396,6 @@ char* app_get_parameter_url(int index)
 {
   return NULL;
 }
-
 
 char* app_get_parameter_name(int index)
 {
