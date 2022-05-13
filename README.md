@@ -100,6 +100,7 @@ Data points:
 - clone this repo
 - go to the repo (cd)
 - mkdir build
+- cd build
 - cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5
   - this command retrieves the dependencies from github
 - open solution (sln) created in the build folder with visual studio
