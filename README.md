@@ -307,7 +307,9 @@ for the Displayotron HAT, by running `./displayotron-install.sh` within
 the knx-iot-virtual folder.
 
 In order to enable DNS-SD Discovery, you will also need to install the
-`avahi-utils` package using `sudo apt-get install avahi-utils`.
+`avahi-utils` package. `python3-dev` is needed for the communication between C
+and Python. Obtain these dependencies using `sudo apt-get install avahi-utils
+python3-dev`.
 
 Finally, you may build the example applications from within the knx-iot-virtual
 directory with the following set of commands:
