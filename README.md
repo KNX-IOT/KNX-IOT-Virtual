@@ -95,7 +95,6 @@ Data points:
 | /p/7  | channel4-OnOff      | dpa.417.61    | if.s |
 | /p/8  | channel4-InfoOnOff  | dpa.417.51 |  if.a |
 
-
 ## Building the applications on Windows
 
 - clone this repo
@@ -105,6 +104,12 @@ Data points:
   - this command retrieves the dependencies from github
 - open solution (sln) created in the build folder with visual studio
 - build the applications in visual studio
+
+To use knx gitlab as source of the KNX-IOT-STACK use the following command:
+
+- cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5 -DUSE_GITLAB=true
+
+Note that one has to have access to knx gitlab.
 
 ### prerequisites windows
 

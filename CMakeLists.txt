@@ -9,10 +9,27 @@ FetchContent_Declare(
     GIT_TAG master
 )
 
+FetchContent_Declare(
+    knx-iot-stack-gitlab
+    GIT_REPOSITORY https://gitlab.knx.org/knxiot/knx-iot-point-api-open-stack.git
+    GIT_TAG master
+)
+
+
+set(USE_GITLAB OFF CACHE BOOL "use gitlab as source for KNX IoT Stack")
+
+if(USE_GITLAB)
+if(NOT knx-iot-stack_POPULATED)
+    FetchContent_Populate(knx-iot-stack-gitlab)
+    add_subdirectory(${knx-iot-stack-gitlab_SOURCE_DIR} ${knx-iot-stack-gitlab_BINARY_DIR})
+endif()
+else()
 if(NOT knx-iot-stack_POPULATED)
     FetchContent_Populate(knx-iot-stack)
     add_subdirectory(${knx-iot-stack_SOURCE_DIR} ${knx-iot-stack_BINARY_DIR})
 endif()
+endif()
+
 
 add_executable(knx_iot_virtual_pb
     ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.c
@@ -32,8 +49,8 @@ add_executable(knx_iot_virtual_dimming_actuator
 target_link_libraries(knx_iot_virtual_dimming_actuator kisClientServer)
 
 if(WIN32)
-	find_package(wxWidgets REQUIRED COMPONENTS net core base)
-	include(${wxWidgets_USE_FILE})
+    find_package(wxWidgets REQUIRED COMPONENTS net core base)
+    include(${wxWidgets_USE_FILE})
     add_executable(knx_iot_virtual_gui_pb WIN32
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_gui_pb.cpp
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.c)
