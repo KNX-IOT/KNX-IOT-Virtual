@@ -175,9 +175,16 @@ git pull --recurse-submodules
 
 updating the knx-iot-stack in knx-iot virtual:
 
-- close all windows, including visual studio
-- remove (or clean) the folder build
-- redo the cmake command listed above
+- Ensure you are within the `knx-iot-virtual` folder
+- Run the following:
+```bash
+cd build/_deps/knx-iot-stack-src
+git pull
+cd ../../../
+```
+
+The next build of `KNX-IoT-Virtual` will use the latest code from `KNX-IoT-Stack`
+
 
 ## The Commandline applications
 
