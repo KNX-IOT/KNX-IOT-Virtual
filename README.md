@@ -99,16 +99,20 @@ Data points:
 
 - clone this repo
 - go to the repo (cd)
-- mkdir build
-- cd build
-- cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5
+```powershell
+mkdir build
+cd build
+cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5
+```
   - this command retrieves the dependencies from github
 - open solution (sln) created in the build folder with visual studio
 - build the applications in visual studio
 
 To use knx gitlab as source of the KNX-IOT-STACK use the following command:
 
-- cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5 -DUSE_GITLAB=true
+```powershell
+cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5 -DUSE_GITLAB=true
+```
 
 Note that one has to have access to knx gitlab.
 
