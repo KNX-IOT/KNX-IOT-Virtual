@@ -95,6 +95,7 @@ static struct timespec ts;
 #ifdef WIN32
 /** windows specific code */
 #include <windows.h>
+#include <WinUser.h>
 static CONDITION_VARIABLE cv; /**< event loop variable */
 static CRITICAL_SECTION cs;   /**< event loop variable */
 #include <direct.h>
@@ -1516,9 +1517,10 @@ int app_initialize_stack()
   */
 #ifdef WIN32
   char storage[40];
-  sprintf(storage,"'./knx_iot_virtual_sa_%s",g_serial_number);  
+  sprintf(storage,"./knx_iot_virtual_sa_%s",g_serial_number);  
   PRINT("\tstorage at '%s' \n",storage);
-  oc_storage_config(storage);
+  int storage_ret = oc_storage_config(storage);
+  PRINT("\treturn value: %d\n", storage_ret);
 #else
   PRINT("\tstorage at 'knx_iot_virtual_sa_creds' \n");
   oc_storage_config("./knx_iot_virtual_sa_creds");
@@ -1640,6 +1642,10 @@ main(int argc, char *argv[])
 {
   oc_clock_time_t next_event;
   bool do_send_s_mode = false;
+
+#ifdef KNX_GUI
+  WinMain(GetModuleHandle(NULL), NULL, GetCommandLine(), SW_SHOWNORMAL);
+#endif
 
 #ifdef WIN32
   /* windows specific */
