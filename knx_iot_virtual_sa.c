@@ -95,6 +95,7 @@ static struct timespec ts;
 #ifdef WIN32
 /** windows specific code */
 #include <windows.h>
+#include <WinUser.h>
 static CONDITION_VARIABLE cv; /**< event loop variable */
 static CRITICAL_SECTION cs;   /**< event loop variable */
 #include <direct.h>
@@ -1640,6 +1641,10 @@ main(int argc, char *argv[])
 {
   oc_clock_time_t next_event;
   bool do_send_s_mode = false;
+
+#ifdef KNX_GUI
+  WinMain(GetModuleHandle(NULL), NULL, GetCommandLine(), SW_SHOWNORMAL);
+#endif
 
 #ifdef WIN32
   /* windows specific */
