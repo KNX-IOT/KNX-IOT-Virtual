@@ -95,7 +95,6 @@ private:
     wxTextCtrl* m_ls_text; // text control for load state
     wxTextCtrl* m_hostname_text; // text control for host name
     wxTextCtrl* m_secured_text; // text for secured/not secured
-    wxTextCtrl* m_debug_text; // Debug console output
 };
 
 
@@ -124,7 +123,7 @@ bool MyApp::OnInit()
 
     MyFrame *frame = new MyFrame((char*)(serial_number.c_str()).AsChar());
     //frame->Fit();
-    frame->SetSize(wxSize(320, 800));  // length x height
+    frame->SetSize(wxSize(400, 295));  // length x height
     frame->Show(true);
     return true;
 }
@@ -221,9 +220,6 @@ MyFrame::MyFrame(char* str_serial_number)
     if (app_is_secure() == false) {
       m_secured_text->SetStyle(0, 100, (wxTextAttr(*wxRED)));
     }
-
-    m_debug_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10, 10 + 200), wxSize(280, 500), wxTE_RICH | wxTE_MULTILINE);
-    m_debug_text->SetEditable(false);
 
     this->updateInfoCheckBoxes();
     this->updateTextButtons();
