@@ -1417,9 +1417,10 @@ int app_initialize_stack()
   */
 #ifdef WIN32
   char storage[40];
-  sprintf(storage,"'./knx_iot_virtual_pb_%s",g_serial_number);  
+  sprintf(storage,"./knx_iot_virtual_pb_%s",g_serial_number);  
   PRINT("\tstorage at '%s' \n",storage);
-  oc_storage_config(storage);
+  int storage_ret = oc_storage_config(storage);
+  PRINT("\treturn value: %d\n", storage_ret);
 #else
   PRINT("\tstorage at 'knx_iot_virtual_pb_creds' \n");
   oc_storage_config("./knx_iot_virtual_pb_creds");
