@@ -57,11 +57,17 @@ if(WIN32)
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_gui_pb.cpp
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.c)
     target_link_libraries(knx_iot_virtual_gui_pb ${wxWidgets_LIBRARIES} kisClientServer)
+    set_target_properties(knx_iot_virtual_gui_pb PROPERTIES
+        LINK_FLAGS /SUBSYSTEM:CONSOLE
+    )
 
     add_executable(knx_iot_virtual_gui_sa WIN32
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_gui_sa.cpp
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_sa.c)
     target_link_libraries(knx_iot_virtual_gui_sa ${wxWidgets_LIBRARIES} kisClientServer)
+    set_target_properties(knx_iot_virtual_gui_sa PROPERTIES
+        LINK_FLAGS /SUBSYSTEM:CONSOLE
+    )
 
 endif()
 
