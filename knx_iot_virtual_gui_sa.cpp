@@ -26,6 +26,7 @@
 #define NO_MAIN
 #include "knx_iot_virtual_pb.h"
 #include "api/oc_knx_dev.h"
+#include "api/oc_knx_sec.h"
 #include "api/oc_knx_fp.h"
 
 enum
@@ -51,7 +52,8 @@ enum
   LS_TEXT = PM_TEXT + 1,  // ID for load status text 
   HOSTNAME_TEXT = LS_TEXT + 1, // ID for hostname text 
   GOT_TABLE_ID = HOSTNAME_TEXT + 1, // ID for the Group object 
-  PARAMETER_LIST_ID = GOT_TABLE_ID + 1 // ID for the parameter list window button
+  PARAMETER_LIST_ID = GOT_TABLE_ID + 1, // ID for the parameter list window button
+  AT_TABLE_ID = PARAMETER_LIST_ID + 1 // ID for the auth at window button
 
 };
 
@@ -76,6 +78,7 @@ public:
 private:
     void OnGroupObjectTable(wxCommandEvent& event);
     void OnParameterList(wxCommandEvent& event);
+    void OnAuthTable(wxCommandEvent& event);
     void OnProgrammingMode(wxCommandEvent& event);
     void OnReset(wxCommandEvent& event);
 
@@ -145,6 +148,7 @@ MyFrame::MyFrame(char* str_serial_number)
     m_menuFile = new wxMenu;
     m_menuFile->Append(GOT_TABLE_ID, "List Group Object Table", "List the Group object table", false);
     //m_menuFile->Append(PARAMETER_LIST_ID, "List Parameters", "List the parameters of the device", false);
+    m_menuFile->Append(AT_TABLE_ID, "List Auth/AT Table", "List the security data of the device", false);
     m_menuFile->Append(CHECK_PM, "Programming Mode", "Sets the application in programming mode", true);
     m_menuFile->Append(RESET, "Reset (ex-factory)", "Reset the Device to ex-factory state", false);
     m_menuFile->AppendSeparator();
@@ -162,6 +166,7 @@ MyFrame::MyFrame(char* str_serial_number)
     Bind(wxEVT_MENU, &MyFrame::OnReset, this, RESET);
     Bind(wxEVT_MENU, &MyFrame::OnGroupObjectTable, this, GOT_TABLE_ID);
     Bind(wxEVT_MENU, &MyFrame::OnParameterList, this, PARAMETER_LIST_ID);
+    Bind(wxEVT_MENU, &MyFrame::OnAuthTable, this, AT_TABLE_ID);
     Bind(wxEVT_MENU, &MyFrame::OnProgrammingMode, this, CHECK_PM);
 
     m_btn_1 = new wxButton(this, BUTTON_1, _T("Actuator 1 ('/p/1')"), wxPoint(10, 10 ), wxSize(130, 25), 0);
@@ -398,6 +403,92 @@ void MyFrame::OnParameterList(wxCommandEvent& event)
 
   SetStatusText("List Parameters and their current set values");
 
+}
+
+
+void MyFrame::OnAuthTable(wxCommandEvent& event)
+{
+  int device_index = 0;
+  char text[1024 * 5];
+  char line[200];
+  char windowtext[200];
+  int max_entries = 20; // need a function for this
+  int index = 1;
+
+  oc_device_info_t* device = oc_core_get_device_info(device_index);
+  if (device == NULL) {
+    return;
+  }
+
+  strcpy(text, "");
+  for (index = 0; index < max_entries; index++) {
+
+    oc_auth_at_t* my_entry = oc_get_auth_at_entry(device_index, index);
+    if (my_entry != NULL) {
+      if (oc_string_len(my_entry->id)) {
+        sprintf(line, "index : '%d' id = '%s' \n", index, oc_string(my_entry->id));
+        strcat(text, line);
+        sprintf(line, "  profile : %d (%s)\n", my_entry->profile,
+          oc_at_profile_to_string(my_entry->profile));
+        strcat(text, line);
+        if (my_entry->profile == OC_PROFILE_COAP_DTLS) {
+          if (oc_string_len(my_entry->sub) > 0) {
+            sprintf(line, "    sub           : %s\n", oc_string(my_entry->sub));
+            strcat(text, line);
+          }
+          if (oc_string_len(my_entry->kid) > 0) {
+            sprintf(line, "  kid : %s\n", oc_string(my_entry->kid));
+            strcat(text, line);
+          }
+        }
+        if (my_entry->profile == OC_PROFILE_COAP_OSCORE) {
+          if (oc_string_len(my_entry->osc_id) > 0) {
+            sprintf(line, "  osc_id : %s\n",
+              oc_string(my_entry->osc_id));
+            strcat(text, line);
+          }
+          if (oc_string_len(my_entry->osc_ms) > 0) {
+            sprintf(line, "  osc_ms : ");
+            strcat(text, line);
+            int length = (int)oc_string_len(my_entry->osc_ms);
+            char* ms = oc_string(my_entry->osc_ms);
+            for (int i = 0; i < length; i++) {
+              sprintf(line, "%02x", (unsigned char)ms[i]);
+              strcat(text, line);
+            }
+            sprintf(line, "\n");
+            strcat(text, line);
+          }
+          if (oc_string_len(my_entry->osc_alg) > 0) {
+            sprintf(line, "  osc_alg : %s\n",
+              oc_string(my_entry->osc_alg));
+            strcat(text, line);
+          }
+          if (oc_string_len(my_entry->osc_contextid) > 0) {
+            sprintf(line, "  osc_contextid : %s\n",
+              oc_string(my_entry->osc_contextid));
+            strcat(text, line);
+          }
+          if (my_entry->ga_len > 0) {
+            sprintf(line, "  osc_ga : [");
+            strcat(text, line);
+            for (int i = 0; i < my_entry->ga_len; i++) {
+              sprintf(line, " %d", my_entry->ga[i]);
+              strcat(text, line);
+            }
+            sprintf(line, " ]\n");
+            strcat(text, line);
+          }
+        }
+      }
+    }
+  }
+
+  strcpy(windowtext, "Auth AT Table ");
+  strcat(windowtext, oc_string(device->serialnumber));
+  wxMessageBox(text, windowtext,
+    wxOK | wxICON_NONE);
+  SetStatusText("List security entries");
 }
 
 void MyFrame::OnAbout(wxCommandEvent& event)
