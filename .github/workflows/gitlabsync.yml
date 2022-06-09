@@ -1,0 +1,23 @@
+name: GitlabSync
+
+on:
+  - push
+  - delete
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    name: Git Repo Sync
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: WAvdBeek/git-repo-sync@master
+      with:
+        # Such as https://github.com/wangchucheng/git-repo-sync.git
+        # https://gitlab.knx.org/knxiot/knx-iot-point-api.git
+        target-url: 'gitlab.knx.org/shared-projects/knx-iot-virtual.git'
+        # Such as wangchucheng
+        target-username: 'WoutervanderBeek'
+          # You can store token in your project's 'Setting > Secrets' and reference the name here. Such as ${{ secrets.ACCESS\_TOKEN }}
+        target-token: ${{ secrets.TARGET_TOKEN }}
