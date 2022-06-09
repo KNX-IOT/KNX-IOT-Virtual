@@ -11,7 +11,7 @@ FetchContent_Declare(
 
 FetchContent_Declare(
     knx-iot-stack-gitlab
-    GIT_REPOSITORY https://gitlab.knx.org/knxiot/knx-iot-point-api-open-stack.git
+    GIT_REPOSITORY https://gitlab.knx.org/shared-projects/knx-iot-point-api-public-stack.git
     GIT_TAG master
 )
 
