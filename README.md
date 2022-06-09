@@ -31,6 +31,8 @@ There are 2 applications in this repo:
 - knx_iot_virtual_pb Application (Push button)
 - knx_iot_virtual_sa Application (Switch Actuator)
 
+Both applications are using the [KNX IoT Point API stack](https://github.com/KNX-IOT/KNX-IOT-STACK)
+
 The general structure of these programs are:
 
 ```
@@ -173,22 +175,11 @@ https://www.wxwidgets.org/downloads/
 
 ## updating KNX-IOT-Virtual code base
 
-please use recursive pull request:
+Please "touch" the `CMakeLists.txt` file, then the visual studio solution will see
+that the file is outdated and will do a pull of the depended projects during
+the next build of `KNX-IoT-Virtual` will use the latest code from `KNX-IoT-Stack`
 
-git pull --recurse-submodules
-
-updating the knx-iot-stack in knx-iot virtual:
-
-- Ensure you are within the `knx-iot-virtual` folder
-- Run the following:
-```bash
-cd build/_deps/knx-iot-stack-src
-git pull
-cd ../../../
-```
-
-The next build of `KNX-IoT-Virtual` will use the latest code from `KNX-IoT-Stack`
-
+Note: touch on windows: please add in the file a blank somewhere and save. e.g. the save date on disk will change.
 
 ## The Commandline applications
 
