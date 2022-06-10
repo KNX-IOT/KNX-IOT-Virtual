@@ -116,8 +116,6 @@ To use knx gitlab as source of the KNX-IOT-STACK use the following command:
 cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5 -DUSE_GITLAB=true
 ```
 
-Note that one has to have access to knx gitlab.
-
 ### prerequisites windows
 
 The prerequisites are the dependencies that are needed to build the applications on Windows:
@@ -296,14 +294,7 @@ These settings will take place upon reboot, so please reboot the device when pro
 
 ### Building the Pi Applications
 
-Obtain a clone of this repository using `git clone
-https://github.com/KNX-IOT/knx-iot-virtual`. If you see a login prompt, use your
-GitHub username and a personal access token with "repo" access scope.
-
-Since personal access tokens are difficult to keep track of, you may want to
-tell git to remember the access tokens you use using `git config --global
-credential.helper store`. The credentials will be stored on the SD card in
-plaintext, within `~/.git-credentials`.
+Obtain a clone of this repository using.
 
 Once you have obtained the repository, you must install the Python drivers
 for the Displayotron HAT, by running `./displayotron-install.sh` within
