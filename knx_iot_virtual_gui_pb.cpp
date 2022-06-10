@@ -459,6 +459,9 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
             }
             sprintf(line, " ]\n");
             strcat(text, line);
+          } else {
+             sprintf(line, "  scope : %d ", my_entry->scope);
+             strcat(text, line);
           }
         }
       }
