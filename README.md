@@ -6,7 +6,7 @@
     - [The knx_iot_virtual_pb Application](#the-knx_iot_virtual_pb-application)
     - [knx_iot_virtual_sa Application](#knx_iot_virtual_sa-application)
   - [Building the applications on Windows](#building-the-applications-on-windows)
-    - [prerequisites windows](#prerequisites-windows)
+    - [Prerequisites windows](#prerequisites-windows)
       - [perl](#perl)
       - [python](#python)
       - [installing wxWidgets on Windows](#installing-wxwidgets-on-windows)
@@ -99,16 +99,33 @@ Data points:
 
 ## Building the applications on Windows
 
-- clone this repo
-- go to the repo (cd)
-```powershell
-mkdir build
-cd build
-cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5
-```
-  - this command retrieves the dependencies from github
-- open solution (sln) created in the build folder with visual studio
-- build the applications in visual studio
+1. clone this repo
+
+   ```powershell
+   # clone the repo
+   git clone https://github.com/KNX-IOT/KNX-IOT-STACK.git
+   ```
+
+1. go to the repo (cd into KNX-IOT-STACK) and create the make infra structure.
+
+   ```powershell
+   cd  KNX-IOT-STACK
+   mkdir build
+   cd build
+   cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5
+   ```
+
+1. open solution (sln) created in the build folder with visual studio
+  
+   ```powershell
+   # clone the repo
+   cd build
+   # open knx-virtual.sln in visual studio
+   ```
+
+1. build the applications in visual studio
+  
+   Note: build the release version.
 
 To use knx gitlab as source of the KNX-IOT-STACK use the following command:
 
@@ -116,7 +133,7 @@ To use knx gitlab as source of the KNX-IOT-STACK use the following command:
 cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5 -DUSE_GITLAB=true
 ```
 
-### prerequisites windows
+### Prerequisites windows
 
 The prerequisites are the dependencies that are needed to build the applications on Windows:
 
