@@ -1,4 +1,8 @@
+![windows build](https://github.com/KNX-IOT/KNX-IOT-Virtual/actions/workflows/cmake-linux.yml/badge.svg)
+![sync](https://github.com/KNX-IOT/KNX-IOT-Virtual/actions/workflows/gitlabsync.yml/badge.svg)
+
 # KNX-IOT-Virtual
+
 <!-- TOC -->
 
 - [KNX-IOT-Virtual](#knx-iot-virtual)
