@@ -10,6 +10,8 @@
     - [The knx_iot_virtual_pb Application](#the-knx_iot_virtual_pb-application)
     - [knx_iot_virtual_sa Application](#knx_iot_virtual_sa-application)
   - [Building the applications on Windows](#building-the-applications-on-windows)
+  - [Running the application on windows](#running-the-application-on-windows)
+    - [python utility `restart_app.py`](#python-utility-restart_apppy)
     - [Prerequisites windows](#prerequisites-windows)
       - [perl](#perl)
       - [python](#python)
@@ -136,6 +138,18 @@ To use knx gitlab as source of the KNX-IOT-STACK use the following command:
 ```powershell
 cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5 -DUSE_GITLAB=true
 ```
+
+## Running the application on windows
+
+The applications do not have a mechanims to restart themselves.
+So if the applications are started from the commmand line, then the `restart` command from ETS will just shut down the application and will not restart the application.
+
+### python utility `restart_app.py`
+
+This utility can start an application, and if the application quits it will restart the application automatically.
+
+Note: Please stop the process by doing `Ctrl-C` in the window where python command is started.
+The `Ctrl-C` is only handled when the application stops, e.g. `Ctrl-C` won't be honored when the application is running. 
 
 ### Prerequisites windows
 
