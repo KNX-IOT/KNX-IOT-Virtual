@@ -15,8 +15,14 @@ FetchContent_Declare(
     GIT_TAG master
 )
 
+#FetchContent_Declare(
+#    wx_widgets
+#    GIT_REPOSITORY  https://github.com/wxWidgets/wxWidgets.git
+#    GIT_TAG master
+#)
 
 set(USE_GITLAB OFF CACHE BOOL "use gitlab as source for KNX IoT Stack")
+set(USE_CONSOLE OFF CACHE BOOL "use console (for output logging)")
 
 if(USE_GITLAB)
     if(NOT knx-iot-stack_POPULATED)
@@ -51,6 +57,15 @@ add_executable(knx_iot_virtual_dimming_actuator
 target_link_libraries(knx_iot_virtual_dimming_actuator kisClientServer)
 
 if(WIN32)
+
+    #if(NOT wx_widgets_POPULATED)
+    #    message(STATUS "Fetching wxWidgets, please wait...")
+    #    FetchContent_Populate(wx_widgets)
+    #    add_subdirectory(${wx_widgets_SOURCE_DIR} ${wx_widgets_BINARY_DIR})
+    #endif()
+
+    #set(wxWidgets_CONFIGURATION mswu)
+    set(wxWidgets_ROOT_DIR ${wx_widgets_SOURCE_DIR})
     find_package(wxWidgets REQUIRED COMPONENTS net core base)
     include(${wxWidgets_USE_FILE})
     add_executable(knx_iot_virtual_gui_pb WIN32
@@ -58,18 +73,22 @@ if(WIN32)
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.c)
     target_link_libraries(knx_iot_virtual_gui_pb ${wxWidgets_LIBRARIES} kisClientServer)
     target_compile_definitions(knx_iot_virtual_gui_pb PUBLIC KNX_GUI)
-    set_target_properties(knx_iot_virtual_gui_pb PROPERTIES
+   if(USE_CONSOLE)
+      set_target_properties(knx_iot_virtual_gui_pb PROPERTIES
         LINK_FLAGS /SUBSYSTEM:CONSOLE
-    )
+      )
+    endif()
 
     add_executable(knx_iot_virtual_gui_sa WIN32
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_gui_sa.cpp
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_sa.c)
     target_link_libraries(knx_iot_virtual_gui_sa ${wxWidgets_LIBRARIES} kisClientServer)
     target_compile_definitions(knx_iot_virtual_gui_sa PUBLIC KNX_GUI)
-    set_target_properties(knx_iot_virtual_gui_sa PROPERTIES
+    if(USE_CONSOLE)
+      set_target_properties(knx_iot_virtual_gui_sa PROPERTIES
         LINK_FLAGS /SUBSYSTEM:CONSOLE
-    )
+      )
+    endif()
 
 endif()
 

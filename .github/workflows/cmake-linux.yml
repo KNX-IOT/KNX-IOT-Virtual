@@ -51,18 +51,18 @@ jobs:
           cd linuxbuild_sec
           cmake ../. -DOC_OSCORE_ENABLED=OFF
           make all
-  unsecured-gitlab:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build unsecured binaries
-        run: |
-          # https://github.com/actions/checkout/issues/81
-          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-          git submodule sync --recursive
-          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-          # create the make files in a subfolder
-          mkdir linuxbuild_sec
-          cd linuxbuild_sec
-          cmake ../. -DOC_OSCORE_ENABLED=OFF -DUSE_GITLAB=ON
-          make all
+  #unsecured-gitlab:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - uses: actions/checkout@v2
+  #    - name: Build unsecured binaries
+  #      run: |
+  #        # https://github.com/actions/checkout/issues/81
+  #        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+  #        git submodule sync --recursive
+  #        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+  #        # create the make files in a subfolder
+  #        mkdir linuxbuild_sec
+  #        cd linuxbuild_sec
+  #        cmake ../. -DOC_OSCORE_ENABLED=OFF -DUSE_GITLAB=ON
+  #        make all
