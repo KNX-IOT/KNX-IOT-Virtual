@@ -15,13 +15,11 @@ FetchContent_Declare(
     GIT_TAG master
 )
 
-FetchContent_Declare(
-    wx_widgets
-    GIT_REPOSITORY  https://github.com/wxWidgets/wxWidgets.git
-    GIT_TAG master
-)
-
-
+#FetchContent_Declare(
+#    wx_widgets
+#    GIT_REPOSITORY  https://github.com/wxWidgets/wxWidgets.git
+#    GIT_TAG master
+#)
 
 set(USE_GITLAB OFF CACHE BOOL "use gitlab as source for KNX IoT Stack")
 set(USE_CONSOLE OFF CACHE BOOL "use console (for output logging)")
