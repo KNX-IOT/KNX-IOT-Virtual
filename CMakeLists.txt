@@ -14,6 +14,9 @@ FetchContent_Declare(
     GIT_REPOSITORY https://gitlab.knx.org/shared-projects/knx-iot-point-api-public-stack.git
     GIT_TAG master
 )
+if(MSVC)
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
 
 #FetchContent_Declare(
 #    wx_widgets
