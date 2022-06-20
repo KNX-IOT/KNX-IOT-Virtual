@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Push Button
- *
+ * 2022-06-17 16:39:30.971988
  * ## Application Design
  *
  * support functions:
@@ -57,7 +57,10 @@
  *   compile out the function main()
  * - INCLUDE_EXTERNAL
  *   includes header file "external_header.h", so that other tools/dependencies
- can be included without changing this code
+ *   can be included without changing this code
+ * - KNX_GUI
+ *   build the GUI with console option, so that all 
+ *   logging can be seen in the command window
  */
 #include "oc_api.h"
 #include "oc_core_res.h"
@@ -95,7 +98,6 @@ static struct timespec ts;
 #ifdef WIN32
 /** windows specific code */
 #include <windows.h>
-#include <WinUser.h>
 static CONDITION_VARIABLE cv; /**< event loop variable */
 static CRITICAL_SECTION cs;   /**< event loop variable */
 #include <direct.h>
@@ -111,14 +113,14 @@ bool g_reset = false;   /**< reset variable, set by commandline arguments */
 char g_serial_number[20] = "0003000";
 
 /* list all object urls as defines */
-#define CH1_URL_ONOFF_1 "/p/1"   /**< define for url /p/1 of OnOff_1 */
-#define CH1_URL_INFOONOFF_1 "/p/2"   /**< define for url /p/2 of InfoOnOff_1 */
-#define CH2_URL_ONOFF_2 "/p/3"   /**< define for url /p/3 of OnOff_2 */
-#define CH2_URL_INFOONOFF_2 "/p/4"   /**< define for url /p/4 of InfoOnOff_2 */
-#define CH3_URL_ONOFF_3 "/p/5"   /**< define for url /p/5 of OnOff_3 */
-#define CH3_URL_INFOONOFF_3 "/p/6"   /**< define for url /p/6 of InfoOnOff_3 */
-#define CH4_URL_ONOFF_4 "/p/7"   /**< define for url /p/7 of OnOff_4 */
-#define CH4_URL_INFOONOFF_4 "/p/8"   /**< define for url /p/8 of InfoOnOff_4 */
+#define CH1_URL_ONOFF_1 "/p/o_1_1"   /**< define for url "/p/o_1_1" of "OnOff_1" */
+#define CH1_URL_INFOONOFF_1 "/p/o_2_2"   /**< define for url "/p/o_2_2" of "InfoOnOff_1" */
+#define CH2_URL_ONOFF_2 "/p/o_3_3"   /**< define for url "/p/o_3_3" of "OnOff_2" */
+#define CH2_URL_INFOONOFF_2 "/p/o_4_4"   /**< define for url "/p/o_4_4" of "InfoOnOff_2" */
+#define CH3_URL_ONOFF_3 "/p/o_5_5"   /**< define for url "/p/o_5_5" of "OnOff_3" */
+#define CH3_URL_INFOONOFF_3 "/p/o_6_6"   /**< define for url "/p/o_6_6" of "InfoOnOff_3" */
+#define CH4_URL_ONOFF_4 "/p/o_7_7"   /**< define for url "/p/o_7_7" of "OnOff_4" */
+#define CH4_URL_INFOONOFF_4 "/p/o_8_8"   /**< define for url "/p/o_8_8" of "InfoOnOff_4" */
 
 /* list all parameter urls as defines */
 
@@ -312,7 +314,7 @@ void app_set_double_variable(char* url, double value)
  * @param url the url indicating the global variable
  * @return the value of the variable
  */
-int app_retrieve_double_variable(char* url)
+double app_retrieve_double_variable(char* url)
 {
   return -1;
 }
@@ -466,14 +468,14 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
  * @brief function to set up the device.
  *
  * sets the:
- * - manufacturer  : cascoda
- * - serial number : 0003000
+ * - manufacturer     : cascoda
+ * - serial number    : 0003000
  * - base path
- * - knx spec version
- * - hardware version
- * - firmware version
- * - hardware type
- * - device model
+ * - knx spec version 
+ * - hardware version : [0, 1, 2]
+ * - firmware version : [3, 4, 5]
+ * - hardware type    : Linux/windows
+ * - device model     : KNX virtual - PB
  *
  */
 int
@@ -487,11 +489,14 @@ app_init(void)
   oc_device_info_t *device = oc_core_get_device_info(0);
   PRINT("Serial Number: %s\n", oc_string(device->serialnumber));
 
+  
   /* set the hardware version 0.1.2 */
   oc_core_set_device_hwv(0, 0, 1, 2);
-
+  
+  
   /* set the firmware version 3.4.5 */
   oc_core_set_device_fwv(0, 3, 4, 5);
+  
 
   /* set the hardware type*/
   oc_core_set_device_hwt(0, "Linux/windows");
@@ -513,9 +518,10 @@ app_init(void)
 
 // data point (objects) handling
 
+
 /**
- * @brief CoAP GET method for "OnOff_1" resource at url CH1_URL_ONOFF_1 ("/p/1").
- *
+ * @brief CoAP GET method for data point "OnOff_1" resource at url CH1_URL_ONOFF_1 ("/p/o_1_1").
+ * resource types: ['urn:knx:dpa.421.61', 'DPT_Switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -560,9 +566,10 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 }
 
 
+
 /**
- * @brief CoAP GET method for "InfoOnOff_1" resource at url CH1_URL_INFOONOFF_1 ("/p/2").
- *
+ * @brief CoAP GET method for data point "InfoOnOff_1" resource at url CH1_URL_INFOONOFF_1 ("/p/o_2_2").
+ * resource types: ['urn:knx:dpa.421.51', 'DPT_Switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -608,8 +615,8 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 
  
 /**
- * @brief CoAP POST method for "InfoOnOff_1" resource at url "/p/2".
- *
+ * @brief CoAP POST method for data point "InfoOnOff_1" resource at url "/p/o_2_2".
+ * resource types: ['urn:knx:dpa.421.51', 'DPT_Switch']
  * The function has as input the request body, which are the input values of the
  * POST method.
  * The input values (as a set) are checked if all supplied values are correct.
@@ -657,9 +664,10 @@ post_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
   PRINT("-- End post_InfoOnOff_1\n");
 }
+
 /**
- * @brief CoAP GET method for "OnOff_2" resource at url CH2_URL_ONOFF_2 ("/p/3").
- *
+ * @brief CoAP GET method for data point "OnOff_2" resource at url CH2_URL_ONOFF_2 ("/p/o_3_3").
+ * resource types: ['urn:knx:dpa.421.61', 'DPT_Switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -704,9 +712,10 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 }
 
 
+
 /**
- * @brief CoAP GET method for "InfoOnOff_2" resource at url CH2_URL_INFOONOFF_2 ("/p/4").
- *
+ * @brief CoAP GET method for data point "InfoOnOff_2" resource at url CH2_URL_INFOONOFF_2 ("/p/o_4_4").
+ * resource types: ['urn:knx:dpa.421.51', 'DPT_Switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -752,8 +761,8 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 
  
 /**
- * @brief CoAP POST method for "InfoOnOff_2" resource at url "/p/4".
- *
+ * @brief CoAP POST method for data point "InfoOnOff_2" resource at url "/p/o_4_4".
+ * resource types: ['urn:knx:dpa.421.51', 'DPT_Switch']
  * The function has as input the request body, which are the input values of the
  * POST method.
  * The input values (as a set) are checked if all supplied values are correct.
@@ -801,9 +810,10 @@ post_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
   PRINT("-- End post_InfoOnOff_2\n");
 }
+
 /**
- * @brief CoAP GET method for "OnOff_3" resource at url CH3_URL_ONOFF_3 ("/p/5").
- *
+ * @brief CoAP GET method for data point "OnOff_3" resource at url CH3_URL_ONOFF_3 ("/p/o_5_5").
+ * resource types: ['urn:knx:dpa.421.61', 'DPT_Switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -848,9 +858,10 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 }
 
 
+
 /**
- * @brief CoAP GET method for "InfoOnOff_3" resource at url CH3_URL_INFOONOFF_3 ("/p/6").
- *
+ * @brief CoAP GET method for data point "InfoOnOff_3" resource at url CH3_URL_INFOONOFF_3 ("/p/o_6_6").
+ * resource types: ['urn:knx:dpa.421.51', 'DPT_Switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -896,8 +907,8 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 
  
 /**
- * @brief CoAP POST method for "InfoOnOff_3" resource at url "/p/6".
- *
+ * @brief CoAP POST method for data point "InfoOnOff_3" resource at url "/p/o_6_6".
+ * resource types: ['urn:knx:dpa.421.51', 'DPT_Switch']
  * The function has as input the request body, which are the input values of the
  * POST method.
  * The input values (as a set) are checked if all supplied values are correct.
@@ -945,9 +956,10 @@ post_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
   PRINT("-- End post_InfoOnOff_3\n");
 }
+
 /**
- * @brief CoAP GET method for "OnOff_4" resource at url CH4_URL_ONOFF_4 ("/p/7").
- *
+ * @brief CoAP GET method for data point "OnOff_4" resource at url CH4_URL_ONOFF_4 ("/p/o_7_7").
+ * resource types: ['urn:knx:dpa.421.61', 'DPT_Switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -992,9 +1004,10 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 }
 
 
+
 /**
- * @brief CoAP GET method for "InfoOnOff_4" resource at url CH4_URL_INFOONOFF_4 ("/p/8").
- *
+ * @brief CoAP GET method for data point "InfoOnOff_4" resource at url CH4_URL_INFOONOFF_4 ("/p/o_8_8").
+ * resource types: ['urn:knx:dpa.421.51', 'DPT_Switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -1040,8 +1053,8 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 
  
 /**
- * @brief CoAP POST method for "InfoOnOff_4" resource at url "/p/8".
- *
+ * @brief CoAP POST method for data point "InfoOnOff_4" resource at url "/p/o_8_8".
+ * resource types: ['urn:knx:dpa.421.51', 'DPT_Switch']
  * The function has as input the request body, which are the input values of the
  * POST method.
  * The input values (as a set) are checked if all supplied values are correct.
@@ -1371,21 +1384,23 @@ swu_cb(size_t device_index, size_t offset, uint8_t *payload, size_t len,
 
 /**
  * @brief initializes the global variables
- * registers and starts the handler
+ * for the resources 
+ * for the parameters
  */
 void
 initialize_variables(void)
 {
   /* initialize global variables for resources */
   /* if wanted read them from persistent storage */
-  g_OnOff_1 = true;   /**< global variable for OnOff_1 */ 
-  g_InfoOnOff_1 = true;   /**< global variable for InfoOnOff_1 */ 
-  g_OnOff_2 = true;   /**< global variable for OnOff_2 */ 
-  g_InfoOnOff_2 = true;   /**< global variable for InfoOnOff_2 */ 
-  g_OnOff_3 = true;   /**< global variable for OnOff_3 */ 
-  g_InfoOnOff_3 = true;   /**< global variable for InfoOnOff_3 */ 
-  g_OnOff_4 = true;   /**< global variable for OnOff_4 */ 
-  g_InfoOnOff_4 = true;   /**< global variable for InfoOnOff_4 */ 
+  g_OnOff_1 = false;   /**< global variable for OnOff_1 */ 
+  g_InfoOnOff_1 = false;   /**< global variable for InfoOnOff_1 */ 
+  g_OnOff_2 = false;   /**< global variable for OnOff_2 */ 
+  g_InfoOnOff_2 = false;   /**< global variable for InfoOnOff_2 */ 
+  g_OnOff_3 = false;   /**< global variable for OnOff_3 */ 
+  g_InfoOnOff_3 = false;   /**< global variable for InfoOnOff_3 */ 
+  g_OnOff_4 = false;   /**< global variable for OnOff_4 */ 
+  g_InfoOnOff_4 = false;   /**< global variable for InfoOnOff_4 */ 
+  /* parameter variables */
 
 }
 
@@ -1419,8 +1434,7 @@ int app_initialize_stack()
   char storage[40];
   sprintf(storage,"./knx_iot_virtual_pb_%s",g_serial_number);  
   PRINT("\tstorage at '%s' \n",storage);
-  int storage_ret = oc_storage_config(storage);
-  PRINT("\treturn value: %d\n", storage_ret);
+  oc_storage_config(storage);
 #else
   PRINT("\tstorage at 'knx_iot_virtual_pb_creds' \n");
   oc_storage_config("./knx_iot_virtual_pb_creds");
@@ -1528,6 +1542,7 @@ print_usage()
   PRINT("no arguments : starts the server\n");
   PRINT("-help  : this message\n");
   PRINT("reset  : does an full reset of the device\n");
+  PRINT("-s <serial number> : sets the serial number of the device\n");
   exit(0);
 }
 /**
@@ -1575,6 +1590,13 @@ main(int argc, char *argv[])
     if (strcmp(argv[1], "-help") == 0) {
       print_usage();
     }
+  }
+  if (argc > 2) {
+     if (strcmp(argv[1], "-s") == 0) {
+        // serial number
+        PRINT("serial number %s\n", argv[2]);
+        app_set_serial_number(argv[2]);
+     }
   }
 
   /* do all initialization */
