@@ -23,6 +23,7 @@
  * e.g. if the c code is compiled without main then 
  * these functions can be used to call all generated code
  *
+ * 2022-06-17 16:39:30.984990
  */
 
 #include "oc_api.h"
@@ -84,14 +85,14 @@ bool app_is_bool_url(char* url);
 /**
  * @brief retrieve the boolean variable of the url/data point
  * the caller needs to know if the resource/data point is conveying a boolean
- * "/p/1" of OnOff_1 
- * "/p/2" of InfoOnOff_1 
- * "/p/3" of OnOff_2 
- * "/p/4" of InfoOnOff_2 
- * "/p/5" of OnOff_3 
- * "/p/6" of InfoOnOff_3 
- * "/p/7" of OnOff_4 
- * "/p/8" of InfoOnOff_4 
+ * "/p/o_1_1" of OnOff_1 
+ * "/p/o_2_2" of InfoOnOff_1 
+ * "/p/o_3_3" of OnOff_2 
+ * "/p/o_4_4" of InfoOnOff_2 
+ * "/p/o_5_5" of OnOff_3 
+ * "/p/o_6_6" of InfoOnOff_3 
+ * "/p/o_7_7" of OnOff_4 
+ * "/p/o_8_8" of InfoOnOff_4 
  * 
  * @param url the url of the resource/data point
  * @return true value is true
@@ -102,10 +103,10 @@ bool app_retrieve_bool_variable(char* url);
 /**
  * @brief set the boolean variable that belongs to the url 
  * The caller needs to know if the resource/data point is conveying a boolean
- * "/p/2" of InfoOnOff_1
- * "/p/4" of InfoOnOff_2
- * "/p/6" of InfoOnOff_3
- * "/p/8" of InfoOnOff_4
+ * "/p/o_2_2" of InfoOnOff_1
+ * "/p/o_4_4" of InfoOnOff_2
+ * "/p/o_6_6" of InfoOnOff_3
+ * "/p/o_8_8" of InfoOnOff_4
  * 
  * @param url the url of the resource/data point
  * @param value the boolean value to be set
@@ -155,7 +156,7 @@ bool app_is_double_url(char* url);
  * @return true value is true
  * @return false value is false or error.
  */
-double app_retrieve_doube_variable(char* url);
+double app_retrieve_double_variable(char* url);
 
 /**
  * @brief set the double variable that belongs to the url 
@@ -213,8 +214,6 @@ char* app_get_parameter_url(int index);
  * @return the name or NULL
  */
 char* app_get_parameter_name(int index);
-
-
 
 /**
  * @brief retrieve the fault state of the url/data point

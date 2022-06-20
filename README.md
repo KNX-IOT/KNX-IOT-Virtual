@@ -73,16 +73,16 @@ Push Button (PB)
 
 Data points:
 
-| url  | channel/usage       | resource type | interface type |
-|------| --------------------| --------------| ---------------|
-| /p/1  | channel1-OnOff      | dpa.421.61    | if.s |
-| /p/2  | channel1-InfoOnOff  | dpa.421.51 |  if.a |
-| /p/3  | channel2-OnOff      |  dpa.421.61    | if.s |
-| /p/4  | channel2-InfoOnOff  | dpa.421.51 |  if.a |
-| /p/5  | channel3-OnOff      | dpa.421.61    | if.s |
-| /p/6  | channel3-InfoOnOff  | dpa.421.51 |  if.a |
-| /p/7  | channel4-OnOff      | dpa.421.61    | if.s |
-| /p/8  | channel4-InfoOnOff  | dpa.421.51 |  if.a |
+| url  | channel/usage       | instance |resource type | interface type | data type |
+|------| --------------------| -------- | -------------| ---------------|-----------|
+| "/p/o_1_1"  | OnOff_1 |  1 |urn:knx:dpa.421.61 | if.s |bool |
+| "/p/o_2_2"  | InfoOnOff_1 |  1 |urn:knx:dpa.421.51 | if.a |bool |
+| "/p/o_3_3"  | OnOff_2 |  2 |urn:knx:dpa.421.61 | if.s |bool |
+| "/p/o_4_4"  | InfoOnOff_2 |  2 |urn:knx:dpa.421.51 | if.a |bool |
+| "/p/o_5_5"  | OnOff_3 |  3 |urn:knx:dpa.421.61 | if.s |bool |
+| "/p/o_6_6"  | InfoOnOff_3 |  3 |urn:knx:dpa.421.51 | if.a |bool |
+| "/p/o_7_7"  | OnOff_4 |  4 |urn:knx:dpa.421.61 | if.s |bool |
+| "/p/o_8_8"  | InfoOnOff_4 |  4 |urn:knx:dpa.421.51 | if.a |bool |
 
 ### knx_iot_virtual_sa Application
 
@@ -92,16 +92,16 @@ Switch Actuator (SA)
 
 Data points:
 
-| url  | channel/usage       | resource type | interface type |
-|------| --------------------| --------------| ---------------|
-| /p/1  | channel1-OnOff      | dpa.417.61    | if.s |
-| /p/2  | channel1-InfoOnOff  | dpa.417.51 |  if.a |
-| /p/3  | channel2-OnOff      |  dpa.417.61    | if.s |
-| /p/4  | channel2-InfoOnOff  | dpa.417.51 |  if.a |
-| /p/5  | channel3-OnOff      | dpa.417.61    | if.s |
-| /p/6  | channel3-InfoOnOff  | dpa.417.51 |  if.a |
-| /p/7  | channel4-OnOff      | dpa.417.61    | if.s |
-| /p/8  | channel4-InfoOnOff  | dpa.417.51 |  if.a |
+| url  | channel/usage       | instance |resource type | interface type | data type |
+|------| --------------------| -------- | -------------| ---------------|-----------|
+| "/p/o_1_1"  | OnOff_1 |  1 |urn:knx:dpa.417.61 | if.a |bool |
+| "/p/o_2_2"  | InfoOnOff_1 |  1 |urn:knx:dpa.417.51 | if.s |bool |
+| "/p/o_3_3"  | OnOff_2 |  2 |urn:knx:dpa.417.61 | if.a |bool |
+| "/p/o_4_4"  | InfoOnOff_2 |  2 |urn:knx:dpa.417.51 | if.s |bool |
+| "/p/o_5_5"  | OnOff_3 |  3 |urn:knx:dpa.417.61 | if.a |bool |
+| "/p/o_6_6"  | InfoOnOff_3 |  3 |urn:knx:dpa.417.51 | if.s |bool |
+| "/p/o_7_7"  | OnOff_4 |  4 |urn:knx:dpa.417.61 | if.a |bool |
+| "/p/o_8_8"  | InfoOnOff_4 |  4 |urn:knx:dpa.417.51 | if.s |bool |
 
 ## Building the applications on Windows
 
@@ -120,6 +120,8 @@ Data points:
    cd build
    cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5
    ```
+
+Note: The above set of commands is already in `build.sh`.
 
 1. open solution (sln) created in the build folder with visual studio
   
