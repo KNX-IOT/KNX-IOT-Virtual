@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Switching Actuator
- * 2022-06-17 16:39:31.420240
+ * 2022-06-20 15:47:10.263940
  * ## Application Design
  *
  * support functions:
@@ -368,10 +368,10 @@ void app_set_fault_variable(char* url, bool value)
     g_fault_OnOff_1 = value;   /**< global fault variable for OnOff_1 */
     if (value == true) {
       /* this is a fault is set the info variable on fault */
-      app_set_bool_variable(CH1_URL_ONOFF_1, false);
+      app_set_bool_variable("/p/o_2_2", false);
     } else {
       /* restore the value from the current data*/
-      app_set_bool_variable(CH1_URL_ONOFF_1, g_OnOff_1); 
+      app_set_bool_variable("/p/o_2_2", g_OnOff_1); 
     }
   } 
   if ( strcmp(url, CH2_URL_ONOFF_2) == 0) { 
@@ -379,10 +379,10 @@ void app_set_fault_variable(char* url, bool value)
     g_fault_OnOff_2 = value;   /**< global fault variable for OnOff_2 */
     if (value == true) {
       /* this is a fault is set the info variable on fault */
-      app_set_bool_variable(CH2_URL_ONOFF_2, false);
+      app_set_bool_variable("/p/o_4_4", false);
     } else {
       /* restore the value from the current data*/
-      app_set_bool_variable(CH2_URL_ONOFF_2, g_OnOff_2); 
+      app_set_bool_variable("/p/o_4_4", g_OnOff_2); 
     }
   } 
   if ( strcmp(url, CH3_URL_ONOFF_3) == 0) { 
@@ -390,10 +390,10 @@ void app_set_fault_variable(char* url, bool value)
     g_fault_OnOff_3 = value;   /**< global fault variable for OnOff_3 */
     if (value == true) {
       /* this is a fault is set the info variable on fault */
-      app_set_bool_variable(CH3_URL_ONOFF_3, false);
+      app_set_bool_variable("/p/o_6_6", false);
     } else {
       /* restore the value from the current data*/
-      app_set_bool_variable(CH3_URL_ONOFF_3, g_OnOff_3); 
+      app_set_bool_variable("/p/o_6_6", g_OnOff_3); 
     }
   } 
   if ( strcmp(url, CH4_URL_ONOFF_4) == 0) { 
@@ -401,10 +401,10 @@ void app_set_fault_variable(char* url, bool value)
     g_fault_OnOff_4 = value;   /**< global fault variable for OnOff_4 */
     if (value == true) {
       /* this is a fault is set the info variable on fault */
-      app_set_bool_variable(CH4_URL_ONOFF_4, false);
+      app_set_bool_variable("/p/o_8_8", false);
     } else {
       /* restore the value from the current data*/
-      app_set_bool_variable(CH4_URL_ONOFF_4, g_OnOff_4); 
+      app_set_bool_variable("/p/o_8_8", g_OnOff_4); 
     }
   }
 }

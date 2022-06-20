@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2022-06-17 16:39:31.479240
+// 2022-06-20 15:47:10.329975
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -220,6 +220,7 @@ MyFrame::MyFrame(char* str_serial_number)
   // if.s  ==> sensor == possible to change value in UI
   m_INFOONOFF_1 = new wxButton(this, DP_ID_INFOONOFF_1, _T("InfoOnOff_1 ('/p/o_2_2')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
   m_INFOONOFF_1->Bind(wxEVT_BUTTON, &MyFrame::OnPressed_InfoOnOff_1, this);
+  m_INFOONOFF_1->Enable(false); 
   
   index = 3-1;
   row = 2 -1;
@@ -234,6 +235,7 @@ MyFrame::MyFrame(char* str_serial_number)
   // if.s  ==> sensor == possible to change value in UI
   m_INFOONOFF_2 = new wxButton(this, DP_ID_INFOONOFF_2, _T("InfoOnOff_2 ('/p/o_4_4')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
   m_INFOONOFF_2->Bind(wxEVT_BUTTON, &MyFrame::OnPressed_InfoOnOff_2, this);
+  m_INFOONOFF_2->Enable(false); 
   
   index = 5-1;
   row = 3 -1;
@@ -248,6 +250,7 @@ MyFrame::MyFrame(char* str_serial_number)
   // if.s  ==> sensor == possible to change value in UI
   m_INFOONOFF_3 = new wxButton(this, DP_ID_INFOONOFF_3, _T("InfoOnOff_3 ('/p/o_6_6')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
   m_INFOONOFF_3->Bind(wxEVT_BUTTON, &MyFrame::OnPressed_InfoOnOff_3, this);
+  m_INFOONOFF_3->Enable(false); 
   
   index = 7-1;
   row = 4 -1;
@@ -262,15 +265,16 @@ MyFrame::MyFrame(char* str_serial_number)
   // if.s  ==> sensor == possible to change value in UI
   m_INFOONOFF_4 = new wxButton(this, DP_ID_INFOONOFF_4, _T("InfoOnOff_4 ('/p/o_8_8')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
   m_INFOONOFF_4->Bind(wxEVT_BUTTON, &MyFrame::OnPressed_InfoOnOff_4, this);
+  m_INFOONOFF_4->Enable(false); 
   
-    m_fault_ONOFF_1 = new wxCheckBox(this, DP_FAULT_ID_ONOFF_1, _T("Fault OnOff_1"),  wxPoint(20 + (2* x_width), 10 + ((1/2 ) * x_height)), wxSize(x_width, x_height), 0);
-    m_fault_ONOFF_1->Bind(wxEVT_CHECKBOX, &MyFrame:: OnFault_ONOFF_1, this); 
-    m_fault_ONOFF_2 = new wxCheckBox(this, DP_FAULT_ID_ONOFF_2, _T("Fault OnOff_2"),  wxPoint(20 + (2* x_width), 10 + ((3/2 ) * x_height)), wxSize(x_width, x_height), 0);
-    m_fault_ONOFF_2->Bind(wxEVT_CHECKBOX, &MyFrame:: OnFault_ONOFF_2, this); 
-    m_fault_ONOFF_3 = new wxCheckBox(this, DP_FAULT_ID_ONOFF_3, _T("Fault OnOff_3"),  wxPoint(20 + (2* x_width), 10 + ((5/2 ) * x_height)), wxSize(x_width, x_height), 0);
-    m_fault_ONOFF_3->Bind(wxEVT_CHECKBOX, &MyFrame:: OnFault_ONOFF_3, this); 
-    m_fault_ONOFF_4 = new wxCheckBox(this, DP_FAULT_ID_ONOFF_4, _T("Fault OnOff_4"),  wxPoint(20 + (2* x_width), 10 + ((7/2 ) * x_height)), wxSize(x_width, x_height), 0);
-    m_fault_ONOFF_4->Bind(wxEVT_CHECKBOX, &MyFrame:: OnFault_ONOFF_4, this); 
+  m_fault_ONOFF_1 = new wxCheckBox(this, DP_FAULT_ID_ONOFF_1, _T("Fault OnOff_1"),  wxPoint(20 + (2* x_width), 10 + ((1/2 ) * x_height)), wxSize(x_width, x_height), 0);
+  m_fault_ONOFF_1->Bind(wxEVT_CHECKBOX, &MyFrame:: OnFault_ONOFF_1, this); 
+  m_fault_ONOFF_2 = new wxCheckBox(this, DP_FAULT_ID_ONOFF_2, _T("Fault OnOff_2"),  wxPoint(20 + (2* x_width), 10 + ((3/2 ) * x_height)), wxSize(x_width, x_height), 0);
+  m_fault_ONOFF_2->Bind(wxEVT_CHECKBOX, &MyFrame:: OnFault_ONOFF_2, this); 
+  m_fault_ONOFF_3 = new wxCheckBox(this, DP_FAULT_ID_ONOFF_3, _T("Fault OnOff_3"),  wxPoint(20 + (2* x_width), 10 + ((5/2 ) * x_height)), wxSize(x_width, x_height), 0);
+  m_fault_ONOFF_3->Bind(wxEVT_CHECKBOX, &MyFrame:: OnFault_ONOFF_3, this); 
+  m_fault_ONOFF_4 = new wxCheckBox(this, DP_FAULT_ID_ONOFF_4, _T("Fault OnOff_4"),  wxPoint(20 + (2* x_width), 10 + ((7/2 ) * x_height)), wxSize(x_width, x_height), 0);
+  m_fault_ONOFF_4->Bind(wxEVT_CHECKBOX, &MyFrame:: OnFault_ONOFF_4, this); 
 
   if (strlen(str_serial_number) > 1) {
     app_set_serial_number(str_serial_number);
@@ -443,7 +447,6 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
   SetStatusText("List Group Object Table");
 }
 
-
 /**
  * @brief shows the Publisher table in a window
  * 
@@ -509,8 +512,6 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
     wxOK | wxICON_NONE);
   SetStatusText("List Publisher Table");
 }
-
-
 
 /**
  * @brief shows the Recipient table in a window
@@ -761,7 +762,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2022-06-17 16:39:31.479240");
+  strcat(text, "2022-06-20 15:47:10.329975");
   wxMessageBox(text, "KNX virtual Switching Actuator",
     wxOK | wxICON_NONE);
 }
@@ -830,11 +831,23 @@ void  MyFrame::updateInfoButtons()
   strcpy(text, "OnOff_4 ('/p/o_7_7')");
   this->bool2text(p, text);
   m_ONOFF_4->SetLabel(text); 
+  p = app_retrieve_bool_variable("/p/o_2_2"); // set button text of InfoOnOff_1
+  strcpy(text, "InfoOnOff_1 ('/p/o_2_2')");
+  this->bool2text(p, text);
+  m_INFOONOFF_1->SetLabel(text); 
+  p = app_retrieve_bool_variable("/p/o_4_4"); // set button text of InfoOnOff_2
+  strcpy(text, "InfoOnOff_2 ('/p/o_4_4')");
+  this->bool2text(p, text);
+  m_INFOONOFF_2->SetLabel(text); 
+  p = app_retrieve_bool_variable("/p/o_6_6"); // set button text of InfoOnOff_3
+  strcpy(text, "InfoOnOff_3 ('/p/o_6_6')");
+  this->bool2text(p, text);
+  m_INFOONOFF_3->SetLabel(text); 
+  p = app_retrieve_bool_variable("/p/o_8_8"); // set button text of InfoOnOff_4
+  strcpy(text, "InfoOnOff_4 ('/p/o_8_8')");
+  this->bool2text(p, text);
+  m_INFOONOFF_4->SetLabel(text); 
 
-  //bool p = app_retrieve_bool_variable("/p/1");
-  //strcpy(text, "Actuator 1 ('/p/1')");
-  //this->bool2text(p, text);
-  //m_btn_1->SetLabel(text);
 }
 void MyFrame::OnPressed_InfoOnOff_1(wxCommandEvent& event)
 {
