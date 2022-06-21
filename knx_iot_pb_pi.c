@@ -47,8 +47,8 @@ knx_handle_left(PyObject *self, PyObject *args)
   // don't care about args, so don't check them
   (void)self;
   (void)args;
-  printf("Left from C! (/p/0_1_1) \n");
-  char url[] = "/p/0_1_1";
+  printf("Left from C! (/p/o_1_1) \n");
+  char url[] = "/p/o_1_1";
   bool p1 = app_retrieve_bool_variable(url);
   if (p1 == true) {
     p1 = false;
