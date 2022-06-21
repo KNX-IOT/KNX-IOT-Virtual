@@ -47,8 +47,8 @@ knx_handle_left(PyObject *self, PyObject *args)
   // don't care about args, so don't check them
   (void)self;
   (void)args;
-  printf("Left from C! (/p/1) \n");
-  char url[] = "/p/1";
+  printf("Left from C! (/p/0_1_1) \n");
+  char url[] = "/p/0_1_1";
   bool p1 = app_retrieve_bool_variable(url);
   if (p1 == true) {
     p1 = false;
@@ -70,8 +70,8 @@ knx_handle_mid(PyObject *self, PyObject *args)
   // don't care about args, so don't check them
   (void)self;
   (void)args;
-  printf("Mid from C!  (/p/3)\n");  
-  char url[] = "/p/3";
+  printf("Mid from C!  (/p/o_3_3)\n");  
+  char url[] = "/p/o_3_3";
   bool p1 = app_retrieve_bool_variable(url);
   if (p1 == true) {
     p1 = false;
@@ -93,8 +93,8 @@ knx_handle_right(PyObject *self, PyObject *args)
   // don't care about args, so don't check them
   (void)self;
   (void)args;
-  printf("Right from C! (/p/5)\n");
-  char url[] = "/p/5";
+  printf("Right from C! (/p/o_5_5)\n");
+  char url[] = "/p/o_5_5";
   bool p1 = app_retrieve_bool_variable(url);
   if (p1 == true) {
     p1 = false;
@@ -116,8 +116,8 @@ knx_handle_up(PyObject *self, PyObject *args)
   // don't care about args, so don't check them
   (void)self;
   (void)args;
-  printf("UP from C! (/p/7)\n");
-  char url[] = "/p/7";
+  printf("UP from C! (/p/o_7_7)\n");
+  char url[] = "/p/o_7_7";
   bool p1 = app_retrieve_bool_variable(url);
   if (p1 == true) {
     p1 = false;
@@ -140,8 +140,8 @@ knx_handle_down(PyObject *self, PyObject *args)
   // don't care about args, so don't check them
   (void)self;
   (void)args;
-  printf("Down from C! (/p/9)\n");
-  char url[] = "/p/9";
+  printf("Down from C! (/p/o_9_9)\n");
+  char url[] = "/p/o_9_9";
   bool p1 = app_retrieve_bool_variable(url);
   if (p1 == true) {
     p1 = false;
@@ -163,8 +163,8 @@ knx_handle_cancel(PyObject *self, PyObject *args)
   // don't care about args, so don't check them
   (void)self;
   (void)args;
-  printf("Cancel from C! (/p/11)\n");
-  char url[] = "/p/11";
+  printf("Cancel from C! (/p/o_11_11)\n");
+  char url[] = "/p/o_11_11";
   bool p1 = app_retrieve_bool_variable(url);
   if (p1 == true) {
     p1 = false;
@@ -283,10 +283,10 @@ set_led(int led_nr, bool value)
 
 void post_callback(char* url){
   bool my_bool = app_retrieve_bool_variable(url);
-  if (strcmp(url, "/p/2") == 0) set_led(1, my_bool);
-  if (strcmp(url, "/p/4") == 0) set_led(2, my_bool);
-  if (strcmp(url, "/p/6") == 0) set_led(3, my_bool);
-  if (strcmp(url, "/p/8") == 0) set_led(4, my_bool);
+  if (strcmp(url, "/p/o_2_2") == 0) set_led(1, my_bool);
+  if (strcmp(url, "/p/o_4_4") == 0) set_led(2, my_bool);
+  if (strcmp(url, "/p/o_6_6") == 0) set_led(3, my_bool);
+  if (strcmp(url, "/p/o_8_8") == 0) set_led(4, my_bool);
   // other 2 not yet mapped
 }
 
