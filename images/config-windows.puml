@@ -1,0 +1,15 @@
+@startuml
+skinparam componentStyle rectangle
+
+component "Configurator\n Application" as config
+
+node "Windows PC"  as host{
+        component "KNX IoT Virtual Push Button\n Application" as o1
+        component "KNX IoT Virtual Switch Actuator\n Application" as cli
+        cli <-> o1 : s-mode
+}
+
+config -down-> o1 : config PB
+config -down-> cli : config SA
+
+@enduml

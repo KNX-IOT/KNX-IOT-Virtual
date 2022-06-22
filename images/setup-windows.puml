@@ -1,0 +1,18 @@
+@startuml
+skinparam componentStyle rectangle
+
+
+rectangle "Windows"  as host{
+        component "KNX IoT Virtual Push Button" as o1
+        component "KNX IoT Virtual Switch Actuator)" as cli
+        cli <-> o1 : s-mode
+
+
+        note as N
+2 devices running 
+on windows
+end note
+
+}
+
+@enduml
