@@ -184,14 +184,23 @@ example (from the folder where the executable resides):
 1. clone this repo
 
    ```powershell
-   # clone the repo
-   git clone https://github.com/KNX-IOT/KNX-IOT-STACK.git
+   # clone the repo from GitHub
+   git clone https://github.com/KNX-IOT/KNX-IOT-Virtual.git
+   # go into the created folder
+   cd KNX-IOT-Virtual
    ```
 
-1. go to the repo (cd into KNX-IOT-STACK) and create the make infra structure.
+   ```powershell
+   # clone the repo from GitLab
+   git clone https://gitlab.knx.org/shared-projects/knx-iot-virtual.git
+      # go into the created folder
+   cd knx-iot-virtual
+   cd 
+   ```
+
+1. Create the make infra structure.
 
    ```powershell
-   cd  KNX-IOT-STACK
    mkdir build
    cd build
    cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5
