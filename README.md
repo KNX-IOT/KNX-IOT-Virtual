@@ -1,36 +1,37 @@
 ![Linux](https://github.com/KNX-IOT/KNX-IOT-Virtual/actions/workflows/cmake-linux.yml/badge.svg)
 ![sync](https://github.com/KNX-IOT/KNX-IOT-Virtual/actions/workflows/gitlabsync.yml/badge.svg)
 
-# KNX-IOT-Virtual
+# 1. KNX-IOT-Virtual
 
 <!-- TOC -->
 
-- [KNX-IOT-Virtual](#knx-iot-virtual)
-  - [The Applications](#the-applications)
-    - [The knx_iot_virtual_pb Application](#the-knx_iot_virtual_pb-application)
-    - [knx_iot_virtual_sa Application](#knx_iot_virtual_sa-application)
-  - [Building the applications on Windows](#building-the-applications-on-windows)
-  - [Running the application on windows](#running-the-application-on-windows)
-    - [python utility `restart_app.py`](#python-utility-restart_apppy)
-    - [Prerequisites windows](#prerequisites-windows)
-      - [perl](#perl)
-      - [python](#python)
-      - [installing wxWidgets on Windows](#installing-wxwidgets-on-windows)
-  - [updating KNX-IOT-Virtual code base](#updating-knx-iot-virtual-code-base)
-  - [The Commandline applications](#the-commandline-applications)
-  - [WxWidget GUI Applications](#wxwidget-gui-applications)
-    - [Push Button wxWidget GUI](#push-button-wxwidget-gui)
-    - [Switch Actuator wxWidget GUI](#switch-actuator-wxwidget-gui)
-    - [Override the serial number (wxWidgets only)](#override-the-serial-number-wxwidgets-only)
-  - [Raspberry Pi Applications](#raspberry-pi-applications)
-    - [Basic Thread Border Router Set-Up](#basic-thread-border-router-set-up)
-    - [Accessing the Thread Border Router CLI](#accessing-the-thread-border-router-cli)
-    - [Configuring the Raspberry Pi](#configuring-the-raspberry-pi)
-    - [Building the Pi Applications](#building-the-pi-applications)
-    - [Running the Pi applications](#running-the-pi-applications)
+- [1. KNX-IOT-Virtual](#1-knx-iot-virtual)
+  - [1.1. The Applications](#11-the-applications)
+    - [1.1.1. The knx_iot_virtual_pb Application](#111-the-knx_iot_virtual_pb-application)
+    - [1.1.2. knx_iot_virtual_sa Application](#112-knx_iot_virtual_sa-application)
+  - [1.2. Building the applications on Windows](#12-building-the-applications-on-windows)
+  - [1.3. Running the application on windows](#13-running-the-application-on-windows)
+    - [1.3.1. python utility `restart_app.py`](#131-python-utility-restart_apppy)
+    - [1.3.2. Prerequisites windows](#132-prerequisites-windows)
+      - [1.3.2.1. perl](#1321-perl)
+      - [1.3.2.2. python](#1322-python)
+      - [1.3.2.3. installing wxWidgets on Windows](#1323-installing-wxwidgets-on-windows)
+  - [1.4. updating KNX-IOT-Virtual code base](#14-updating-knx-iot-virtual-code-base)
+  - [1.5. The Commandline applications](#15-the-commandline-applications)
+  - [1.6. WxWidget GUI Applications](#16-wxwidget-gui-applications)
+    - [1.6.1. Push Button wxWidget GUI](#161-push-button-wxwidget-gui)
+    - [1.6.2. Switch Actuator wxWidget GUI](#162-switch-actuator-wxwidget-gui)
+    - [1.6.3. Override the serial number (wxWidgets only)](#163-override-the-serial-number-wxwidgets-only)
+  - [1.7. Raspberry Pi Applications](#17-raspberry-pi-applications)
+    - [1.7.1. Basic Thread Border Router Set-Up](#171-basic-thread-border-router-set-up)
+    - [1.7.2. Accessing the Thread Border Router CLI](#172-accessing-the-thread-border-router-cli)
+    - [1.7.3. Configuring the Raspberry Pi](#173-configuring-the-raspberry-pi)
+    - [1.7.4. Building the Pi Applications](#174-building-the-pi-applications)
+    - [1.7.5. Running the Pi applications](#175-running-the-pi-applications)
 
 <!-- /TOC -->
-## The Applications
+
+## 1.1. The Applications
 
 There are 2 applications in this repo:
 
@@ -65,7 +66,7 @@ The point code has an API so that one can:
 - callback on POST data changes
 - functions to figure out what type of data the url conveys
 
-### The knx_iot_virtual_pb Application
+### 1.1.1. The knx_iot_virtual_pb Application
 
 Push Button (PB)
 
@@ -84,7 +85,7 @@ Data points:
 | "/p/o_7_7"  | OnOff_4 |  4 |urn:knx:dpa.421.61 | if.s |bool |
 | "/p/o_8_8"  | InfoOnOff_4 |  4 |urn:knx:dpa.421.51 | if.a |bool |
 
-### knx_iot_virtual_sa Application
+### 1.1.2. knx_iot_virtual_sa Application
 
 Switch Actuator (SA)
 
@@ -103,7 +104,7 @@ Data points:
 | "/p/o_7_7"  | OnOff_4 |  4 |urn:knx:dpa.417.61 | if.a |bool |
 | "/p/o_8_8"  | InfoOnOff_4 |  4 |urn:knx:dpa.417.51 | if.s |bool |
 
-## Building the applications on Windows
+## 1.2. Building the applications on Windows
 
 1. clone this repo
 
@@ -141,19 +142,19 @@ To use knx gitlab as source of the KNX-IOT-STACK use the following command:
 cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5 -DUSE_GITLAB=true
 ```
 
-## Running the application on windows
+## 1.3. Running the application on windows
 
 The applications do not have a mechanims to restart themselves.
 So if the applications are started from the commmand line, then the `restart` command from ETS will just shut down the application and will not restart the application.
 
-### python utility `restart_app.py`
+### 1.3.1. python utility `restart_app.py`
 
 This utility can start an application, and if the application quits it will restart the application automatically.
 
 Note: Please stop the process by doing `Ctrl-C` in the window where python command is started.
 The `Ctrl-C` is only handled when the application stops, e.g. `Ctrl-C` won't be honored when the application is running. 
 
-### Prerequisites windows
+### 1.3.2. Prerequisites windows
 
 The prerequisites are the dependencies that are needed to build the applications on Windows:
 
@@ -161,7 +162,7 @@ The prerequisites are the dependencies that are needed to build the applications
 - python
 - wxWidgets
 
-#### perl
+#### 1.3.2.1. perl
 
 Building (e.g. configuring wxWidgets with Cmake) requires perl
 If perl is not installed then install it via a Windows installer available at:
@@ -177,7 +178,7 @@ which perl
 # /usr/bin/perl
 ```
 
-#### python
+#### 1.3.2.2. python
 
 Building (e.g. configuring wxWidgets with CMake) requires python
 
@@ -194,7 +195,7 @@ which python
 # <some path>/python
 ```
 
-#### installing wxWidgets on Windows
+#### 1.3.2.3. installing wxWidgets on Windows
 
 download wxwidgets from (installer source code):
 https://www.wxwidgets.org/downloads/
@@ -208,7 +209,7 @@ https://www.wxwidgets.org/downloads/
     - static Win32 library for Debug & Release
     - static x64 library for Debug & Release
 
-## updating KNX-IOT-Virtual code base
+## 1.4. updating KNX-IOT-Virtual code base
 
 Please "touch" the `CMakeLists.txt` file, then the visual studio solution will see
 that the file is outdated and will do a pull of the depended projects during
@@ -216,7 +217,7 @@ the next build of `KNX-IoT-Virtual` will use the latest code from `KNX-IoT-Stack
 
 Note: touch on windows: please add in the file a blank somewhere and save. e.g. the save date on disk will change.
 
-## The Commandline applications
+## 1.5. The Commandline applications
 
 The command line applications are:
 
@@ -227,7 +228,7 @@ The command line applications can run on Linux & Windows.
 Both applications show the interaction with printfs.
 The Push Button application has no means to fire a push button interaction.
 
-## WxWidget GUI Applications
+## 1.6. WxWidget GUI Applications
 
 ```
    _________________
@@ -241,14 +242,14 @@ The Push Button application has no means to fire a push button interaction.
   Code on windows using WxWidgets as GUI framework
 ```
 
-### Push Button wxWidget GUI
+### 1.6.1. Push Button wxWidget GUI
 
 The application implements:
 
 - Button to send on/off, status bar shows what is being send (on=true or off=false)
 - Toggle for InfoOnOff (readonly) shows the received info, the toggle is for viewing only
 
-### Switch Actuator wxWidget GUI
+### 1.6.2. Switch Actuator wxWidget GUI
 
 The application implements:
 
@@ -256,7 +257,7 @@ The application implements:
 - Toggle for Info (readonly) shows the received info, the toggle is for viewing only
 - Toggle for Fault info, e.g. allows sending the received status back or always false (e.g. not active).
 
-### Override the serial number (wxWidgets only)
+### 1.6.3. Override the serial number (wxWidgets only)
 
 The serial number can be overridden with the command line argument -s.
 
@@ -267,7 +268,7 @@ example (from the folder where the executable resides):
 .\knx_iot_virtual_gui_sa.exe -s 0000444
 ```
 
-## Raspberry Pi Applications
+## 1.7. Raspberry Pi Applications
 
 Versions of the Push Button and Switch Actuator applications are also available for the Cascoda Thread Border Router (Raspberry Pi).
 These work alongside the Pimoroni Displayotron PiHat and take advantage of its six touch buttons, LEDs and LCD display.
@@ -289,7 +290,7 @@ The applications are:
   Code on the Pi
 ```
 
-info about Pimoroni Displayotron hat :
+Info about Pimoroni Displayotron hat :
 
 https://pinout.xyz/pinout/display_o_tron_hat?msclkid=02fa4484c6d511ecaaaf64d47a2d5e81
 
@@ -303,14 +304,14 @@ The main differences wrt to wxWidget apps are:
 - interaction via python to turn on/off the leds (sa & pb)
   - via callback of the point api code (on CoAP POST)
 
-### Basic Thread Border Router Set-Up
+### 1.7.1. Basic Thread Border Router Set-Up
 
 Please flash an SD card with [the latest Border Router prebuilt image available
 here](https://github.com/Cascoda/install-script/releases). Insert the SD
 card into a Raspberry Pi 3 or 4, attach the Displayotron HAT and then connect
 the Raspberry Pi to your wired via Ethernet. Finally, power on the Raspberry Pi by connecting the power supply cable.
 
-### Accessing the Thread Border Router CLI
+### 1.7.2. Accessing the Thread Border Router CLI
 
 You can configure the Thread Border Router via SSH, through the Ethernet connection. The default
 hostname is `raspberrypi`. Alternatively, you may connect a keyboard & HDMI monitor to the
@@ -319,7 +320,7 @@ Raspberry Pi and access the terminal directly that way.
 Once you have access to the terminal, log in as the user `pi` using the default password,
 `raspberry`
 
-### Configuring the Raspberry Pi
+### 1.7.3. Configuring the Raspberry Pi
 
 Please access the configuration menu available through `sudo raspi-config`. Once you are in,
 use the arrow keys and navigate to Advanced Options, then select Expand Filesystem. Once that is
@@ -329,9 +330,10 @@ giving the two Raspberry Pis different Hostnames so that you can SSH into them e
 
 These settings will take place upon reboot, so please reboot the device when prompted.
 
-### Building the Pi Applications
+### 1.7.4. Building the Pi Applications
 
-Obtain a clone of this repository using.
+Obtain a clone of this repository using git.
+e.g. the resulting action should be a folder `knx-iot-virtual`
 
 Once you have obtained the repository, you must install the Python drivers
 for the Displayotron HAT, by running `./displayotron-install.sh` within
@@ -352,7 +354,9 @@ cmake ../
 make -j4 
 ```
 
-### Running the Pi applications
+The applications should be available in the `knx-iot-virtual/bin`` folder.
+
+### 1.7.5. Running the Pi applications
 
 The Raspberry Pi Push Button application is called `knx_iot_pb_pi`. You
 should see the backlight of the Displayotron HAT turn on as soon as the
@@ -363,3 +367,5 @@ the touch buttons on the Displayotron HAT.
 The Switching Actuator application is called `knx_iot_sa_pi`. The KNX
 resources are equivalent to `knx_iot_virtual_sa` and likewise the actuators
 control the status of the six LEDs on the side of the display.
+
+Once one of the applications has been started, the device can commissioned.
