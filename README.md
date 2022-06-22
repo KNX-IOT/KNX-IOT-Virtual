@@ -10,6 +10,8 @@
     - [1.1.1. The knx_iot_virtual_pb Application](#111-the-knx_iot_virtual_pb-application)
     - [1.1.2. knx_iot_virtual_sa Application](#112-knx_iot_virtual_sa-application)
   - [1.2. Updating KNX-IOT-Virtual code base](#12-updating-knx-iot-virtual-code-base)
+    - [GitHub access](#github-access)
+    - [GitLab access](#gitlab-access)
   - [1.1.3. The Commandline applications](#113-the-commandline-applications)
   - [1.3. WxWidget GUI Applications (Windows)](#13-wxwidget-gui-applications-windows)
     - [1.3.1. Push Button wxWidget GUI](#131-push-button-wxwidget-gui)
@@ -111,6 +113,20 @@ that the file is outdated and will do a pull of the depended projects during
 the next build of `KNX-IoT-Virtual` will use the latest code from `KNX-IoT-Stack`
 
 Note: touch on windows: please add in the file a blank somewhere and save. e.g. the save date on disk will change.
+
+### GitHub access
+
+Obtain a clone of this repository using `git clone https://github.com/KNX-IOT/knx-iot-virtual`.
+If you see a login prompt, use your GitHub username and a personal access token with "repo" access scope.
+
+Since personal access tokens are difficult to keep track of, you may want to tell git to remember the access tokens you use using `git config global credential.helper store`. The credentials will be stored on the SD card in plaintext, within `~/.git-credentials`.
+
+### GitLab access
+
+Obtain a clone of this repository using `git clone https://github.com/KNX-IOT/knx-iot-virtual`.
+If you see a login prompt, use your GitLab username and a personal access token with "repo" access scope.
+
+Since personal access tokens are difficult to keep track of, you may want to tell git to remember the access tokens you use using `git config global credential.helper store`. The credentials will be stored on the SD card in plaintext, within `~/.git-credentials`.
 
 ## 1.1.3. The Commandline applications
 
