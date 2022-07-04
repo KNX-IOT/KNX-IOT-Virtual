@@ -23,7 +23,8 @@
     - [1.4.5. Prerequisites windows](#145-prerequisites-windows)
       - [1.4.5.1. perl](#1451-perl)
       - [1.4.5.2. python](#1452-python)
-      - [1.4.5.3. Installing wxWidgets on Windows](#1453-installing-wxwidgets-on-windows)
+      - [1.4.5.3. Cmake](#1453-cmake)
+      - [1.4.5.4. Installing wxWidgets on Windows](#1454-installing-wxwidgets-on-windows)
   - [1.5. Raspberry Pi Applications](#15-raspberry-pi-applications)
     - [1.5.1. Basic Thread Border Router Set-Up](#151-basic-thread-border-router-set-up)
     - [1.5.2. Accessing the Thread Border Router CLI](#152-accessing-the-thread-border-router-cli)
@@ -252,13 +253,14 @@ The `Ctrl-C` is only handled when the application stops, e.g. `Ctrl-C` won't be 
 
 The prerequisites are the dependencies that are needed to build the applications on Windows:
 
-- perl
-- python
+- cmake
+  - perl
+  - python
 - wxWidgets
 
 #### 1.4.5.1. perl
 
-Building (e.g. configuring wxWidgets with Cmake) requires perl
+Building (e.g. configuring with Cmake) requires perl.
 If perl is not installed then install it via a Windows installer available at:
 
 https://www.perl.org/get.html
@@ -272,9 +274,11 @@ which perl
 # /usr/bin/perl
 ```
 
+Note: needed by Cmake
+
 #### 1.4.5.2. python
 
-Building (e.g. configuring wxWidgets with CMake) requires python
+Building (e.g. configuring with CMake) requires python.
 
 If python is not installed then install it via a Windows installer available at:
 
@@ -289,7 +293,17 @@ which python
 # <some path>/python
 ```
 
-#### 1.4.5.3. Installing wxWidgets on Windows
+Note: needed by Cmake
+
+#### 1.4.5.3. Cmake
+
+Configuring makefiles, solutions are done via CMake.
+
+If cmake is not installed then install it via a Windows installer available at:
+
+https://cmake.org/download/
+
+#### 1.4.5.4. Installing wxWidgets on Windows
 
 Download wxwidgets from (installer source code):
 https://www.wxwidgets.org/downloads/
