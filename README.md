@@ -31,6 +31,7 @@
     - [1.5.3. Configuring the Raspberry Pi](#153-configuring-the-raspberry-pi)
     - [1.5.4. Building the Pi Applications](#154-building-the-pi-applications)
     - [1.5.5. Running the Pi applications](#155-running-the-pi-applications)
+  - [1.6. Installation tools](#16-installation-tools)
 
 <!-- /TOC -->
 
@@ -418,3 +419,12 @@ resources are equivalent to `knx_iot_virtual_sa` and likewise the actuators
 control the status of the six LEDs on the side of the display.
 
 Once one of the applications has been started, the device can commissioned.
+
+## 1.6. Installation tools
+
+The installation tools in a zip called `app_release_no_security_win32.zip` can be found in the release page of
+[GitHub](https://github.com/KNX-IOT/KNX-IOT-STACK/releases) or in the release page of [GitLab](https://gitlab.knx.org/shared-projects/knx-iot-point-api-public-stack/-/releases).
+
+- Download the zip file
+- unzip the file on your local (windows machine)
+- read the README.md file located in the created folder
