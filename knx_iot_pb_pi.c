@@ -333,7 +333,8 @@ main(void)
   sa.sa_handler = handle_signal;
   /* install Ctrl-C */
   sigaction(SIGINT, &sa, NULL);
-
+  /* Disable full buffering so stdout appears in journalctl */
+  setvbuf(stdout, NULL, _IONBF, BUFSIZ);
   PyImport_AppendInittab("knx", PyInit_knx);
 
   Py_Initialize();
