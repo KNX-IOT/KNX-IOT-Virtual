@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 3.15)
 project(knx-virtual)
- 
-include(FetchContent)
 
+
+include(FetchContent)
+ 
 FetchContent_Declare(
     knx-iot-stack
     GIT_REPOSITORY https://github.com/KNX-IOT/KNX-IOT-STACK.git
     GIT_TAG master
 )
+
 
 FetchContent_Declare(
     knx-iot-stack-gitlab
@@ -19,7 +21,7 @@ if(MSVC)
 endif()
 
 set(USE_GITLAB OFF CACHE BOOL "use gitlab as source for KNX IoT Stack")
-set(USE_CONSOLE OFF CACHE BOOL "use console (for output logging)")
+set(USE_CONSOLE ON CACHE BOOL "use console (for output logging)")
 
 if(USE_GITLAB)
     if(NOT knx-iot-stack_POPULATED)
@@ -48,10 +50,10 @@ add_executable(knx_iot_virtual_sa
 target_link_libraries(knx_iot_virtual_sa kisClientServer)
 
 
-add_executable(knx_iot_virtual_dimming_actuator
-    ${PROJECT_SOURCE_DIR}/knx_iot_virtual_dimming_actuator.c
-)
-target_link_libraries(knx_iot_virtual_dimming_actuator kisClientServer)
+#add_executable(knx_iot_virtual_dimming_actuator
+#    ${PROJECT_SOURCE_DIR}/knx_iot_virtual_dimming_actuator.c
+#)
+#target_link_libraries(knx_iot_virtual_dimming_actuator kisClientServer)
 
 if(WIN32)
     set(wxWidgets_ROOT_DIR ${wx_widgets_SOURCE_DIR})
@@ -62,11 +64,11 @@ if(WIN32)
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.c)
     target_link_libraries(knx_iot_virtual_gui_pb ${wxWidgets_LIBRARIES} kisClientServer)
     target_compile_definitions(knx_iot_virtual_gui_pb PUBLIC KNX_GUI)
-   if(USE_CONSOLE)
+   #if(USE_CONSOLE)
       set_target_properties(knx_iot_virtual_gui_pb PROPERTIES
         LINK_FLAGS /SUBSYSTEM:CONSOLE
       )
-    endif()
+    #endif()
 
     add_executable(knx_iot_virtual_gui_sa WIN32
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_sa.cpp
@@ -79,7 +81,7 @@ if(WIN32)
       )
     endif()
 
-endif()
+endif() 
 
 if(UNIX)
 
