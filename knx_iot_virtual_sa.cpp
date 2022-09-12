@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2022-06-20 15:47:10.329975
+// 2022-09-12 13:45:58.472269
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -101,6 +101,7 @@ private:
   void updateInfoButtons();
   void updateTextButtons();
   void bool2text(bool on_off, char* text);
+  void double2text(double value, char* text);
 
   wxMenu* m_menuFile;
   wxTimer m_timer;
@@ -747,7 +748,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   strcat(text,"model            : KNX virtual - SA\n");
   strcat(text,"hardware type    : Windows\n");
   strcat(text,"hardware version : [0, 1, 2]\n");
-  strcat(text,"firmware version : [3, 4, 5]\n\n");
+  strcat(text,"firmware version : [0, 0, 8]\n\n");
   
   strcat(text, "data points:\n");
   strcat(text,"url:/p/o_1_1 rt:urn:knx:dpa.417.61 if:if.a inst:1 name:OnOff_1\n");
@@ -762,7 +763,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2022-06-20 15:47:10.329975");
+  strcat(text, "2022-09-12 13:45:58.472269");
   wxMessageBox(text, "KNX virtual Switching Actuator",
     wxOK | wxICON_NONE);
 }
@@ -811,10 +812,18 @@ void MyFrame::bool2text(bool on_off, char* text)
   }
 }
 
+void MyFrame::double2text(double value, char* text)
+{
+  char new_text[200];
+  sprintf(new_text," %f", value);
+  strcat(text, new_text);
+}
+
 void  MyFrame::updateInfoButtons()
 {
   char text[200];
   bool p;
+  double d;
   p = app_retrieve_bool_variable("/p/o_1_1"); // set button text of OnOff_1
   strcpy(text, "OnOff_1 ('/p/o_1_1')");
   this->bool2text(p, text);

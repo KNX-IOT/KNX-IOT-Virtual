@@ -8,7 +8,9 @@
 - [1. KNX-IOT-Virtual](#1-knx-iot-virtual)
   - [1.1. The Applications](#11-the-applications)
     - [1.1.1. The knx_iot_virtual_pb Application](#111-the-knx_iot_virtual_pb-application)
+      - [1.1.1.1. MetaData push button](#1111-metadata-push-button)
     - [1.1.2. knx_iot_virtual_sa Application](#112-knx_iot_virtual_sa-application)
+      - [1.1.2.1. MetaData switch actuator](#1121-metadata-switch-actuator)
   - [1.2. Updating KNX-IOT-Virtual code base](#12-updating-knx-iot-virtual-code-base)
     - [1.2.1. GitHub access](#121-github-access)
     - [1.2.2. GitLab access](#122-gitlab-access)
@@ -89,6 +91,42 @@ Data points:
 | "/p/o_7_7"  | OnOff_4 |  4 |urn:knx:dpa.421.61 | if.s |bool |
 | "/p/o_8_8"  | InfoOnOff_4 |  4 |urn:knx:dpa.421.51 | if.a |bool |
 
+#### 1.1.1.1. MetaData push button
+
+The mandatory metadata parameters per data points implemented:
+
+- id (9) - the unique url
+- rt - the resource type
+- if - the interface type
+- dpt - the data point type
+- ga - the array of group addresses (if initialized)
+
+next to the mandatory metadata fields the following datapoint specific metadata fields are implemented
+
+| url  | name   | metadata tag | metadata value |
+|------| ----------------| ---------| --------- |
+| "/p/o_1_1"  | OnOff_1 |  desc |On/Off push button 1 |
+| "/p/o_2_2"  | InfoOnOff_1 |  desc |Feedback 1 |
+| "/p/o_3_3"  | OnOff_2 |  desc |On/Off push button 2 |
+| "/p/o_4_4"  | InfoOnOff_2 |  desc |Feedback 2 |
+| "/p/o_5_5"  | OnOff_3 |  desc |On/Off push button 3 |
+| "/p/o_6_6"  | InfoOnOff_3 |  desc |Feedback 3 |
+| "/p/o_7_7"  | OnOff_4 |  desc |On/Off push button 4 |
+| "/p/o_8_8"  | InfoOnOff_4 |  desc |Feedback 4 |
+
+for querying the metadata items implemented one can use the following commands:
+
+```
+  GET /p/o_1_1?m=*
+  GET /p/o_2_2?m=*
+  GET /p/o_3_3?m=*
+  GET /p/o_4_4?m=*
+  GET /p/o_5_5?m=*
+  GET /p/o_6_6?m=*
+  GET /p/o_7_7?m=*
+  GET /p/o_8_8?m=*
+```
+
 ### 1.1.2. knx_iot_virtual_sa Application
 
 Switch Actuator (SA)
@@ -107,6 +145,42 @@ Data points:
 | "/p/o_6_6"  | InfoOnOff_3 |  3 |urn:knx:dpa.417.51 | if.s |bool |
 | "/p/o_7_7"  | OnOff_4 |  4 |urn:knx:dpa.417.61 | if.a |bool |
 | "/p/o_8_8"  | InfoOnOff_4 |  4 |urn:knx:dpa.417.51 | if.s |bool |
+
+#### 1.1.2.1. MetaData switch actuator
+
+The mandatory metadata parameters per data points implemented:
+
+- id (9) - the unique url
+- rt - the resource type
+- if - the interface type
+- dpt - the data point type
+- ga - the array of group addresses (if initialized)
+
+next to the mandatory metadata fields the following datapoint specific metadata fields are implemented
+
+| url  | name   | metadata tag | metadata value |
+|------| ----------------| ---------| --------- |
+| "/p/o_1_1"  | OnOff_1 |  desc |On/Off switch 1 |
+| "/p/o_2_2"  | InfoOnOff_1 |  desc |Feedback 1 |
+| "/p/o_3_3"  | OnOff_2 |  desc |On/Off switch 2 |
+| "/p/o_4_4"  | InfoOnOff_2 |  desc |Feedback 2 |
+| "/p/o_5_5"  | OnOff_3 |  desc |On/Off switch 3 |
+| "/p/o_6_6"  | InfoOnOff_3 |  desc |Feedback 3 |
+| "/p/o_7_7"  | OnOff_4 |  desc |On/Off switch 4 |
+| "/p/o_8_8"  | InfoOnOff_4 |  desc |Feedback 4 |
+
+for querying the metadata items implemented one can use the following commands:
+```
+  GET /p/o_1_1?m=*
+  GET /p/o_2_2?m=*
+  GET /p/o_3_3?m=*
+  GET /p/o_4_4?m=*
+  GET /p/o_5_5?m=*
+  GET /p/o_6_6?m=*
+  GET /p/o_7_7?m=*
+  GET /p/o_8_8?m=*
+```
+
 
 ## 1.2. Updating KNX-IOT-Virtual code base
 

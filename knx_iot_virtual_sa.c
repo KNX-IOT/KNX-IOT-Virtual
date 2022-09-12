@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Switching Actuator
- * 2022-06-20 15:47:10.263940
+ * 2022-09-12 13:45:58.380031
  * ## Application Design
  *
  * support functions:
@@ -64,6 +64,7 @@
  */
 #include "oc_api.h"
 #include "oc_core_res.h"
+#include "api/oc_knx_fp.h"
 #include "port/oc_clock.h"
 #include <signal.h>
 /* test purpose only; commandline reset */
@@ -517,7 +518,7 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
  * - base path
  * - knx spec version 
  * - hardware version : [0, 1, 2]
- * - firmware version : [3, 4, 5]
+ * - firmware version : [0, 0, 8]
  * - hardware type    : Windows
  * - device model     : KNX virtual - SA
  *
@@ -538,8 +539,8 @@ app_init(void)
   oc_core_set_device_hwv(0, 0, 1, 2);
   
   
-  /* set the firmware version 3.4.5 */
-  oc_core_set_device_fwv(0, 3, 4, 5);
+  /* set the firmware version 0.0.8 */
+  oc_core_set_device_fwv(0, 0, 0, 8);
   
 
   /* set the hardware type*/
@@ -565,7 +566,7 @@ app_init(void)
 
 /**
  * @brief CoAP GET method for data point "OnOff_1" resource at url CH1_URL_ONOFF_1 ("/p/o_1_1").
- * resource types: ['urn:knx:dpa.417.61', 'DPT_Switch']
+ * resource types: ['urn:knx:dpa.417.61', 'urn:knx:dpt.switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -593,7 +594,67 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  
+
+  // check the query parameter m with the various values
+  char *m;
+  char* m_key;
+  size_t m_key_len;
+  size_t m_len = (int)oc_get_query_value(request, "m", &m);
+  if (m_len != -1) {
+    PRINT("  Query param: %.*s",(int)m_len, m);
+    oc_init_query_iterator();
+    size_t device_index = request->resource->device;
+    oc_device_info_t *device = oc_core_get_device_info(device_index);
+    if (device != NULL) {
+      oc_rep_begin_root_object();
+      while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
+        // unique identifier
+        if ((strncmp(m, "id", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          char mystring[100];
+          snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
+           oc_string(request->resource->uri));
+          oc_rep_i_set_text_string(root, 9, mystring);
+        }
+        // resource types
+        if ((strncmp(m, "rt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.417.61"); 
+        }
+        // interfaces
+        if ((strncmp(m, "if", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, if, "if.a");
+        }
+        if ((strncmp(m, "dpt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+        }
+        // ga
+        if ((strncmp(m, "ga", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
+          if (index > -1) {
+             oc_group_object_table_t* got_table_entry = oc_core_get_group_object_table_entry(index);
+             if (got_table_entry) {
+               oc_rep_set_int_array(root, ga, got_table_entry->ga, got_table_entry->ga_len);
+             }
+          }
+        }
+        if ((strncmp(m, "desc", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, desc, "On/Off switch 1");
+        }
+      } /* query iterator */
+      oc_rep_end_root_object();
+    } else {
+      /* device is NULL */
+      oc_send_cbor_response(request, OC_STATUS_BAD_OPTION);
+    }
+    oc_send_cbor_response(request, OC_STATUS_OK);
+    return;
+  } 
+
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_OnOff_1);
   oc_rep_end_root_object();
@@ -612,7 +673,7 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
  
 /**
  * @brief CoAP POST method for data point "OnOff_1" resource at url "/p/o_1_1".
- * resource types: ['urn:knx:dpa.417.61', 'DPT_Switch']
+ * resource types: ['urn:knx:dpa.417.61', 'urn:knx:dpt.switch']
  * The function has as input the request body, which are the input values of the
  * POST method.
  * The input values (as a set) are checked if all supplied values are correct.
@@ -677,7 +738,7 @@ post_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "InfoOnOff_1" resource at url CH1_URL_INFOONOFF_1 ("/p/o_2_2").
- * resource types: ['urn:knx:dpa.417.51', 'DPT_Switch']
+ * resource types: ['urn:knx:dpa.417.51', 'urn:knx:dpt.switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -705,7 +766,67 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  
+
+  // check the query parameter m with the various values
+  char *m;
+  char* m_key;
+  size_t m_key_len;
+  size_t m_len = (int)oc_get_query_value(request, "m", &m);
+  if (m_len != -1) {
+    PRINT("  Query param: %.*s",(int)m_len, m);
+    oc_init_query_iterator();
+    size_t device_index = request->resource->device;
+    oc_device_info_t *device = oc_core_get_device_info(device_index);
+    if (device != NULL) {
+      oc_rep_begin_root_object();
+      while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
+        // unique identifier
+        if ((strncmp(m, "id", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          char mystring[100];
+          snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
+           oc_string(request->resource->uri));
+          oc_rep_i_set_text_string(root, 9, mystring);
+        }
+        // resource types
+        if ((strncmp(m, "rt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.417.51"); 
+        }
+        // interfaces
+        if ((strncmp(m, "if", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, if, "if.s");
+        }
+        if ((strncmp(m, "dpt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+        }
+        // ga
+        if ((strncmp(m, "ga", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
+          if (index > -1) {
+             oc_group_object_table_t* got_table_entry = oc_core_get_group_object_table_entry(index);
+             if (got_table_entry) {
+               oc_rep_set_int_array(root, ga, got_table_entry->ga, got_table_entry->ga_len);
+             }
+          }
+        }
+        if ((strncmp(m, "desc", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, desc, "Feedback 1");
+        }
+      } /* query iterator */
+      oc_rep_end_root_object();
+    } else {
+      /* device is NULL */
+      oc_send_cbor_response(request, OC_STATUS_BAD_OPTION);
+    }
+    oc_send_cbor_response(request, OC_STATUS_OK);
+    return;
+  } 
+
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_InfoOnOff_1);
   oc_rep_end_root_object();
@@ -725,7 +846,7 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "OnOff_2" resource at url CH2_URL_ONOFF_2 ("/p/o_3_3").
- * resource types: ['urn:knx:dpa.417.61', 'DPT_Switch']
+ * resource types: ['urn:knx:dpa.417.61', 'urn:knx:dpt.switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -753,7 +874,67 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  
+
+  // check the query parameter m with the various values
+  char *m;
+  char* m_key;
+  size_t m_key_len;
+  size_t m_len = (int)oc_get_query_value(request, "m", &m);
+  if (m_len != -1) {
+    PRINT("  Query param: %.*s",(int)m_len, m);
+    oc_init_query_iterator();
+    size_t device_index = request->resource->device;
+    oc_device_info_t *device = oc_core_get_device_info(device_index);
+    if (device != NULL) {
+      oc_rep_begin_root_object();
+      while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
+        // unique identifier
+        if ((strncmp(m, "id", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          char mystring[100];
+          snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
+           oc_string(request->resource->uri));
+          oc_rep_i_set_text_string(root, 9, mystring);
+        }
+        // resource types
+        if ((strncmp(m, "rt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.417.61"); 
+        }
+        // interfaces
+        if ((strncmp(m, "if", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, if, "if.a");
+        }
+        if ((strncmp(m, "dpt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+        }
+        // ga
+        if ((strncmp(m, "ga", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
+          if (index > -1) {
+             oc_group_object_table_t* got_table_entry = oc_core_get_group_object_table_entry(index);
+             if (got_table_entry) {
+               oc_rep_set_int_array(root, ga, got_table_entry->ga, got_table_entry->ga_len);
+             }
+          }
+        }
+        if ((strncmp(m, "desc", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, desc, "On/Off switch 2");
+        }
+      } /* query iterator */
+      oc_rep_end_root_object();
+    } else {
+      /* device is NULL */
+      oc_send_cbor_response(request, OC_STATUS_BAD_OPTION);
+    }
+    oc_send_cbor_response(request, OC_STATUS_OK);
+    return;
+  } 
+
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_OnOff_2);
   oc_rep_end_root_object();
@@ -772,7 +953,7 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
  
 /**
  * @brief CoAP POST method for data point "OnOff_2" resource at url "/p/o_3_3".
- * resource types: ['urn:knx:dpa.417.61', 'DPT_Switch']
+ * resource types: ['urn:knx:dpa.417.61', 'urn:knx:dpt.switch']
  * The function has as input the request body, which are the input values of the
  * POST method.
  * The input values (as a set) are checked if all supplied values are correct.
@@ -837,7 +1018,7 @@ post_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "InfoOnOff_2" resource at url CH2_URL_INFOONOFF_2 ("/p/o_4_4").
- * resource types: ['urn:knx:dpa.417.51', 'DPT_Switch']
+ * resource types: ['urn:knx:dpa.417.51', 'urn:knx:dpt.switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -865,7 +1046,67 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  
+
+  // check the query parameter m with the various values
+  char *m;
+  char* m_key;
+  size_t m_key_len;
+  size_t m_len = (int)oc_get_query_value(request, "m", &m);
+  if (m_len != -1) {
+    PRINT("  Query param: %.*s",(int)m_len, m);
+    oc_init_query_iterator();
+    size_t device_index = request->resource->device;
+    oc_device_info_t *device = oc_core_get_device_info(device_index);
+    if (device != NULL) {
+      oc_rep_begin_root_object();
+      while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
+        // unique identifier
+        if ((strncmp(m, "id", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          char mystring[100];
+          snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
+           oc_string(request->resource->uri));
+          oc_rep_i_set_text_string(root, 9, mystring);
+        }
+        // resource types
+        if ((strncmp(m, "rt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.417.51"); 
+        }
+        // interfaces
+        if ((strncmp(m, "if", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, if, "if.s");
+        }
+        if ((strncmp(m, "dpt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+        }
+        // ga
+        if ((strncmp(m, "ga", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
+          if (index > -1) {
+             oc_group_object_table_t* got_table_entry = oc_core_get_group_object_table_entry(index);
+             if (got_table_entry) {
+               oc_rep_set_int_array(root, ga, got_table_entry->ga, got_table_entry->ga_len);
+             }
+          }
+        }
+        if ((strncmp(m, "desc", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, desc, "Feedback 2");
+        }
+      } /* query iterator */
+      oc_rep_end_root_object();
+    } else {
+      /* device is NULL */
+      oc_send_cbor_response(request, OC_STATUS_BAD_OPTION);
+    }
+    oc_send_cbor_response(request, OC_STATUS_OK);
+    return;
+  } 
+
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_InfoOnOff_2);
   oc_rep_end_root_object();
@@ -885,7 +1126,7 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "OnOff_3" resource at url CH3_URL_ONOFF_3 ("/p/o_5_5").
- * resource types: ['urn:knx:dpa.417.61', 'DPT_Switch']
+ * resource types: ['urn:knx:dpa.417.61', 'urn:knx:dpt.switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -913,7 +1154,67 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  
+
+  // check the query parameter m with the various values
+  char *m;
+  char* m_key;
+  size_t m_key_len;
+  size_t m_len = (int)oc_get_query_value(request, "m", &m);
+  if (m_len != -1) {
+    PRINT("  Query param: %.*s",(int)m_len, m);
+    oc_init_query_iterator();
+    size_t device_index = request->resource->device;
+    oc_device_info_t *device = oc_core_get_device_info(device_index);
+    if (device != NULL) {
+      oc_rep_begin_root_object();
+      while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
+        // unique identifier
+        if ((strncmp(m, "id", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          char mystring[100];
+          snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
+           oc_string(request->resource->uri));
+          oc_rep_i_set_text_string(root, 9, mystring);
+        }
+        // resource types
+        if ((strncmp(m, "rt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.417.61"); 
+        }
+        // interfaces
+        if ((strncmp(m, "if", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, if, "if.a");
+        }
+        if ((strncmp(m, "dpt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+        }
+        // ga
+        if ((strncmp(m, "ga", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
+          if (index > -1) {
+             oc_group_object_table_t* got_table_entry = oc_core_get_group_object_table_entry(index);
+             if (got_table_entry) {
+               oc_rep_set_int_array(root, ga, got_table_entry->ga, got_table_entry->ga_len);
+             }
+          }
+        }
+        if ((strncmp(m, "desc", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, desc, "On/Off switch 3");
+        }
+      } /* query iterator */
+      oc_rep_end_root_object();
+    } else {
+      /* device is NULL */
+      oc_send_cbor_response(request, OC_STATUS_BAD_OPTION);
+    }
+    oc_send_cbor_response(request, OC_STATUS_OK);
+    return;
+  } 
+
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_OnOff_3);
   oc_rep_end_root_object();
@@ -932,7 +1233,7 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
  
 /**
  * @brief CoAP POST method for data point "OnOff_3" resource at url "/p/o_5_5".
- * resource types: ['urn:knx:dpa.417.61', 'DPT_Switch']
+ * resource types: ['urn:knx:dpa.417.61', 'urn:knx:dpt.switch']
  * The function has as input the request body, which are the input values of the
  * POST method.
  * The input values (as a set) are checked if all supplied values are correct.
@@ -997,7 +1298,7 @@ post_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "InfoOnOff_3" resource at url CH3_URL_INFOONOFF_3 ("/p/o_6_6").
- * resource types: ['urn:knx:dpa.417.51', 'DPT_Switch']
+ * resource types: ['urn:knx:dpa.417.51', 'urn:knx:dpt.switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -1025,7 +1326,67 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  
+
+  // check the query parameter m with the various values
+  char *m;
+  char* m_key;
+  size_t m_key_len;
+  size_t m_len = (int)oc_get_query_value(request, "m", &m);
+  if (m_len != -1) {
+    PRINT("  Query param: %.*s",(int)m_len, m);
+    oc_init_query_iterator();
+    size_t device_index = request->resource->device;
+    oc_device_info_t *device = oc_core_get_device_info(device_index);
+    if (device != NULL) {
+      oc_rep_begin_root_object();
+      while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
+        // unique identifier
+        if ((strncmp(m, "id", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          char mystring[100];
+          snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
+           oc_string(request->resource->uri));
+          oc_rep_i_set_text_string(root, 9, mystring);
+        }
+        // resource types
+        if ((strncmp(m, "rt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.417.51"); 
+        }
+        // interfaces
+        if ((strncmp(m, "if", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, if, "if.s");
+        }
+        if ((strncmp(m, "dpt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+        }
+        // ga
+        if ((strncmp(m, "ga", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
+          if (index > -1) {
+             oc_group_object_table_t* got_table_entry = oc_core_get_group_object_table_entry(index);
+             if (got_table_entry) {
+               oc_rep_set_int_array(root, ga, got_table_entry->ga, got_table_entry->ga_len);
+             }
+          }
+        }
+        if ((strncmp(m, "desc", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, desc, "Feedback 3");
+        }
+      } /* query iterator */
+      oc_rep_end_root_object();
+    } else {
+      /* device is NULL */
+      oc_send_cbor_response(request, OC_STATUS_BAD_OPTION);
+    }
+    oc_send_cbor_response(request, OC_STATUS_OK);
+    return;
+  } 
+
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_InfoOnOff_3);
   oc_rep_end_root_object();
@@ -1045,7 +1406,7 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "OnOff_4" resource at url CH4_URL_ONOFF_4 ("/p/o_7_7").
- * resource types: ['urn:knx:dpa.417.61', 'DPT_Switch']
+ * resource types: ['urn:knx:dpa.417.61', 'urn:knx:dpt.switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -1073,7 +1434,67 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  
+
+  // check the query parameter m with the various values
+  char *m;
+  char* m_key;
+  size_t m_key_len;
+  size_t m_len = (int)oc_get_query_value(request, "m", &m);
+  if (m_len != -1) {
+    PRINT("  Query param: %.*s",(int)m_len, m);
+    oc_init_query_iterator();
+    size_t device_index = request->resource->device;
+    oc_device_info_t *device = oc_core_get_device_info(device_index);
+    if (device != NULL) {
+      oc_rep_begin_root_object();
+      while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
+        // unique identifier
+        if ((strncmp(m, "id", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          char mystring[100];
+          snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
+           oc_string(request->resource->uri));
+          oc_rep_i_set_text_string(root, 9, mystring);
+        }
+        // resource types
+        if ((strncmp(m, "rt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.417.61"); 
+        }
+        // interfaces
+        if ((strncmp(m, "if", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, if, "if.a");
+        }
+        if ((strncmp(m, "dpt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+        }
+        // ga
+        if ((strncmp(m, "ga", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
+          if (index > -1) {
+             oc_group_object_table_t* got_table_entry = oc_core_get_group_object_table_entry(index);
+             if (got_table_entry) {
+               oc_rep_set_int_array(root, ga, got_table_entry->ga, got_table_entry->ga_len);
+             }
+          }
+        }
+        if ((strncmp(m, "desc", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, desc, "On/Off switch 4");
+        }
+      } /* query iterator */
+      oc_rep_end_root_object();
+    } else {
+      /* device is NULL */
+      oc_send_cbor_response(request, OC_STATUS_BAD_OPTION);
+    }
+    oc_send_cbor_response(request, OC_STATUS_OK);
+    return;
+  } 
+
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_OnOff_4);
   oc_rep_end_root_object();
@@ -1092,7 +1513,7 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
  
 /**
  * @brief CoAP POST method for data point "OnOff_4" resource at url "/p/o_7_7".
- * resource types: ['urn:knx:dpa.417.61', 'DPT_Switch']
+ * resource types: ['urn:knx:dpa.417.61', 'urn:knx:dpt.switch']
  * The function has as input the request body, which are the input values of the
  * POST method.
  * The input values (as a set) are checked if all supplied values are correct.
@@ -1157,7 +1578,7 @@ post_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "InfoOnOff_4" resource at url CH4_URL_INFOONOFF_4 ("/p/o_8_8").
- * resource types: ['urn:knx:dpa.417.51', 'DPT_Switch']
+ * resource types: ['urn:knx:dpa.417.51', 'urn:knx:dpt.switch']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -1185,7 +1606,67 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
-  
+
+  // check the query parameter m with the various values
+  char *m;
+  char* m_key;
+  size_t m_key_len;
+  size_t m_len = (int)oc_get_query_value(request, "m", &m);
+  if (m_len != -1) {
+    PRINT("  Query param: %.*s",(int)m_len, m);
+    oc_init_query_iterator();
+    size_t device_index = request->resource->device;
+    oc_device_info_t *device = oc_core_get_device_info(device_index);
+    if (device != NULL) {
+      oc_rep_begin_root_object();
+      while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
+        // unique identifier
+        if ((strncmp(m, "id", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          char mystring[100];
+          snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
+           oc_string(request->resource->uri));
+          oc_rep_i_set_text_string(root, 9, mystring);
+        }
+        // resource types
+        if ((strncmp(m, "rt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.417.51"); 
+        }
+        // interfaces
+        if ((strncmp(m, "if", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, if, "if.s");
+        }
+        if ((strncmp(m, "dpt", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+        }
+        // ga
+        if ((strncmp(m, "ga", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
+          if (index > -1) {
+             oc_group_object_table_t* got_table_entry = oc_core_get_group_object_table_entry(index);
+             if (got_table_entry) {
+               oc_rep_set_int_array(root, ga, got_table_entry->ga, got_table_entry->ga_len);
+             }
+          }
+        }
+        if ((strncmp(m, "desc", m_len) == 0) | 
+            (strncmp(m, "*", m_len) == 0) ) {
+          oc_rep_set_text_string(root, desc, "Feedback 4");
+        }
+      } /* query iterator */
+      oc_rep_end_root_object();
+    } else {
+      /* device is NULL */
+      oc_send_cbor_response(request, OC_STATUS_BAD_OPTION);
+    }
+    oc_send_cbor_response(request, OC_STATUS_OK);
+    return;
+  } 
+
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_InfoOnOff_4);
   oc_rep_end_root_object();
@@ -1228,7 +1709,8 @@ register_resources(void)
   oc_resource_t *res_OnOff_1 =
     oc_new_resource("OnOff_1", CH1_URL_ONOFF_1, 2, 0);
   oc_resource_bind_resource_type(res_OnOff_1, "urn:knx:dpa.417.61");
-  oc_resource_bind_resource_type(res_OnOff_1, "DPT_Switch");
+  oc_resource_bind_resource_type(res_OnOff_1, "urn:knx:dpt.switch");
+  oc_resource_bind_dpt(res_OnOff_1, "");
   oc_resource_bind_content_type(res_OnOff_1, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_OnOff_1, OC_IF_A); /* if.a */ 
   oc_resource_set_function_block_instance(res_OnOff_1, 1); /* instance 1 */ 
@@ -1249,7 +1731,8 @@ register_resources(void)
   oc_resource_t *res_InfoOnOff_1 =
     oc_new_resource("InfoOnOff_1", CH1_URL_INFOONOFF_1, 2, 0);
   oc_resource_bind_resource_type(res_InfoOnOff_1, "urn:knx:dpa.417.51");
-  oc_resource_bind_resource_type(res_InfoOnOff_1, "DPT_Switch");
+  oc_resource_bind_resource_type(res_InfoOnOff_1, "urn:knx:dpt.switch");
+  oc_resource_bind_dpt(res_InfoOnOff_1, "");
   oc_resource_bind_content_type(res_InfoOnOff_1, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_InfoOnOff_1, OC_IF_S); /* if.s */ 
   oc_resource_set_function_block_instance(res_InfoOnOff_1, 1); /* instance 1 */ 
@@ -1269,7 +1752,8 @@ register_resources(void)
   oc_resource_t *res_OnOff_2 =
     oc_new_resource("OnOff_2", CH2_URL_ONOFF_2, 2, 0);
   oc_resource_bind_resource_type(res_OnOff_2, "urn:knx:dpa.417.61");
-  oc_resource_bind_resource_type(res_OnOff_2, "DPT_Switch");
+  oc_resource_bind_resource_type(res_OnOff_2, "urn:knx:dpt.switch");
+  oc_resource_bind_dpt(res_OnOff_2, "");
   oc_resource_bind_content_type(res_OnOff_2, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_OnOff_2, OC_IF_A); /* if.a */ 
   oc_resource_set_function_block_instance(res_OnOff_2, 2); /* instance 2 */ 
@@ -1290,7 +1774,8 @@ register_resources(void)
   oc_resource_t *res_InfoOnOff_2 =
     oc_new_resource("InfoOnOff_2", CH2_URL_INFOONOFF_2, 2, 0);
   oc_resource_bind_resource_type(res_InfoOnOff_2, "urn:knx:dpa.417.51");
-  oc_resource_bind_resource_type(res_InfoOnOff_2, "DPT_Switch");
+  oc_resource_bind_resource_type(res_InfoOnOff_2, "urn:knx:dpt.switch");
+  oc_resource_bind_dpt(res_InfoOnOff_2, "");
   oc_resource_bind_content_type(res_InfoOnOff_2, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_InfoOnOff_2, OC_IF_S); /* if.s */ 
   oc_resource_set_function_block_instance(res_InfoOnOff_2, 2); /* instance 2 */ 
@@ -1310,7 +1795,8 @@ register_resources(void)
   oc_resource_t *res_OnOff_3 =
     oc_new_resource("OnOff_3", CH3_URL_ONOFF_3, 2, 0);
   oc_resource_bind_resource_type(res_OnOff_3, "urn:knx:dpa.417.61");
-  oc_resource_bind_resource_type(res_OnOff_3, "DPT_Switch");
+  oc_resource_bind_resource_type(res_OnOff_3, "urn:knx:dpt.switch");
+  oc_resource_bind_dpt(res_OnOff_3, "");
   oc_resource_bind_content_type(res_OnOff_3, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_OnOff_3, OC_IF_A); /* if.a */ 
   oc_resource_set_function_block_instance(res_OnOff_3, 3); /* instance 3 */ 
@@ -1331,7 +1817,8 @@ register_resources(void)
   oc_resource_t *res_InfoOnOff_3 =
     oc_new_resource("InfoOnOff_3", CH3_URL_INFOONOFF_3, 2, 0);
   oc_resource_bind_resource_type(res_InfoOnOff_3, "urn:knx:dpa.417.51");
-  oc_resource_bind_resource_type(res_InfoOnOff_3, "DPT_Switch");
+  oc_resource_bind_resource_type(res_InfoOnOff_3, "urn:knx:dpt.switch");
+  oc_resource_bind_dpt(res_InfoOnOff_3, "");
   oc_resource_bind_content_type(res_InfoOnOff_3, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_InfoOnOff_3, OC_IF_S); /* if.s */ 
   oc_resource_set_function_block_instance(res_InfoOnOff_3, 3); /* instance 3 */ 
@@ -1351,7 +1838,8 @@ register_resources(void)
   oc_resource_t *res_OnOff_4 =
     oc_new_resource("OnOff_4", CH4_URL_ONOFF_4, 2, 0);
   oc_resource_bind_resource_type(res_OnOff_4, "urn:knx:dpa.417.61");
-  oc_resource_bind_resource_type(res_OnOff_4, "DPT_Switch");
+  oc_resource_bind_resource_type(res_OnOff_4, "urn:knx:dpt.switch");
+  oc_resource_bind_dpt(res_OnOff_4, "");
   oc_resource_bind_content_type(res_OnOff_4, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_OnOff_4, OC_IF_A); /* if.a */ 
   oc_resource_set_function_block_instance(res_OnOff_4, 4); /* instance 4 */ 
@@ -1372,7 +1860,8 @@ register_resources(void)
   oc_resource_t *res_InfoOnOff_4 =
     oc_new_resource("InfoOnOff_4", CH4_URL_INFOONOFF_4, 2, 0);
   oc_resource_bind_resource_type(res_InfoOnOff_4, "urn:knx:dpa.417.51");
-  oc_resource_bind_resource_type(res_InfoOnOff_4, "DPT_Switch");
+  oc_resource_bind_resource_type(res_InfoOnOff_4, "urn:knx:dpt.switch");
+  oc_resource_bind_dpt(res_InfoOnOff_4, "");
   oc_resource_bind_content_type(res_InfoOnOff_4, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_InfoOnOff_4, OC_IF_S); /* if.s */ 
   oc_resource_set_function_block_instance(res_InfoOnOff_4, 4); /* instance 4 */ 

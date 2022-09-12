@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2022-06-17 16:39:31.028988
+// 2022-09-12 13:45:57.975062
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -93,6 +93,7 @@ private:
   void updateInfoButtons();
   void updateTextButtons();
   void bool2text(bool on_off, char* text);
+  void double2text(double value, char* text);
 
   wxMenu* m_menuFile;
   wxTimer m_timer;
@@ -423,7 +424,6 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
   SetStatusText("List Group Object Table");
 }
 
-
 /**
  * @brief shows the Publisher table in a window
  * 
@@ -489,8 +489,6 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
     wxOK | wxICON_NONE);
   SetStatusText("List Publisher Table");
 }
-
-
 
 /**
  * @brief shows the Recipient table in a window
@@ -726,7 +724,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   strcat(text,"model            : KNX virtual - PB\n");
   strcat(text,"hardware type    : Linux/windows\n");
   strcat(text,"hardware version : [0, 1, 2]\n");
-  strcat(text,"firmware version : [3, 4, 5]\n\n");
+  strcat(text,"firmware version : [0, 0, 8]\n\n");
   
   strcat(text, "data points:\n");
   strcat(text,"url:/p/o_1_1 rt:urn:knx:dpa.421.61 if:if.s inst:1 name:OnOff_1\n");
@@ -741,7 +739,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2022-06-17 16:39:31.028988");
+  strcat(text, "2022-09-12 13:45:57.975062");
   wxMessageBox(text, "KNX virtual Push Button",
     wxOK | wxICON_NONE);
 }
@@ -790,10 +788,18 @@ void MyFrame::bool2text(bool on_off, char* text)
   }
 }
 
+void MyFrame::double2text(double value, char* text)
+{
+  char new_text[200];
+  sprintf(new_text," %f", value);
+  strcat(text, new_text);
+}
+
 void  MyFrame::updateInfoButtons()
 {
   char text[200];
   bool p;
+  double d;
   p = app_retrieve_bool_variable("/p/o_2_2"); // set button text of InfoOnOff_1
   strcpy(text, "InfoOnOff_1 ('/p/o_2_2')");
   this->bool2text(p, text);
@@ -811,10 +817,6 @@ void  MyFrame::updateInfoButtons()
   this->bool2text(p, text);
   m_INFOONOFF_4->SetLabel(text); 
 
-  //bool p = app_retrieve_bool_variable("/p/1");
-  //strcpy(text, "Actuator 1 ('/p/1')");
-  //this->bool2text(p, text);
-  //m_btn_1->SetLabel(text);
 }
 void MyFrame::OnPressed_OnOff_1(wxCommandEvent& event)
 {

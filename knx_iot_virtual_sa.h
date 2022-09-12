@@ -23,7 +23,7 @@
  * e.g. if the c code is compiled without main then 
  * these functions can be used to call all generated code
  *
- * 2022-06-20 15:47:10.281943
+ * 2022-09-12 13:45:58.398275
  */
 
 #include "oc_api.h"
@@ -126,8 +126,7 @@ bool app_is_int_url(char* url);
  * the caller needs to know if the resource/data point is conveying a integer
  * 
  * @param url the url of the resource/data point
- * @return true value is true
- * @return false value is false or error.
+ * @return the integer value of the global variable
  */
 int app_retrieve_int_variable(char* url);
 
@@ -136,7 +135,7 @@ int app_retrieve_int_variable(char* url);
  * The caller needs to know if the resource/data point is conveying a integer
  * 
  * @param url the url of the resource/data point
- * @param value the boolean value to be set
+ * @param value the integer value to be set
  */
 void app_set_integer_variable(char* url, int value);
 
@@ -144,7 +143,7 @@ void app_set_integer_variable(char* url, int value);
  * @brief checks if the url depicts an double
  * 
  * @param url the url to check
- * @return true: url conveys a int
+ * @return true: url conveys a double
  */
 bool app_is_double_url(char* url);
 
@@ -153,8 +152,7 @@ bool app_is_double_url(char* url);
  * the caller needs to know if the resource/data point is conveying a integer
  * 
  * @param url the url of the resource/data point
- * @return true value is true
- * @return false value is false or error.
+ * @return the double value of the global variable
  */
 double app_retrieve_double_variable(char* url);
 
@@ -163,15 +161,15 @@ double app_retrieve_double_variable(char* url);
  * The caller needs to know if the resource/data point is conveying a double
  * 
  * @param url the url of the resource/data point
- * @param value the boolean value to be set
+ * @param value the double value to be set
  */
 void app_set_double_variable(char* url, double value);
 
 /**
  * @brief function to check if the url is represented by a string
  *
- * @param true = url value is a string
- * @param false = url is not a string
+ * @param url the url value is a string
+ * @return true = url returns a string, false = url is not a string
  */
 bool app_is_string_url(char* url);
 
@@ -179,10 +177,10 @@ bool app_is_string_url(char* url);
  * @brief sets the global string variable at the url
  *
  * @param url the url indicating the global variable
- * @param value the value to be set
+ * @param value the string value to be set
  */
- 
 void app_set_string_variable(char* url, char* value);
+
 /**
  * @brief retrieve the global string variable at the url
  *
