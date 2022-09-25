@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2022-09-12 13:45:57.975062
+// 2022-09-25 15:20:33.411439
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -724,7 +724,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   strcat(text,"model            : KNX virtual - PB\n");
   strcat(text,"hardware type    : Linux/windows\n");
   strcat(text,"hardware version : [0, 1, 2]\n");
-  strcat(text,"firmware version : [0, 0, 8]\n\n");
+  strcat(text,"firmware version : [0, 0, 9]\n\n");
   
   strcat(text, "data points:\n");
   strcat(text,"url:/p/o_1_1 rt:urn:knx:dpa.421.61 if:if.s inst:1 name:OnOff_1\n");
@@ -739,7 +739,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2022-09-12 13:45:57.975062");
+  strcat(text, "2022-09-25 15:20:33.411439");
   wxMessageBox(text, "KNX virtual Push Button",
     wxOK | wxICON_NONE);
 }

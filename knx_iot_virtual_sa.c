@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Switching Actuator
- * 2022-09-12 13:45:58.380031
+ * 2022-09-25 15:20:33.854556
  * ## Application Design
  *
  * support functions:
@@ -111,7 +111,7 @@ static CRITICAL_SECTION cs;   /**< event loop variable */
 #define btoa(x) ((x) ? "true" : "false")
 volatile int quit = 0;  /**< stop variable, used by handle_signal */
 bool g_reset = false;   /**< reset variable, set by commandline arguments */
-char g_serial_number[20] = "0004000";
+char g_serial_number[20] = "00FA10010700";
 
 /* list all object urls as defines */
 #define CH1_URL_ONOFF_1 "/p/o_1_1"   /**< define for url "/p/o_1_1" of "OnOff_1" */
@@ -514,11 +514,11 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
  *
  * sets the:
  * - manufacturer     : cascoda
- * - serial number    : 0004000
+ * - serial number    : 00FA10010700
  * - base path
  * - knx spec version 
  * - hardware version : [0, 1, 2]
- * - firmware version : [0, 0, 8]
+ * - firmware version : [0, 0, 9]
  * - hardware type    : Windows
  * - device model     : KNX virtual - SA
  *
@@ -539,8 +539,8 @@ app_init(void)
   oc_core_set_device_hwv(0, 0, 1, 2);
   
   
-  /* set the firmware version 0.0.8 */
-  oc_core_set_device_fwv(0, 0, 0, 8);
+  /* set the firmware version 0.0.9 */
+  oc_core_set_device_fwv(0, 0, 0, 9);
   
 
   /* set the hardware type*/
