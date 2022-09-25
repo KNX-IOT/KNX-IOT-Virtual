@@ -76,7 +76,7 @@ The point code has an API so that one can:
 
 Push Button (PB)
 
-- serial number :  0003000
+- serial number :  00FA10010400
 
 Data points:
 
@@ -131,7 +131,7 @@ for querying the metadata items implemented one can use the following commands:
 
 Switch Actuator (SA)
 
-- serial number : 0004000
+- serial number : 00FA10010700
 
 Data points:
 
@@ -170,6 +170,7 @@ next to the mandatory metadata fields the following datapoint specific metadata 
 | "/p/o_8_8"  | InfoOnOff_4 |  desc |Feedback 4 |
 
 for querying the metadata items implemented one can use the following commands:
+
 ```
   GET /p/o_1_1?m=*
   GET /p/o_2_2?m=*
@@ -180,7 +181,6 @@ for querying the metadata items implemented one can use the following commands:
   GET /p/o_7_7?m=*
   GET /p/o_8_8?m=*
 ```
-
 
 ## 1.2. Updating KNX-IOT-Virtual code base
 
@@ -251,8 +251,8 @@ The serial number can be overridden with the command line argument -s.
 Example (from the folder where the executable resides):
 
 ```bash
-.\knx_iot_virtual_gui_pb.exe -s 0000333
-.\knx_iot_virtual_gui_sa.exe -s 0000444
+.\knx_iot_virtual_gui_pb.exe -s 00FA10010401
+.\knx_iot_virtual_gui_sa.exe -s 00FA10010401
 ```
 
 ### 1.4.4. Building the applications on Windows
