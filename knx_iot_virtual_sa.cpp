@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2022-09-25 15:20:33.948981
+// 2022-09-26 13:55:37.427069
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -376,7 +376,14 @@ void MyFrame::updateTextButtons()
   // get the device data structure
   oc_device_info_t* device = oc_core_get_device_info(device_index);
   // update the text labels
-  sprintf(text, "IA: %d", device->ia);
+  // ia_0 == AAxxxxxx = AA
+  // ia_1 == xxAAxxxx = AA
+  // ia_2 == xxxxAAAA = AAAA
+  int ia = device->ia;
+  int ia_o = (ia >> 12);
+  int ia_1 = (ia >> 8) & 0xF;
+  int ia_2 = (ia & 0x000000FF);
+  sprintf(text, "IA: %d.%d.%d   [%d]", ia_o, ia_1, ia_2, device->ia);
   m_ia_text->SetLabelText(text);
   sprintf(text, "LoadState: %s", oc_core_get_lsm_state_as_string(device->lsm_s));
   m_pm_text->SetLabelText(text);
@@ -386,6 +393,8 @@ void MyFrame::updateTextButtons()
   m_iid_text->SetLabelText(text);
   sprintf(text, "host name: %s", oc_string(device->hostname));
   m_hostname_text->SetLabelText(text);
+  // reset the programming mode to what the device has
+  m_menuFile->Check(CHECK_PM, device->pm);
 }
 
 /**
@@ -763,7 +772,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2022-09-25 15:20:33.948981");
+  strcat(text, "2022-09-26 13:55:37.427069");
   wxMessageBox(text, "KNX virtual Switching Actuator",
     wxOK | wxICON_NONE);
 }
