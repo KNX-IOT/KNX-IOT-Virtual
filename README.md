@@ -281,6 +281,7 @@ Example (from the folder where the executable resides):
    cd KNX-IOT-Virtual
    mkdir build
    cd build
+   # use the wxWidgets folder on your machine
    cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5
    ```
 
@@ -300,6 +301,7 @@ Example (from the folder where the executable resides):
    cd knx-iot-virtual
    mkdir build
    cd build 
+   # use the wxWidgets folder on your machine
    cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5 -DUSE_GITLAB=true
    ```
 
