@@ -23,10 +23,11 @@
       - [1.4.4.1. Running the application on windows](#1441-running-the-application-on-windows)
         - [1.4.4.1.1. Python utility `restart_app.py`](#14411-python-utility-restart_apppy)
     - [1.4.5. Prerequisites windows](#145-prerequisites-windows)
-      - [1.4.5.1. perl](#1451-perl)
-      - [1.4.5.2. python](#1452-python)
-      - [1.4.5.3. Cmake](#1453-cmake)
-      - [1.4.5.4. Installing wxWidgets on Windows](#1454-installing-wxwidgets-on-windows)
+      - [1.4.5.1. git](#1451-git)
+      - [1.4.5.2. perl](#1452-perl)
+      - [1.4.5.3. python](#1453-python)
+      - [1.4.5.4. Cmake](#1454-cmake)
+      - [1.4.5.5. Installing wxWidgets on Windows](#1455-installing-wxwidgets-on-windows)
   - [1.5. Raspberry Pi Applications](#15-raspberry-pi-applications)
     - [1.5.1. Basic Thread Border Router Set-Up](#151-basic-thread-border-router-set-up)
     - [1.5.2. Accessing the Thread Border Router CLI](#152-accessing-the-thread-border-router-cli)
@@ -299,7 +300,7 @@ Example (from the folder where the executable resides):
    # open knx-virtual.sln in visual studio by double clicking it.
    ```
 
-1. build the applications in visual studio
+1. Build the applications in visual studio
   
    Note: build the release version.
 
@@ -328,12 +329,29 @@ The `Ctrl-C` is only handled when the application stops, e.g. `Ctrl-C` won't be 
 
 The prerequisites are the dependencies that are needed to build the applications on Windows:
 
+- git
 - cmake
   - perl
   - python
 - wxWidgets
 
-#### 1.4.5.1. perl
+#### 1.4.5.1. git
+
+git can be obtained from:
+
+https://git-scm.com/download/win
+
+- Download the file that is appropriate for your machine
+
+  example: `64-bit Git for Windows Setup`
+- Install the software (e.g. run the downloaded installer)
+
+one should now have windows explorer integration to:
+
+- Git Gui Here (to push data)
+- Git Bash Here (a bash shell for commandline git)
+
+#### 1.4.5.2. perl
 
 Building (e.g. configuring with Cmake) requires perl.
 If perl is not installed then install it via a Windows installer available at:
@@ -343,7 +361,7 @@ https://www.perl.org/get.html
 To check if perl is installed:
 
 ```bash
-# do in a bash window
+# do in a new bash window
 which perl
 # result should be
 # /usr/bin/perl
@@ -351,7 +369,7 @@ which perl
 
 Note: needed by Cmake
 
-#### 1.4.5.2. python
+#### 1.4.5.3. python
 
 Building (e.g. configuring with CMake) requires python.
 
@@ -362,7 +380,7 @@ https://www.python.org/downloads/
 To check if python is installed:
 
 ```bash
-# do in a bash window
+# do in a new bash window
 which python
 # result should be
 # <some path>/python
@@ -370,7 +388,7 @@ which python
 
 Note: needed by Cmake
 
-#### 1.4.5.3. Cmake
+#### 1.4.5.4. Cmake
 
 Configuring makefiles, solutions are done via CMake.
 
@@ -378,7 +396,16 @@ If cmake is not installed then install it via a Windows installer available at:
 
 https://cmake.org/download/
 
-#### 1.4.5.4. Installing wxWidgets on Windows
+Note: During installation, select that cmake is installed in path.
+
+```bash
+# do in a new bash window
+which cmake 
+# result should be
+# <some path>/cmake
+```
+
+#### 1.4.5.5. Installing wxWidgets on Windows
 
 Download wxwidgets from (installer source code):
 https://www.wxwidgets.org/downloads/
