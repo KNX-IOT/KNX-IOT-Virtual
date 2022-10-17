@@ -258,7 +258,14 @@ Example (from the folder where the executable resides):
 
 ### 1.4.4. Building the applications on Windows
 
-1. Steps using GitHub
+1. Install all prerequisits:
+   - git
+   - python
+   - perl
+   - cmake
+   - wxwidgets
+
+2. Steps using GitHub
 
    - Clone the repo
    - Go to the created folder
@@ -277,7 +284,7 @@ Example (from the folder where the executable resides):
 
    Note: The above set of commands is already in `build.sh`.
 
-1. Steps using GitLab
+3. Steps using GitLab
 
    - Clone the repo
    - Go to the created folder
@@ -294,13 +301,13 @@ Example (from the folder where the executable resides):
    cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5 -DUSE_GITLAB=true
    ```
 
-1. open solution (sln) created in the build folder with visual studio
+4. open solution (sln) created in the build folder with visual studio
   
    ```powershell
    # open knx-virtual.sln in visual studio by double clicking it.
    ```
 
-1. Build the applications in visual studio
+5. Build the applications in visual studio
   
    Note: build the release version.
 
