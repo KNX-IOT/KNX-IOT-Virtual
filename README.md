@@ -308,7 +308,10 @@ Example (from the folder where the executable resides):
 4. open solution (sln) created in the build folder with visual studio
   
    ```powershell
+   # show the contents of the build dir
+   ls
    # open knx-virtual.sln in visual studio by double clicking it.
+   
    ```
 
 5. Build the applications in visual studio
