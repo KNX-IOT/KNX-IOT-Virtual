@@ -23,6 +23,7 @@
       - [1.4.4.1. Running the application on windows](#1441-running-the-application-on-windows)
         - [1.4.4.1.1. Python utility `restart_app.py`](#14411-python-utility-restart_apppy)
     - [1.4.5. Prerequisites windows](#145-prerequisites-windows)
+      - [1.4.5.1. Visual Studio](#1451-visual-studio)
       - [1.4.5.1. git](#1451-git)
       - [1.4.5.2. perl](#1452-perl)
       - [1.4.5.3. python](#1453-python)
@@ -259,6 +260,7 @@ Example (from the folder where the executable resides):
 ### 1.4.4. Building the applications on Windows
 
 1. Install all prerequisits:
+   - visual studio (C++)
    - git
    - python
    - perl
@@ -336,11 +338,20 @@ The `Ctrl-C` is only handled when the application stops, e.g. `Ctrl-C` won't be 
 
 The prerequisites are the dependencies that are needed to build the applications on Windows:
 
+- visual studio (C++)
 - git
 - cmake
   - perl
   - python
 - wxWidgets
+
+#### 1.4.5.1. Visual Studio
+
+download visual studio from :
+
+https://visualstudio.microsoft.com/downloads/
+
+Install the package, including C++ (Desktop development with C++)
 
 #### 1.4.5.1. git
 
