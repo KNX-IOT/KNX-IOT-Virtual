@@ -37,7 +37,7 @@ There are 2 applications in this repo:
 - knx_iot_virtual_pb Application (Push button)
 - knx_iot_virtual_sa Application (Switch Actuator)
 
-Both applications are using the [KNX IoT Point API stack](https://github.com/KNX-IOT/KNX-IOT-STACK)
+Both applications are using the [KNX IoT Point API stack](https://github.com/KNX-IOT/KNX-IOT-STACK).
 
 The general structure of these programs are:
 
@@ -52,6 +52,8 @@ The general structure of these programs are:
 
   General structure
 ```
+
+Note: In the structure diagram above, the "GUI CODE" can be replaced with something else, for example, with an "EMBEDDED CODE" layer which provides an interface for running a KNX device on embedded platforms (see [KNX IoT Embedded repository](https://github.com/KNX-IOT/KNX-IOT-Embedded)). This is possible because that upper layer is decoupled from the layers below it. The "POINT API CODE" layer is completely generic and does not need to be modified.
 
 The Point API Code is shared code that can be used:
 
