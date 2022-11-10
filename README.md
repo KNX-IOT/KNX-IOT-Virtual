@@ -29,13 +29,7 @@
       - [1.4.5.3. python](#1453-python)
       - [1.4.5.4. Cmake](#1454-cmake)
       - [1.4.5.5. Installing wxWidgets on Windows](#1455-installing-wxwidgets-on-windows)
-  - [1.5. Raspberry Pi Applications](#15-raspberry-pi-applications)
-    - [1.5.1. Basic Thread Border Router Set-Up](#151-basic-thread-border-router-set-up)
-    - [1.5.2. Accessing the Thread Border Router CLI](#152-accessing-the-thread-border-router-cli)
-    - [1.5.3. Configuring the Raspberry Pi](#153-configuring-the-raspberry-pi)
-    - [1.5.4. Building the Pi Applications](#154-building-the-pi-applications)
-    - [1.5.5. Running the Pi applications](#155-running-the-pi-applications)
-  - [1.6. Installation tools](#16-installation-tools)
+  - [1.5. Installation tools](#16-installation-tools)
 
 <!-- /TOC -->
 
@@ -66,7 +60,6 @@ The Point API Code is shared code that can be used:
 
 - as commandline application (on Linux & Windows)
 - GUI application with wxWidgets (on Windows)
-- as raspberry Pi application (Linux) with an displayotron pi hat
 
 The point code has an API so that one can:
 
@@ -442,109 +435,7 @@ https://www.wxwidgets.org/downloads/
     - static Win32 library for Debug & Release
     - static x64 library for Debug & Release
 
-## 1.5. Raspberry Pi Applications
-
-Versions of the Push Button and Switch Actuator applications are also available for the Cascoda Thread Border Router (Raspberry Pi).
-These work alongside the Pimoroni Displayotron PiHat and take advantage of its six touch buttons, LEDs and LCD display.
-
-The applications are:
-
-- knx_iot_pb_pi.c (push button)
-- knx_iot_sa_pi.c (switch actuator)
-
-```
-   _________________
-  |   C  |  Python  |   <---- C code calling python
-  |_________________|     
-  |     POINT CODE  |   <---- Code handling all Point API CoAP code
-  |_________________|
-  |     STACK       |   <---- The KNX IoT Point API Stack (other repo)
-  |_________________|
-
-  Code on the Pi
-```
-
-Info about Pimoroni Displayotron hat :
-
-https://pinout.xyz/pinout/display_o_tron_hat?msclkid=02fa4484c6d511ecaaaf64d47a2d5e81
-
-https://github.com/pimoroni/displayotron
-
-The main differences wrt to wxWidget apps are:
-
-- Different main application
-- Interaction via python to listen to the buttons (pb)
-  - Polling python interaction
-- Interaction via python to turn on/off the leds (sa & pb)
-  - via callback of the point api code (on CoAP POST)
-
-### 1.5.1. Basic Thread Border Router Set-Up
-
-Please flash an SD card with [the latest Border Router prebuilt image available
-here](https://github.com/Cascoda/install-script/releases). Insert the SD
-card into a Raspberry Pi 3 or 4, attach the Displayotron HAT and then connect
-the Raspberry Pi to your wired via Ethernet. Finally, power on the Raspberry Pi by connecting the power supply cable.
-
-### 1.5.2. Accessing the Thread Border Router CLI
-
-You can configure the Thread Border Router via SSH, through the Ethernet connection. The default
-hostname is `raspberrypi`. Alternatively, you may connect a keyboard & HDMI monitor to the
-Raspberry Pi and access the terminal directly that way.
-
-Once you have access to the terminal, log in as the user `pi` using the default password,
-`raspberry`
-
-### 1.5.3. Configuring the Raspberry Pi
-
-Please access the configuration menu available through `sudo raspi-config`. Once you are in,
-use the arrow keys and navigate to Advanced Options, then select Expand Filesystem. Once that is
-complete, you may also want to change the Password & Hostname from within the System Options menu.
-If you want to configure the Push Button application to toggle the Switch Actuator, I recommend
-giving the two Raspberry Pis different Hostnames so that you can SSH into them easily.
-
-These settings will take place upon reboot, so please reboot the device when prompted.
-
-### 1.5.4. Building the Pi Applications
-
-Obtain a clone of this repository using git.
-e.g. the resulting action should be a folder `knx-iot-virtual`
-
-Once you have obtained the repository, you must install the Python drivers
-for the Displayotron HAT, by running `./displayotron-install.sh` within
-the knx-iot-virtual folder.
-
-In order to enable DNS-SD Discovery, you will also need to install the
-`avahi-utils` package. `python3-dev` is needed for the communication between C
-and Python. Obtain these dependencies using `sudo apt-get install avahi-utils
-python3-dev`.
-
-Finally, you may build the example applications from within the knx-iot-virtual
-directory with the following set of commands:
-
-```bash
-mkdir build
-cd build
-cmake ../
-make -j4 
-```
-
-The applications should be available in the `knx-iot-virtual/bin`` folder.
-
-### 1.5.5. Running the Pi applications
-
-The Raspberry Pi Push Button application is called `knx_iot_pb_pi`. You
-should see the backlight of the Displayotron HAT turn on as soon as the
-application starts. The KNX functionality is identical to the
-`knx_iot_virtual_pb` application, except the push button resources correspond to
-the touch buttons on the Displayotron HAT.
-
-The Switching Actuator application is called `knx_iot_sa_pi`. The KNX
-resources are equivalent to `knx_iot_virtual_sa` and likewise the actuators
-control the status of the six LEDs on the side of the display.
-
-Once one of the applications has been started, the device can commissioned.
-
-## 1.6. Installation tools
+## 1.5. Installation tools
 
 The installation tools in a zip called `app_release_no_security_win32.zip` can be found in the release page of
 [GitHub](https://github.com/KNX-IOT/KNX-IOT-STACK/releases) or in the release page of [GitLab](https://gitlab.knx.org/shared-projects/knx-iot-point-api-public-stack/-/releases).
