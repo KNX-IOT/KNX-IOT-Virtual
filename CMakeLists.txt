@@ -24,19 +24,24 @@ set(USE_GITLAB OFF CACHE BOOL "use gitlab as source for KNX IoT Stack")
 set(USE_CONSOLE ON CACHE BOOL "use console (for output logging)")
 
 if(USE_GITLAB)
-    if(NOT knx-iot-stack_POPULATED)
-        message(STATUS "Fetching KNX-IoT Source Code, please wait...")
-        FetchContent_Populate(knx-iot-stack-gitlab)
-        add_subdirectory(${knx-iot-stack-gitlab_SOURCE_DIR} ${knx-iot-stack-gitlab_BINARY_DIR})
-    endif()
+    message(STATUS "Fetching KNX-IoT Source Code, please wait...")
+    FetchContent_MakeAvailable(knx-iot-stack-gitlab)
 else()
-    if(NOT knx-iot-stack_POPULATED)
-        message(STATUS "Fetching KNX-IoT Source Code, please wait...")
-        FetchContent_Populate(knx-iot-stack)
-        add_subdirectory(${knx-iot-stack_SOURCE_DIR} ${knx-iot-stack_BINARY_DIR})
-    endif()
+    message(STATUS "Fetching KNX-IoT Source Code, please wait...")
+    FetchContent_MakeAvailable(knx-iot-stack)
 endif()
 
+if(WIN32)
+    FetchContent_Declare(
+        wxWidgets
+        URL https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.7z
+    )
+
+    option(wxBUILD_SHARED "" OFF)
+
+    message(STATUS "Fetching wxWidgets, kindly wait...")
+    FetchContent_MakeAvailable(wxWidgets)
+endif()
 
 add_executable(knx_iot_virtual_pb
     ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.c
@@ -56,32 +61,29 @@ target_link_libraries(knx_iot_virtual_sa kisClientServer)
 #target_link_libraries(knx_iot_virtual_dimming_actuator kisClientServer)
 
 if(WIN32)
-    set(wxWidgets_ROOT_DIR ${wx_widgets_SOURCE_DIR})
-    find_package(wxWidgets REQUIRED COMPONENTS net core base)
-    include(${wxWidgets_USE_FILE})
     add_executable(knx_iot_virtual_gui_pb WIN32
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.cpp
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_pb.c)
-    target_link_libraries(knx_iot_virtual_gui_pb ${wxWidgets_LIBRARIES} kisClientServer)
+    target_link_libraries(knx_iot_virtual_gui_pb wx::net wx::core wx::base kisClientServer )
     target_compile_definitions(knx_iot_virtual_gui_pb PUBLIC KNX_GUI)
-   #if(USE_CONSOLE)
-      set_target_properties(knx_iot_virtual_gui_pb PROPERTIES
+
+    if(USE_CONSOLE)
+        set_target_properties(knx_iot_virtual_gui_pb PROPERTIES
         LINK_FLAGS /SUBSYSTEM:CONSOLE
-      )
-    #endif()
+        )
+    endif()
 
     add_executable(knx_iot_virtual_gui_sa WIN32
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_sa.cpp
         ${PROJECT_SOURCE_DIR}/knx_iot_virtual_sa.c)
-    target_link_libraries(knx_iot_virtual_gui_sa ${wxWidgets_LIBRARIES} kisClientServer)
+    target_link_libraries(knx_iot_virtual_gui_sa wx::net wx::core wx::base kisClientServer)
     target_compile_definitions(knx_iot_virtual_gui_sa PUBLIC KNX_GUI)
     if(USE_CONSOLE)
-      set_target_properties(knx_iot_virtual_gui_sa PROPERTIES
+        set_target_properties(knx_iot_virtual_gui_sa PROPERTIES
         LINK_FLAGS /SUBSYSTEM:CONSOLE
-      )
+        )
     endif()
-
-endif() 
+endif()
 
 if(UNIX)
 
