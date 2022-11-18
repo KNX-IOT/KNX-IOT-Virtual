@@ -121,7 +121,6 @@ jobs:
           message(FATAL_ERROR "Bad exit status")
         endif()
 
-
     - name: Build
       shell: cmake -P {0}
       run: |
@@ -143,3 +142,12 @@ jobs:
         if (NOT result EQUAL 0)
           message(FATAL_ERROR "Bad exit status")
         endif()
+
+
+    - name: Upload exe ${{ matrix.config.option_name }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows_${{ matrix.config.option_name }}
+        path: |
+           /a/KNX-IOT-Virtual/KNX-IOT-Virtual/build_${{ matrix.config.option_name }}/knx_iot_virtual_gui_pb.exe
+           /a/KNX-IOT-Virtual/KNX-IOT-Virtual/build_${{ matrix.config.option_name }}/knx_iot_virtual_gui_pb.exe
