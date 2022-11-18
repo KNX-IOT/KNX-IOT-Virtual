@@ -1,4 +1,5 @@
 ![Linux](https://github.com/KNX-IOT/KNX-IOT-Virtual/actions/workflows/cmake-linux.yml/badge.svg)
+![Windows](https://github.com/KNX-IOT/KNX-IOT-Virtual/actions/workflows/cmake-windows.yml/badge.svg)
 ![sync](https://github.com/KNX-IOT/KNX-IOT-Virtual/actions/workflows/gitlabsync.yml/badge.svg)
 
 # 1. KNX-IOT-Virtual
@@ -74,7 +75,7 @@ The point code has an API so that one can:
 - callback on POST data changes
 - functions to figure out what type of data the url conveys
 
-### 1.1.1. The knx_iot_virtual_pb Application
+## 1.1.1. The knx_iot_virtual_pb Application
 
 Push Button (PB)
 
