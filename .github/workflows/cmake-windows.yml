@@ -20,7 +20,17 @@ jobs:
             name: "Windows Latest MSVC", artifact: "Windows-MSVC.tar.xz",
             os: windows-latest,
             build_type: "Release", cc: "cl", cxx: "cl",
-            environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+            environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            option: "-D OC_OSCORE_ENABLED=OFF",
+            option_name: "unsecured"
+          }
+        - {
+            name: "Windows Latest MSVC", artifact: "Windows-MSVC.tar.xz",
+            os: windows-latest,
+            build_type: "Release", cc: "cl", cxx: "cl",
+            environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            option: "-D OC_OSCORE_ENABLED=ON",
+            option_name: "secured"
           }
         #- {
         #    name: "Windows Latest MinGW", artifact: "Windows-MinGW.tar.xz",
@@ -86,7 +96,11 @@ jobs:
             COMMAND chmod +x ${cmake_dir}/cmake
           )
         endif()
-
+    - name: folder creation
+      run: |
+        mkdir build_${{ matrix.config.option_name }}
+        cd build_${{ matrix.config.option_name }}
+        ls
     - name: Configure
       shell: cmake -P {0}
       run: |
@@ -111,8 +125,8 @@ jobs:
         execute_process(
           COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake
             -S .
-            -B build
-            -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+            -B build_${{ matrix.config.option_name }}
+            -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }} ${{ matrix.config.option }}
             -G Ninja
             -D CMAKE_MAKE_PROGRAM=${ninja_program}
           RESULT_VARIABLE result
@@ -136,7 +150,7 @@ jobs:
         endif()
 
         execute_process(
-          COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake --build build
+          COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake --build build_${{ matrix.config.option_name }}
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
@@ -148,5 +162,5 @@ jobs:
       with:
         name: windows_${{ matrix.config.option_name }}
         path: |
-           D:/a/KNX-IOT-Virtual/KNX-IOT-Virtual/build/knx_iot_virtual_gui_pb.exe
-           D:/a/KNX-IOT-Virtual/KNX-IOT-Virtual/build/knx_iot_virtual_gui_sa.exe
+           D:/a/KNX-IOT-Virtual/KNX-IOT-Virtual/build_${{ matrix.config.option_name }}/knx_iot_virtual_gui_pb.exe
+           D:/a/KNX-IOT-Virtual/KNX-IOT-Virtual/build_${{ matrix.config.option_name }}/knx_iot_virtual_gui_sa.exe
