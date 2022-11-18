@@ -1,4 +1,5 @@
 ![Linux](https://github.com/KNX-IOT/KNX-IOT-Virtual/actions/workflows/cmake-linux.yml/badge.svg)
+![Windows](https://github.com/KNX-IOT/KNX-IOT-Virtual/actions/workflows/cmake-windows.yml/badge.svg)
 ![sync](https://github.com/KNX-IOT/KNX-IOT-Virtual/actions/workflows/gitlabsync.yml/badge.svg)
 
 <!-- TOC -->
