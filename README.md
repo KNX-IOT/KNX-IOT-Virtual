@@ -22,10 +22,8 @@
   - [4.5. Prerequisites windows](#45-prerequisites-windows)
     - [4.5.1. Visual Studio](#451-visual-studio)
     - [4.5.2. git](#452-git)
-    - [4.5.3. perl](#453-perl)
-    - [4.5.4. python](#454-python)
-    - [4.5.5. Cmake](#455-cmake)
-    - [4.5.6. Installing wxWidgets on Windows](#456-installing-wxwidgets-on-windows)
+    - [4.5.3. python](#453-python)
+    - [4.5.4. Cmake](#454-cmake)
 - [5. Installation tools](#5-installation-tools)
 
 <!-- /TOC -->
@@ -255,9 +253,7 @@ Example (from the folder where the executable resides):
    - visual studio (C++)
    - git
    - python
-   - perl
    - cmake
-   - wxwidgets
 
 2. Steps using GitHub
 
@@ -273,8 +269,7 @@ Example (from the folder where the executable resides):
    cd KNX-IOT-Virtual
    mkdir build
    cd build
-   # use the wxWidgets folder on your machine
-   cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5
+   cmake ..
    ```
 
    Note: The above set of commands is already in `build.sh`.
@@ -293,8 +288,7 @@ Example (from the folder where the executable resides):
    cd knx-iot-virtual
    mkdir build
    cd build 
-   # use the wxWidgets folder on your machine
-   cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5 -DUSE_GITLAB=true
+   cmake .. -DUSE_GITLAB=true
    ```
 
 4. open solution (sln) created in the build folder with visual studio
@@ -314,9 +308,9 @@ Note: The above set of commands will build the executables without security. The
 If one wants to build the executables with security: add the option -DUSE_OSCORE=true in the cmake command:
 
    ```powershell
-   cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5 -DOC_OSCORE_ENABLED=ON
+   cmake .. -DOC_OSCORE_ENABLED=ON
    or
-   cmake .. -DwxWidgets_ROOT_DIR=c:/wxWidgets-3.1.5 -DUSE_GITLAB=true -DOC_OSCORE_ENABLED=ON
+   cmake .. -DUSE_GITLAB=true -DOC_OSCORE_ENABLED=ON
    ```
 
 #### 4.4.1. Running the application on windows
@@ -338,9 +332,7 @@ The prerequisites are the dependencies that are needed to build the applications
 - visual studio (C++)
 - git
 - cmake
-  - perl
   - python
-- wxWidgets
 
 #### 4.5.1. Visual Studio
 
@@ -366,25 +358,7 @@ one should now have windows explorer integration to:
 - Git Gui Here (to push data)
 - Git Bash Here (a bash shell for commandline git)
 
-#### 4.5.3. perl
-
-Building (e.g. configuring with Cmake) requires perl.
-If perl is not installed then install it via a Windows installer available at:
-
-https://www.perl.org/get.html
-
-To check if perl is installed:
-
-```bash
-# do in a new bash window
-which perl
-# result should be
-# /usr/bin/perl
-```
-
-Note: needed by Cmake
-
-#### 4.5.4. python
+#### 4.5.3. python
 
 Building (e.g. configuring with CMake) requires python.
 
@@ -403,7 +377,7 @@ which python
 
 Note: needed by Cmake
 
-#### 4.5.5. Cmake
+#### 4.5.4. Cmake
 
 Configuring makefiles, solutions are done via CMake.
 
@@ -419,20 +393,6 @@ which cmake
 # result should be
 # <some path>/cmake
 ```
-
-#### 4.5.6. Installing wxWidgets on Windows
-
-Download wxwidgets from (installer source code):
-https://www.wxwidgets.org/downloads/
-
-- Install the contents on the recommended folder (e.g. c:\wxWidgets-3.1.5)
-- Build wxwidgets with visual studio:
-  
-  - Open c:\wxWidgets-3.1.5\build\msw\wx_vc16.sln (or take the highest number available)
-  - Accept convert solution suggestion: convert solution to newer version studio
-  - Build the solution :
-    - static Win32 library for Debug & Release
-    - static x64 library for Debug & Release
 
 ## 5. Installation tools
 
