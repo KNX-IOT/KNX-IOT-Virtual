@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2022-09-26 13:55:37.427069
+// 2022-11-29 16:45:42.020527
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -200,8 +200,8 @@ MyFrame::MyFrame(char* str_serial_number)
   Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
   Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 
-  int x_width = 210;
-  int x_height = 25;
+  int x_width = 230; /* width of the widgets */
+  int x_height = 25; /* height of the widgets */
   int max_instances = 4;
   int max_dp_count = 2;
   int index;
@@ -282,34 +282,36 @@ MyFrame::MyFrame(char* str_serial_number)
   }
   app_initialize_stack();
 
+
+  int width_size = 180; /* size of the knx info widgets */
   // serial number
   char text[500];
   strcpy(text, "Device Serial Number: -sn ");
   oc_device_info_t* device = oc_core_get_device_info(0);
   strcat(text, oc_string(device->serialnumber));
   wxTextCtrl* Statictext;
-  Statictext = new wxTextCtrl(this, wxID_ANY, text, wxPoint(10, 10 + ((max_instances + 1) * x_height)), wxSize(150 + 130, x_height), 0);
+  Statictext = new wxTextCtrl(this, wxID_ANY, text, wxPoint(10, 10 + ((max_instances + 1) * x_height)), wxSize(width_size*2, x_height), 0);
   Statictext->SetEditable(false);
 
   // internal address
   sprintf(text, "IA: %d", device->ia);
-  m_ia_text = new wxTextCtrl(this, IA_TEXT, text, wxPoint(10, 10 + ((max_instances + 2) * x_height)), wxSize(140, x_height), 0);
+  m_ia_text = new wxTextCtrl(this, IA_TEXT, text, wxPoint(10, 10 + ((max_instances + 2) * x_height)), wxSize(width_size, x_height), 0);
   m_ia_text->SetEditable(false);
   // installation id
-  sprintf(text, "IID: %d", device->iid);
-  m_iid_text = new wxTextCtrl(this, IID_TEXT, text, wxPoint(10 + 140, 10 + ((max_instances + 2) * x_height)), wxSize(140, x_height), 0);
+  sprintf(text, "IID: %lld", device->iid);
+  m_iid_text = new wxTextCtrl(this, IID_TEXT, text, wxPoint(10 + width_size, 10 + ((max_instances + 2) * x_height)), wxSize(width_size, x_height), 0);
   m_iid_text->SetEditable(false);
   // programming mode
   sprintf(text, "Programming Mode: %d", device->pm);
-  m_pm_text = new wxTextCtrl(this, PM_TEXT, text, wxPoint(10, 10 + ((max_instances + 3) * x_height)), wxSize(140, x_height), 0);
+  m_pm_text = new wxTextCtrl(this, PM_TEXT, text, wxPoint(10, 10 + ((max_instances + 3) * x_height)), wxSize(width_size, x_height), 0);
   m_pm_text->SetEditable(false);
   // installation id
   sprintf(text, "LoadState: %s", oc_core_get_lsm_state_as_string(device->lsm_s));
-  m_ls_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10 + 140, 10 + ((max_instances + 3) * 25)), wxSize(140, 25), 0);
+  m_ls_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10 + width_size, 10 + ((max_instances + 3) * 25)), wxSize(width_size, 25), 0);
   m_ls_text->SetEditable(false);
   // host name
   sprintf(text, "host name: %s", oc_string(device->hostname));
-  m_hostname_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10, 10 + ((max_instances + 4) * 25)), wxSize(140, 25), 0);
+  m_hostname_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10, 10 + ((max_instances + 4) * 25)), wxSize(width_size, 25), 0);
   m_hostname_text->SetEditable(false);
   if (app_is_secure()) {
     strcpy(text, "secured");
@@ -317,7 +319,7 @@ MyFrame::MyFrame(char* str_serial_number)
   else {
     strcpy(text, "unsecured");
   }
-  m_secured_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10 + 140,  10 + ((max_instances + 4) * 25)), wxSize(140, 25), wxTE_RICH);
+  m_secured_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10 + width_size,  10 + ((max_instances + 4) * 25)), wxSize(width_size, 25), wxTE_RICH);
   m_secured_text->SetEditable(false);
   if (app_is_secure() == false) {
     m_secured_text->SetStyle(0, 100, (wxTextAttr(*wxRED)));
@@ -379,17 +381,17 @@ void MyFrame::updateTextButtons()
   // ia_0 == AAxxxxxx = AA
   // ia_1 == xxAAxxxx = AA
   // ia_2 == xxxxAAAA = AAAA
-  int ia = device->ia;
-  int ia_o = (ia >> 12);
-  int ia_1 = (ia >> 8) & 0xF;
-  int ia_2 = (ia & 0x000000FF);
+  uint32_t ia = device->ia;
+  uint32_t ia_o = (ia >> 12);
+  uint32_t ia_1 = (ia >> 8) & 0xF;
+  uint32_t ia_2 = (ia & 0x000000FF);
   sprintf(text, "IA: %d.%d.%d   [%d]", ia_o, ia_1, ia_2, device->ia);
   m_ia_text->SetLabelText(text);
   sprintf(text, "LoadState: %s", oc_core_get_lsm_state_as_string(device->lsm_s));
   m_pm_text->SetLabelText(text);
   sprintf(text, "Programming Mode : % d", device->pm);
   m_ls_text->SetLabelText(text);
-  sprintf(text, "IID: %d", device->iid);
+  sprintf(text, "IID: %lld", device->iid);
   m_iid_text->SetLabelText(text);
   sprintf(text, "host name: %s", oc_string(device->hostname));
   m_hostname_text->SetLabelText(text);
@@ -486,14 +488,14 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
         strcat(text, line);
       }
       if ( entry->iid >= 0) {
-        sprintf(line, "  iid: '%d' ", entry->iid);
+        sprintf(line, "  iid: '%lld' ", entry->iid);
         strcat(text, line);
       }
       if ( entry->fid >= 0) {
-        sprintf(line, "  fid: '%d' ", entry->fid);
+        sprintf(line, "  fid: '%lld' ", entry->fid);
         strcat(text, line);
       }
-      if ( entry->grpid >= 0) {
+      if ( entry->grpid > 0) {
         sprintf(line, "  grpid: '%d' ", entry->grpid);
         strcat(text, line);
       }
@@ -552,11 +554,11 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
         strcat(text, line);
       }
       if ( entry->iid >= 0) {
-        sprintf(line, "  iid: '%d' ", entry->iid);
+        sprintf(line, "  iid: '%lld' ", entry->iid);
         strcat(text, line);
       }
       if ( entry->fid >= 0) {
-        sprintf(line, "  fid: '%d' ", entry->fid);
+        sprintf(line, "  fid: '%lld' ", entry->fid);
         strcat(text, line);
       }
       if ( entry->grpid >= 0) {
@@ -772,7 +774,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2022-09-26 13:55:37.427069");
+  strcat(text, "2022-11-29 16:45:42.020527");
   wxMessageBox(text, "KNX virtual Switching Actuator",
     wxOK | wxICON_NONE);
 }
@@ -780,7 +782,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 /**
  * @brief update the UI on the timer ticks
  * updates:
- * - checkboxes
+ * - check boxes
  * - info buttons
  * - text buttons
  * does a oc_main_poll to give a tick to the stack

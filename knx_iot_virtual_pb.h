@@ -23,7 +23,7 @@
  * e.g. if the c code is compiled without main then 
  * these functions can be used to call all generated code
  *
- * 2022-09-26 13:55:36.646180
+ * 2022-11-29 16:45:41.415591
  */
 
 #include "oc_api.h"
@@ -35,28 +35,28 @@ extern "C" {
 #endif
 
 /**
- * Callback invoked by the stack when a successfull post is done
+ * Callback invoked by the stack when a successfull put is done
  *
- * @param[in] url the url of the post
+ * @param[in] url the url of the put
  *
  */
-typedef void (*oc_post_cb_t)(char* url);
+typedef void (*oc_put_cb_t)(char* url);
 
 /**
- * @brief The post callback
+ * @brief The put callback
  *
  */
-typedef struct oc_post_struct_t
+typedef struct oc_put_struct_t
 {
-  oc_post_cb_t cb; /**< the post callback, e.g. when something has changed */
-} oc_post_struct_t;
+  oc_put_cb_t cb; /**< the put callback, e.g. when something has changed */
+} oc_put_struct_t;
 
 /**
- * @brief set the post callback (on application level)
+ * @brief set the put callback (on application level)
  * 
  * @param cb the callback
  */
-void app_set_post_cb(oc_post_cb_t cb);
+void app_set_put_cb(oc_put_cb_t cb);
 
 /**
  * @brief initialize the stack
