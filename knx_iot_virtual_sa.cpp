@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2022-11-29 16:45:42.020527
+// 2022-11-29 18:51:18.171219
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -314,7 +314,8 @@ MyFrame::MyFrame(char* str_serial_number)
   m_hostname_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10, 10 + ((max_instances + 4) * 25)), wxSize(width_size, 25), 0);
   m_hostname_text->SetEditable(false);
   if (app_is_secure()) {
-    strcpy(text, "secured");
+    strcpy(text, app_get_password());
+    //strcpy(text, "secured");
   }
   else {
     strcpy(text, "unsecured");
@@ -774,7 +775,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2022-11-29 16:45:42.020527");
+  strcat(text, "2022-11-29 18:51:18.171219");
   wxMessageBox(text, "KNX virtual Switching Actuator",
     wxOK | wxICON_NONE);
 }

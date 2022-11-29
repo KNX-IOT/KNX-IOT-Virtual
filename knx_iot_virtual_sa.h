@@ -23,7 +23,7 @@
  * e.g. if the c code is compiled without main then 
  * these functions can be used to call all generated code
  *
- * 2022-11-29 16:45:41.950466
+ * 2022-11-29 18:51:18.071746
  */
 
 #include "oc_api.h"
@@ -239,6 +239,13 @@ void app_set_fault_variable(char* url, bool value);
  * @return false is not secure
  */
 bool app_is_secure();
+
+/**
+ * @brief retrieves the password for showing on screen
+ * 
+ * @return password (as string)
+ */
+char* app_get_password();
 
 
 #ifdef __cplusplus

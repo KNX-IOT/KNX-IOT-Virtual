@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Push Button
- * 2022-11-29 16:45:41.397874
+ * 2022-11-29 18:51:17.560638
  * ## Application Design
  *
  * support functions:
@@ -508,12 +508,21 @@ app_init(void)
   oc_set_s_mode_response_cb(oc_add_s_mode_response_cb);
   
 #ifdef OC_SPAKE
-#define PASSWORD "LETTUCE"
+#define PASSWORD "C3F2WY1GM4FJWP0KH9YP"
   oc_spake_set_password(PASSWORD);
   PRINT(" SPAKE password %s\n", PASSWORD);
 #endif
 
   return ret;
+}
+
+char* app_get_password()
+{
+#ifdef OC_SPAKE
+    return PASSWORD;
+#else
+    return "";
+#endif
 }
 
 
