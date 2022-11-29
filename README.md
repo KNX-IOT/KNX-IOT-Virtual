@@ -5,9 +5,9 @@
 <!-- TOC -->
 
 - [1. The Applications](#1-the-applications)
-  - [1.1. The knx_iot_virtual_pb Application](#11-the-knx_iot_virtual_pb-application)
+  - [1.1. The knx\_iot\_virtual\_pb Application](#11-the-knx_iot_virtual_pb-application)
     - [1.1.1. MetaData push button](#111-metadata-push-button)
-  - [1.2. knx_iot_virtual_sa Application](#12-knx_iot_virtual_sa-application)
+  - [1.2. knx\_iot\_virtual\_sa Application](#12-knx_iot_virtual_sa-application)
     - [1.2.1. MetaData switch actuator](#121-metadata-switch-actuator)
 - [2. Updating KNX-IOT-Virtual code base](#2-updating-knx-iot-virtual-code-base)
   - [2.1. GitHub access](#21-github-access)
@@ -62,7 +62,7 @@ The Point API Code is shared code that can be used:
 The point code has an API so that one can:
 
 - set/retrieve data from an URL
-- callback on POST data changes
+- callback on PUT data changes
 - functions to figure out what type of data the url conveys
 
 ### 1.1. The knx_iot_virtual_pb Application
