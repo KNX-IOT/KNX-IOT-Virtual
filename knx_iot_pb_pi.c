@@ -281,7 +281,7 @@ set_led(int led_nr, bool value)
   }
 }
 
-void post_callback(char* url){
+void put_callback(char* url){
   bool my_bool = app_retrieve_bool_variable(url);
   if (strcmp(url, "/p/o_2_2") == 0) set_led(1, my_bool);
   if (strcmp(url, "/p/o_4_4") == 0) set_led(2, my_bool);
@@ -352,7 +352,7 @@ main(void)
   PyRun_SimpleString("pi_hat.init_client()");
 
   // needed to for the info data points
-  app_set_post_cb(post_callback);
+  app_set_put_cb(put_callback);
 
   app_initialize_stack();
 

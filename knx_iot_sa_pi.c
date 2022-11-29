@@ -133,7 +133,7 @@ set_led(int led_nr, bool value)
   }
 }
 
-void post_callback(char* url){
+void put_callback(char* url){
   bool my_bool = app_retrieve_bool_variable(url);
   if (strcmp(url, "/p/o_1_1") == 0) set_led(1, my_bool);
   if (strcmp(url, "/p/o_3_3") == 0) set_led(2, my_bool);
@@ -178,7 +178,7 @@ main(void)
   /* Disable full buffering so stdout appears in journalctl */
   setvbuf(stdout, NULL, _IONBF, BUFSIZ);
 
-  app_set_post_cb(post_callback);
+  app_set_put_cb(put_callback);
 
   app_initialize_stack();
 

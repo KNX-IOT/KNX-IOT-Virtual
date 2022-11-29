@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Switching Actuator
- * 2022-09-26 13:55:37.296750
+ * 2022-11-29 16:45:41.936717
  * ## Application Design
  *
  * support functions:
@@ -36,12 +36,12 @@
  *   starts the stack, with the registered resources.
  *   can be compiled out with NO_MAIN
  *
- *  handlers for the implemented methods (get/post):
+ *  handlers for the implemented methods (get/put):
  *   - get_[path]
  *     function that is being called when a GET is called on [path]
  *     set the global variables in the output
- *   - post_[path]
- *     function that is being called when a POST is called on [path]
+ *   - put_[path]
+ *     function that is being called when a PUT is called on [path]
  *     if input data is of the correct type
  *       updates the global variables
  *
@@ -459,23 +459,23 @@ bool app_is_secure()
 #endif /* OC_OSCORE */
 }
 
-static oc_post_struct_t app_post = { NULL };
+static oc_put_struct_t app_put = { NULL };
 
 void
-app_set_post_cb(oc_post_cb_t cb)
+app_set_put_cb(oc_put_cb_t cb)
 {
-  app_post.cb = cb;
+  app_put.cb = cb;
 }
 
-oc_post_struct_t *
-oc_get_post_cb(void)
+oc_put_struct_t *
+oc_get_put_cb(void)
 {
-  return &app_post;
+  return &app_put;
 }
 
-void do_post_cb(char* url) 
+void do_put_cb(char* url) 
 {
-  oc_post_struct_t *my_cb = oc_get_post_cb();
+  oc_put_struct_t *my_cb = oc_get_put_cb();
   if (my_cb && my_cb->cb) {
     my_cb->cb(url);
   }
@@ -672,10 +672,10 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 
  
 /**
- * @brief CoAP POST method for data point "OnOff_1" resource at url "/p/o_1_1".
+ * @brief CoAP PUT method for data point "OnOff_1" resource at url "/p/o_1_1".
  * resource types: ['urn:knx:dpa.417.61', 'urn:knx:dpt.switch']
  * The function has as input the request body, which are the input values of the
- * POST method.
+ * PUT method.
  * The input values (as a set) are checked if all supplied values are correct.
  * If the input values are correct, they will be assigned to the global property
  * values. 
@@ -685,13 +685,13 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param user_data the supplied user data.
  */
 void
-post_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
+put_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
                 void *user_data)
 {
   (void)interfaces;
   (void)user_data;
   bool error_state = false;
-  PRINT("-- Begin post_OnOff_1:\n");
+  PRINT("-- Begin put_OnOff_1:\n");
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
@@ -703,7 +703,7 @@ post_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
-      PRINT("  post_OnOff_1 received : %d\n", rep->value.boolean);
+      PRINT("  put_OnOff_1 received : %d\n", rep->value.boolean);
       g_OnOff_1 = rep->value.boolean;
       oc_send_cbor_response(request, OC_STATUS_CHANGED);
       /* MANUFACTORER: add here the code to talk to the HW if one implements an
@@ -725,15 +725,15 @@ post_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
       PRINT("  Send status to '/p/o_2_2' with flag: 'w'\n");
       oc_do_s_mode_with_scope(2, CH1_URL_INFOONOFF_1, "w");
       oc_do_s_mode_with_scope(5, CH1_URL_INFOONOFF_1, "w");
-      do_post_cb(CH1_URL_ONOFF_1);
-      PRINT("-- End post_OnOff_1\n");
+      do_put_cb(CH1_URL_ONOFF_1);
+      PRINT("-- End put_OnOff_1\n");
       return;
     }
     rep = rep->next;
   }
 
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
-  PRINT("-- End post_OnOff_1\n");
+  PRINT("-- End put_OnOff_1\n");
 }
 
 /**
@@ -952,10 +952,10 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 
  
 /**
- * @brief CoAP POST method for data point "OnOff_2" resource at url "/p/o_3_3".
+ * @brief CoAP PUT method for data point "OnOff_2" resource at url "/p/o_3_3".
  * resource types: ['urn:knx:dpa.417.61', 'urn:knx:dpt.switch']
  * The function has as input the request body, which are the input values of the
- * POST method.
+ * PUT method.
  * The input values (as a set) are checked if all supplied values are correct.
  * If the input values are correct, they will be assigned to the global property
  * values. 
@@ -965,13 +965,13 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param user_data the supplied user data.
  */
 void
-post_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
+put_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
                 void *user_data)
 {
   (void)interfaces;
   (void)user_data;
   bool error_state = false;
-  PRINT("-- Begin post_OnOff_2:\n");
+  PRINT("-- Begin put_OnOff_2:\n");
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
@@ -983,7 +983,7 @@ post_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
-      PRINT("  post_OnOff_2 received : %d\n", rep->value.boolean);
+      PRINT("  put_OnOff_2 received : %d\n", rep->value.boolean);
       g_OnOff_2 = rep->value.boolean;
       oc_send_cbor_response(request, OC_STATUS_CHANGED);
       /* MANUFACTORER: add here the code to talk to the HW if one implements an
@@ -1005,15 +1005,15 @@ post_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
       PRINT("  Send status to '/p/o_4_4' with flag: 'w'\n");
       oc_do_s_mode_with_scope(2, CH2_URL_INFOONOFF_2, "w");
       oc_do_s_mode_with_scope(5, CH2_URL_INFOONOFF_2, "w");
-      do_post_cb(CH2_URL_ONOFF_2);
-      PRINT("-- End post_OnOff_2\n");
+      do_put_cb(CH2_URL_ONOFF_2);
+      PRINT("-- End put_OnOff_2\n");
       return;
     }
     rep = rep->next;
   }
 
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
-  PRINT("-- End post_OnOff_2\n");
+  PRINT("-- End put_OnOff_2\n");
 }
 
 /**
@@ -1232,10 +1232,10 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 
  
 /**
- * @brief CoAP POST method for data point "OnOff_3" resource at url "/p/o_5_5".
+ * @brief CoAP PUT method for data point "OnOff_3" resource at url "/p/o_5_5".
  * resource types: ['urn:knx:dpa.417.61', 'urn:knx:dpt.switch']
  * The function has as input the request body, which are the input values of the
- * POST method.
+ * PUT method.
  * The input values (as a set) are checked if all supplied values are correct.
  * If the input values are correct, they will be assigned to the global property
  * values. 
@@ -1245,13 +1245,13 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param user_data the supplied user data.
  */
 void
-post_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
+put_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
                 void *user_data)
 {
   (void)interfaces;
   (void)user_data;
   bool error_state = false;
-  PRINT("-- Begin post_OnOff_3:\n");
+  PRINT("-- Begin put_OnOff_3:\n");
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
@@ -1263,7 +1263,7 @@ post_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
-      PRINT("  post_OnOff_3 received : %d\n", rep->value.boolean);
+      PRINT("  put_OnOff_3 received : %d\n", rep->value.boolean);
       g_OnOff_3 = rep->value.boolean;
       oc_send_cbor_response(request, OC_STATUS_CHANGED);
       /* MANUFACTORER: add here the code to talk to the HW if one implements an
@@ -1285,15 +1285,15 @@ post_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
       PRINT("  Send status to '/p/o_6_6' with flag: 'w'\n");
       oc_do_s_mode_with_scope(2, CH3_URL_INFOONOFF_3, "w");
       oc_do_s_mode_with_scope(5, CH3_URL_INFOONOFF_3, "w");
-      do_post_cb(CH3_URL_ONOFF_3);
-      PRINT("-- End post_OnOff_3\n");
+      do_put_cb(CH3_URL_ONOFF_3);
+      PRINT("-- End put_OnOff_3\n");
       return;
     }
     rep = rep->next;
   }
 
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
-  PRINT("-- End post_OnOff_3\n");
+  PRINT("-- End put_OnOff_3\n");
 }
 
 /**
@@ -1512,10 +1512,10 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 
  
 /**
- * @brief CoAP POST method for data point "OnOff_4" resource at url "/p/o_7_7".
+ * @brief CoAP PUT method for data point "OnOff_4" resource at url "/p/o_7_7".
  * resource types: ['urn:knx:dpa.417.61', 'urn:knx:dpt.switch']
  * The function has as input the request body, which are the input values of the
- * POST method.
+ * PUT method.
  * The input values (as a set) are checked if all supplied values are correct.
  * If the input values are correct, they will be assigned to the global property
  * values. 
@@ -1525,13 +1525,13 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
  * @param user_data the supplied user data.
  */
 void
-post_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
+put_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
                 void *user_data)
 {
   (void)interfaces;
   (void)user_data;
   bool error_state = false;
-  PRINT("-- Begin post_OnOff_4:\n");
+  PRINT("-- Begin put_OnOff_4:\n");
 
   oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
@@ -1543,7 +1543,7 @@ post_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
   while (rep != NULL) {
     /* handle the type of payload correctly. */
     if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
-      PRINT("  post_OnOff_4 received : %d\n", rep->value.boolean);
+      PRINT("  put_OnOff_4 received : %d\n", rep->value.boolean);
       g_OnOff_4 = rep->value.boolean;
       oc_send_cbor_response(request, OC_STATUS_CHANGED);
       /* MANUFACTORER: add here the code to talk to the HW if one implements an
@@ -1565,15 +1565,15 @@ post_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
       PRINT("  Send status to '/p/o_8_8' with flag: 'w'\n");
       oc_do_s_mode_with_scope(2, CH4_URL_INFOONOFF_4, "w");
       oc_do_s_mode_with_scope(5, CH4_URL_INFOONOFF_4, "w");
-      do_post_cb(CH4_URL_ONOFF_4);
-      PRINT("-- End post_OnOff_4\n");
+      do_put_cb(CH4_URL_ONOFF_4);
+      PRINT("-- End put_OnOff_4\n");
       return;
     }
     rep = rep->next;
   }
 
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
-  PRINT("-- End post_OnOff_4\n");
+  PRINT("-- End put_OnOff_4\n");
 }
 
 /**
@@ -1693,7 +1693,7 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
  * @brief register all the data point resources to the stack
  * this function registers all data point level resources:
  * - each resource path is bind to a specific function for the supported methods
- *  (GET, POST)
+ *  (GET, PUT)
  * - each resource is
  *   - secure
  *   - observable
@@ -1725,7 +1725,7 @@ register_resources(void)
     an interrupt when something is read from the hardware. */
   oc_resource_set_observable(res_OnOff_1, true);
   oc_resource_set_request_handler(res_OnOff_1, OC_GET, get_OnOff_1, NULL);
-  oc_resource_set_request_handler(res_OnOff_1, OC_POST, post_OnOff_1, NULL); 
+  oc_resource_set_request_handler(res_OnOff_1, OC_PUT, put_OnOff_1, NULL); 
   oc_add_resource(res_OnOff_1);
   PRINT("Register Resource 'InfoOnOff_1' with local path \"%s\"\n", CH1_URL_INFOONOFF_1);
   oc_resource_t *res_InfoOnOff_1 =
@@ -1768,7 +1768,7 @@ register_resources(void)
     an interrupt when something is read from the hardware. */
   oc_resource_set_observable(res_OnOff_2, true);
   oc_resource_set_request_handler(res_OnOff_2, OC_GET, get_OnOff_2, NULL);
-  oc_resource_set_request_handler(res_OnOff_2, OC_POST, post_OnOff_2, NULL); 
+  oc_resource_set_request_handler(res_OnOff_2, OC_PUT, put_OnOff_2, NULL); 
   oc_add_resource(res_OnOff_2);
   PRINT("Register Resource 'InfoOnOff_2' with local path \"%s\"\n", CH2_URL_INFOONOFF_2);
   oc_resource_t *res_InfoOnOff_2 =
@@ -1811,7 +1811,7 @@ register_resources(void)
     an interrupt when something is read from the hardware. */
   oc_resource_set_observable(res_OnOff_3, true);
   oc_resource_set_request_handler(res_OnOff_3, OC_GET, get_OnOff_3, NULL);
-  oc_resource_set_request_handler(res_OnOff_3, OC_POST, post_OnOff_3, NULL); 
+  oc_resource_set_request_handler(res_OnOff_3, OC_PUT, put_OnOff_3, NULL); 
   oc_add_resource(res_OnOff_3);
   PRINT("Register Resource 'InfoOnOff_3' with local path \"%s\"\n", CH3_URL_INFOONOFF_3);
   oc_resource_t *res_InfoOnOff_3 =
@@ -1854,7 +1854,7 @@ register_resources(void)
     an interrupt when something is read from the hardware. */
   oc_resource_set_observable(res_OnOff_4, true);
   oc_resource_set_request_handler(res_OnOff_4, OC_GET, get_OnOff_4, NULL);
-  oc_resource_set_request_handler(res_OnOff_4, OC_POST, post_OnOff_4, NULL); 
+  oc_resource_set_request_handler(res_OnOff_4, OC_PUT, put_OnOff_4, NULL); 
   oc_add_resource(res_OnOff_4);
   PRINT("Register Resource 'InfoOnOff_4' with local path \"%s\"\n", CH4_URL_INFOONOFF_4);
   oc_resource_t *res_InfoOnOff_4 =
