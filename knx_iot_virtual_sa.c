@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Switching Actuator
- * 2022-11-29 18:51:18.059720
+ * 2022-11-30 09:04:53.639708
  * ## Application Design
  *
  * support functions:
@@ -552,9 +552,10 @@ app_init(void)
   oc_set_s_mode_response_cb(oc_add_s_mode_response_cb);
   
 #ifdef OC_SPAKE
-#define PASSWORD "2VKWPHUHWWV4SP5DYA4L"
+#define PASSWORD "0MK4U5LV950ST3VRXL8G"
   oc_spake_set_password(PASSWORD);
   PRINT(" SPAKE password %s\n", PASSWORD);
+
 #endif
 
   return ret;
