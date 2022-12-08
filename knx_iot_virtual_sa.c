@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Switching Actuator
- * 2022-11-30 09:04:53.639708
+ * 2022-12-08 10:59:40.922551
  * ## Application Design
  *
  * support functions:
@@ -550,9 +550,8 @@ app_init(void)
   oc_core_set_device_model(0, "KNX virtual - SA");
 
   oc_set_s_mode_response_cb(oc_add_s_mode_response_cb);
-  
-#ifdef OC_SPAKE
 #define PASSWORD "0MK4U5LV950ST3VRXL8G"
+#ifdef OC_SPAKE
   oc_spake_set_password(PASSWORD);
   PRINT(" SPAKE password %s\n", PASSWORD);
 
@@ -561,15 +560,13 @@ app_init(void)
   return ret;
 }
 
+/**
+ * @brief returns the password
+ */
 char* app_get_password()
 {
-#ifdef OC_SPAKE
-    return PASSWORD;
-#else
-    return "";
-#endif
+  return PASSWORD;
 }
-
 
 // data point (objects) handling
 
@@ -700,27 +697,25 @@ put_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 {
   (void)interfaces;
   (void)user_data;
-  bool error_state = false;
+  bool error_state = true;
   PRINT("-- Begin put_OnOff_1:\n");
 
-  oc_rep_t *rep = NULL;
+  oc_rep_t *req = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
   if (oc_is_redirected_request(request)) {
     PRINT("  redirected request..\n");
-    /* retrieve the value of the s-mode payload */
   }
-  rep = request->request_payload;
-  while (rep != NULL) {
+  req = request->request_payload;
+  /* loop over all the entries in the request */
+  while (req != NULL) {
     /* handle the type of payload correctly. */
-    if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
-      PRINT("  put_OnOff_1 received : %d\n", rep->value.boolean);
-      g_OnOff_1 = rep->value.boolean;
-      oc_send_cbor_response(request, OC_STATUS_CHANGED);
-      /* MANUFACTORER: add here the code to talk to the HW if one implements an
-       actuator. The call to the HW needs to fill in the global variable before it
-       returns to this function here. Alternative is to have a callback from the
-       hardware that sets the global variables.
-     */
+    if ((req->iname == 1) && (req->type == OC_REP_BOOL)) {
+      PRINT("  put_OnOff_1 received : %d\n", req->value.boolean);
+      g_OnOff_1 = req->value.boolean;
+      error_state = false;
+      if (error_state == false){
+        /* input is valid, so handle the response */
+        oc_send_cbor_response(request, OC_STATUS_CHANGED);
       /* update the status information of InfoOnOff_1*/
       if (g_fault_OnOff_1 == false) { 
         PRINT("  No Fault update feedback to %d'\n", g_OnOff_1);
@@ -735,13 +730,14 @@ put_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
       PRINT("  Send status to '/p/o_2_2' with flag: 'w'\n");
       oc_do_s_mode_with_scope(2, CH1_URL_INFOONOFF_1, "w");
       oc_do_s_mode_with_scope(5, CH1_URL_INFOONOFF_1, "w");
-      do_put_cb(CH1_URL_ONOFF_1);
-      PRINT("-- End put_OnOff_1\n");
-      return;
+        do_put_cb(CH1_URL_ONOFF_1);
+        PRINT("-- End put_OnOff_1\n");
+        return;
+      }
     }
-    rep = rep->next;
+    req = req->next;
   }
-
+  /* request data was not recognized, so it was a bad request */
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
   PRINT("-- End put_OnOff_1\n");
 }
@@ -980,27 +976,25 @@ put_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 {
   (void)interfaces;
   (void)user_data;
-  bool error_state = false;
+  bool error_state = true;
   PRINT("-- Begin put_OnOff_2:\n");
 
-  oc_rep_t *rep = NULL;
+  oc_rep_t *req = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
   if (oc_is_redirected_request(request)) {
     PRINT("  redirected request..\n");
-    /* retrieve the value of the s-mode payload */
   }
-  rep = request->request_payload;
-  while (rep != NULL) {
+  req = request->request_payload;
+  /* loop over all the entries in the request */
+  while (req != NULL) {
     /* handle the type of payload correctly. */
-    if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
-      PRINT("  put_OnOff_2 received : %d\n", rep->value.boolean);
-      g_OnOff_2 = rep->value.boolean;
-      oc_send_cbor_response(request, OC_STATUS_CHANGED);
-      /* MANUFACTORER: add here the code to talk to the HW if one implements an
-       actuator. The call to the HW needs to fill in the global variable before it
-       returns to this function here. Alternative is to have a callback from the
-       hardware that sets the global variables.
-     */
+    if ((req->iname == 1) && (req->type == OC_REP_BOOL)) {
+      PRINT("  put_OnOff_2 received : %d\n", req->value.boolean);
+      g_OnOff_2 = req->value.boolean;
+      error_state = false;
+      if (error_state == false){
+        /* input is valid, so handle the response */
+        oc_send_cbor_response(request, OC_STATUS_CHANGED);
       /* update the status information of InfoOnOff_2*/
       if (g_fault_OnOff_2 == false) { 
         PRINT("  No Fault update feedback to %d'\n", g_OnOff_2);
@@ -1015,13 +1009,14 @@ put_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
       PRINT("  Send status to '/p/o_4_4' with flag: 'w'\n");
       oc_do_s_mode_with_scope(2, CH2_URL_INFOONOFF_2, "w");
       oc_do_s_mode_with_scope(5, CH2_URL_INFOONOFF_2, "w");
-      do_put_cb(CH2_URL_ONOFF_2);
-      PRINT("-- End put_OnOff_2\n");
-      return;
+        do_put_cb(CH2_URL_ONOFF_2);
+        PRINT("-- End put_OnOff_2\n");
+        return;
+      }
     }
-    rep = rep->next;
+    req = req->next;
   }
-
+  /* request data was not recognized, so it was a bad request */
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
   PRINT("-- End put_OnOff_2\n");
 }
@@ -1260,27 +1255,25 @@ put_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 {
   (void)interfaces;
   (void)user_data;
-  bool error_state = false;
+  bool error_state = true;
   PRINT("-- Begin put_OnOff_3:\n");
 
-  oc_rep_t *rep = NULL;
+  oc_rep_t *req = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
   if (oc_is_redirected_request(request)) {
     PRINT("  redirected request..\n");
-    /* retrieve the value of the s-mode payload */
   }
-  rep = request->request_payload;
-  while (rep != NULL) {
+  req = request->request_payload;
+  /* loop over all the entries in the request */
+  while (req != NULL) {
     /* handle the type of payload correctly. */
-    if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
-      PRINT("  put_OnOff_3 received : %d\n", rep->value.boolean);
-      g_OnOff_3 = rep->value.boolean;
-      oc_send_cbor_response(request, OC_STATUS_CHANGED);
-      /* MANUFACTORER: add here the code to talk to the HW if one implements an
-       actuator. The call to the HW needs to fill in the global variable before it
-       returns to this function here. Alternative is to have a callback from the
-       hardware that sets the global variables.
-     */
+    if ((req->iname == 1) && (req->type == OC_REP_BOOL)) {
+      PRINT("  put_OnOff_3 received : %d\n", req->value.boolean);
+      g_OnOff_3 = req->value.boolean;
+      error_state = false;
+      if (error_state == false){
+        /* input is valid, so handle the response */
+        oc_send_cbor_response(request, OC_STATUS_CHANGED);
       /* update the status information of InfoOnOff_3*/
       if (g_fault_OnOff_3 == false) { 
         PRINT("  No Fault update feedback to %d'\n", g_OnOff_3);
@@ -1295,13 +1288,14 @@ put_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
       PRINT("  Send status to '/p/o_6_6' with flag: 'w'\n");
       oc_do_s_mode_with_scope(2, CH3_URL_INFOONOFF_3, "w");
       oc_do_s_mode_with_scope(5, CH3_URL_INFOONOFF_3, "w");
-      do_put_cb(CH3_URL_ONOFF_3);
-      PRINT("-- End put_OnOff_3\n");
-      return;
+        do_put_cb(CH3_URL_ONOFF_3);
+        PRINT("-- End put_OnOff_3\n");
+        return;
+      }
     }
-    rep = rep->next;
+    req = req->next;
   }
-
+  /* request data was not recognized, so it was a bad request */
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
   PRINT("-- End put_OnOff_3\n");
 }
@@ -1540,27 +1534,25 @@ put_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 {
   (void)interfaces;
   (void)user_data;
-  bool error_state = false;
+  bool error_state = true;
   PRINT("-- Begin put_OnOff_4:\n");
 
-  oc_rep_t *rep = NULL;
+  oc_rep_t *req = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
   if (oc_is_redirected_request(request)) {
     PRINT("  redirected request..\n");
-    /* retrieve the value of the s-mode payload */
   }
-  rep = request->request_payload;
-  while (rep != NULL) {
+  req = request->request_payload;
+  /* loop over all the entries in the request */
+  while (req != NULL) {
     /* handle the type of payload correctly. */
-    if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
-      PRINT("  put_OnOff_4 received : %d\n", rep->value.boolean);
-      g_OnOff_4 = rep->value.boolean;
-      oc_send_cbor_response(request, OC_STATUS_CHANGED);
-      /* MANUFACTORER: add here the code to talk to the HW if one implements an
-       actuator. The call to the HW needs to fill in the global variable before it
-       returns to this function here. Alternative is to have a callback from the
-       hardware that sets the global variables.
-     */
+    if ((req->iname == 1) && (req->type == OC_REP_BOOL)) {
+      PRINT("  put_OnOff_4 received : %d\n", req->value.boolean);
+      g_OnOff_4 = req->value.boolean;
+      error_state = false;
+      if (error_state == false){
+        /* input is valid, so handle the response */
+        oc_send_cbor_response(request, OC_STATUS_CHANGED);
       /* update the status information of InfoOnOff_4*/
       if (g_fault_OnOff_4 == false) { 
         PRINT("  No Fault update feedback to %d'\n", g_OnOff_4);
@@ -1575,13 +1567,14 @@ put_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
       PRINT("  Send status to '/p/o_8_8' with flag: 'w'\n");
       oc_do_s_mode_with_scope(2, CH4_URL_INFOONOFF_4, "w");
       oc_do_s_mode_with_scope(5, CH4_URL_INFOONOFF_4, "w");
-      do_put_cb(CH4_URL_ONOFF_4);
-      PRINT("-- End put_OnOff_4\n");
-      return;
+        do_put_cb(CH4_URL_ONOFF_4);
+        PRINT("-- End put_OnOff_4\n");
+        return;
+      }
     }
-    rep = rep->next;
+    req = req->next;
   }
-
+  /* request data was not recognized, so it was a bad request */
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
   PRINT("-- End put_OnOff_4\n");
 }
