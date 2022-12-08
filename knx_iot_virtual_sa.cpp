@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2022-12-05 11:49:13.196438
+// 2022-12-08 10:59:41.143309
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -32,7 +32,7 @@
 
 enum
 {
-  RESET = wxID_HIGHEST + 1, // ID for reset button in the menu
+  RESET = wxID_HIGHEST + 1,  // ID for reset button in the menu
   IA_TEXT = RESET + 1,       // ID for internal address text 
   IID_TEXT = IA_TEXT + 1,    // ID for installation id text 
   PM_TEXT = IID_TEXT + 1,    // ID for programming mode text 
@@ -101,32 +101,33 @@ private:
   void updateInfoButtons();
   void updateTextButtons();
   void bool2text(bool on_off, char* text);
+  void int2text(int value, char* text);
   void double2text(double value, char* text);
 
   wxMenu* m_menuFile;
   wxTimer m_timer;
 
-  wxTextCtrl* m_ia_text;   // text control for internal address
+  wxTextCtrl* m_ia_text;  // text control for internal address
   wxTextCtrl* m_iid_text; // text control for installation id
-  wxTextCtrl* m_pm_text; // text control for programming mode
-  wxTextCtrl* m_ls_text; // text control for load state
+  wxTextCtrl* m_pm_text;  // text control for programming mode
+  wxTextCtrl* m_ls_text;  // text control for load state
   wxTextCtrl* m_hostname_text; // text control for host name
   wxTextCtrl* m_secured_text; // text secure/not secure
-  //DP_ID_ONOFF_1
+  //DP_ID_ONOFF_1 bool
   wxCheckBox* m_ONOFF_1 ; // OnOff_1 if.a 
-  //DP_ID_INFOONOFF_1
+  //DP_ID_INFOONOFF_1 bool
   wxButton* m_INFOONOFF_1; // InfoOnOff_1 if.s 
-  //DP_ID_ONOFF_2
+  //DP_ID_ONOFF_2 bool
   wxCheckBox* m_ONOFF_2 ; // OnOff_2 if.a 
-  //DP_ID_INFOONOFF_2
+  //DP_ID_INFOONOFF_2 bool
   wxButton* m_INFOONOFF_2; // InfoOnOff_2 if.s 
-  //DP_ID_ONOFF_3
+  //DP_ID_ONOFF_3 bool
   wxCheckBox* m_ONOFF_3 ; // OnOff_3 if.a 
-  //DP_ID_INFOONOFF_3
+  //DP_ID_INFOONOFF_3 bool
   wxButton* m_INFOONOFF_3; // InfoOnOff_3 if.s 
-  //DP_ID_ONOFF_4
+  //DP_ID_ONOFF_4 bool
   wxCheckBox* m_ONOFF_4 ; // OnOff_4 if.a 
-  //DP_ID_INFOONOFF_4
+  //DP_ID_INFOONOFF_4 bool
   wxButton* m_INFOONOFF_4; // InfoOnOff_4 if.s 
   wxCheckBox* m_fault_ONOFF_1 ; // OnOff_1 if.a 
   wxCheckBox* m_fault_ONOFF_2 ; // OnOff_2 if.a 
@@ -211,9 +212,9 @@ MyFrame::MyFrame(char* str_serial_number)
   index = 1-1;
   row = 1 -1;
   column = (index % max_dp_count) - column_offset;
-  //DP_ID_ONOFF_1
+  //DP_ID_ONOFF_1 
   m_ONOFF_1 = new wxCheckBox(this, DP_ID_ONOFF_1, _T("OnOff_1 ('/p/o_1_1')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
-  m_ONOFF_1->Enable(false); 
+  m_ONOFF_1->Enable(false);      
   index = 2-1;
   row = 1 -1;
   column = (index % max_dp_count) - column_offset;
@@ -221,14 +222,13 @@ MyFrame::MyFrame(char* str_serial_number)
   // if.s  ==> sensor == possible to change value in UI
   m_INFOONOFF_1 = new wxButton(this, DP_ID_INFOONOFF_1, _T("InfoOnOff_1 ('/p/o_2_2')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
   m_INFOONOFF_1->Bind(wxEVT_BUTTON, &MyFrame::OnPressed_InfoOnOff_1, this);
-  m_INFOONOFF_1->Enable(false); 
-  
+  m_INFOONOFF_1->Enable(false);        
   index = 3-1;
   row = 2 -1;
   column = (index % max_dp_count) - column_offset;
-  //DP_ID_ONOFF_2
+  //DP_ID_ONOFF_2 
   m_ONOFF_2 = new wxCheckBox(this, DP_ID_ONOFF_2, _T("OnOff_2 ('/p/o_3_3')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
-  m_ONOFF_2->Enable(false); 
+  m_ONOFF_2->Enable(false);      
   index = 4-1;
   row = 2 -1;
   column = (index % max_dp_count) - column_offset;
@@ -236,14 +236,13 @@ MyFrame::MyFrame(char* str_serial_number)
   // if.s  ==> sensor == possible to change value in UI
   m_INFOONOFF_2 = new wxButton(this, DP_ID_INFOONOFF_2, _T("InfoOnOff_2 ('/p/o_4_4')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
   m_INFOONOFF_2->Bind(wxEVT_BUTTON, &MyFrame::OnPressed_InfoOnOff_2, this);
-  m_INFOONOFF_2->Enable(false); 
-  
+  m_INFOONOFF_2->Enable(false);        
   index = 5-1;
   row = 3 -1;
   column = (index % max_dp_count) - column_offset;
-  //DP_ID_ONOFF_3
+  //DP_ID_ONOFF_3 
   m_ONOFF_3 = new wxCheckBox(this, DP_ID_ONOFF_3, _T("OnOff_3 ('/p/o_5_5')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
-  m_ONOFF_3->Enable(false); 
+  m_ONOFF_3->Enable(false);      
   index = 6-1;
   row = 3 -1;
   column = (index % max_dp_count) - column_offset;
@@ -251,14 +250,13 @@ MyFrame::MyFrame(char* str_serial_number)
   // if.s  ==> sensor == possible to change value in UI
   m_INFOONOFF_3 = new wxButton(this, DP_ID_INFOONOFF_3, _T("InfoOnOff_3 ('/p/o_6_6')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
   m_INFOONOFF_3->Bind(wxEVT_BUTTON, &MyFrame::OnPressed_InfoOnOff_3, this);
-  m_INFOONOFF_3->Enable(false); 
-  
+  m_INFOONOFF_3->Enable(false);        
   index = 7-1;
   row = 4 -1;
   column = (index % max_dp_count) - column_offset;
-  //DP_ID_ONOFF_4
+  //DP_ID_ONOFF_4 
   m_ONOFF_4 = new wxCheckBox(this, DP_ID_ONOFF_4, _T("OnOff_4 ('/p/o_7_7')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
-  m_ONOFF_4->Enable(false); 
+  m_ONOFF_4->Enable(false);      
   index = 8-1;
   row = 4 -1;
   column = (index % max_dp_count) - column_offset;
@@ -266,8 +264,7 @@ MyFrame::MyFrame(char* str_serial_number)
   // if.s  ==> sensor == possible to change value in UI
   m_INFOONOFF_4 = new wxButton(this, DP_ID_INFOONOFF_4, _T("InfoOnOff_4 ('/p/o_8_8')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
   m_INFOONOFF_4->Bind(wxEVT_BUTTON, &MyFrame::OnPressed_InfoOnOff_4, this);
-  m_INFOONOFF_4->Enable(false); 
-  
+  m_INFOONOFF_4->Enable(false);        
   m_fault_ONOFF_1 = new wxCheckBox(this, DP_FAULT_ID_ONOFF_1, _T("Fault OnOff_1"),  wxPoint(20 + (2* x_width), 10 + ((1/2 ) * x_height)), wxSize(x_width, x_height), 0);
   m_fault_ONOFF_1->Bind(wxEVT_CHECKBOX, &MyFrame:: OnFault_ONOFF_1, this); 
   m_fault_ONOFF_2 = new wxCheckBox(this, DP_FAULT_ID_ONOFF_2, _T("Fault OnOff_2"),  wxPoint(20 + (2* x_width), 10 + ((3/2 ) * x_height)), wxSize(x_width, x_height), 0);
@@ -282,7 +279,6 @@ MyFrame::MyFrame(char* str_serial_number)
   }
   app_initialize_stack();
 
-
   int width_size = 180; /* size of the knx info widgets */
   // serial number
   char text[500];
@@ -292,26 +288,36 @@ MyFrame::MyFrame(char* str_serial_number)
   wxTextCtrl* Statictext;
   Statictext = new wxTextCtrl(this, wxID_ANY, text, wxPoint(10, 10 + ((max_instances + 1) * x_height)), wxSize(width_size*2, x_height), 0);
   Statictext->SetEditable(false);
+  
+  // QR code
+  char qrtext[500];
+  strcpy(qrtext, "QR info:   KNX:S:");
+  strcat(qrtext, oc_string(device->serialnumber));
+  strcat(qrtext, ":P:");
+  strcat(qrtext, app_get_password());
+  wxTextCtrl* Statictext2;
+  Statictext2 = new wxTextCtrl(this, wxID_ANY, qrtext, wxPoint(10, 10 + ((max_instances + 2) * x_height)), wxSize(width_size*2, x_height), 0);
+  Statictext2->SetEditable(false);
 
   // internal address
   sprintf(text, "IA: %d", device->ia);
-  m_ia_text = new wxTextCtrl(this, IA_TEXT, text, wxPoint(10, 10 + ((max_instances + 2) * x_height)), wxSize(width_size, x_height), 0);
+  m_ia_text = new wxTextCtrl(this, IA_TEXT, text, wxPoint(10, 10 + ((max_instances + 3) * x_height)), wxSize(width_size, x_height), 0);
   m_ia_text->SetEditable(false);
   // installation id
   sprintf(text, "IID: %lld", device->iid);
-  m_iid_text = new wxTextCtrl(this, IID_TEXT, text, wxPoint(10 + width_size, 10 + ((max_instances + 2) * x_height)), wxSize(width_size, x_height), 0);
+  m_iid_text = new wxTextCtrl(this, IID_TEXT, text, wxPoint(10 + width_size, 10 + ((max_instances + 3) * x_height)), wxSize(width_size, x_height), 0);
   m_iid_text->SetEditable(false);
   // programming mode
   sprintf(text, "Programming Mode: %d", device->pm);
-  m_pm_text = new wxTextCtrl(this, PM_TEXT, text, wxPoint(10, 10 + ((max_instances + 3) * x_height)), wxSize(width_size, x_height), 0);
+  m_pm_text = new wxTextCtrl(this, PM_TEXT, text, wxPoint(10, 10 + ((max_instances + 4) * x_height)), wxSize(width_size, x_height), 0);
   m_pm_text->SetEditable(false);
   // installation id
   sprintf(text, "LoadState: %s", oc_core_get_lsm_state_as_string(device->lsm_s));
-  m_ls_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10 + width_size, 10 + ((max_instances + 3) * 25)), wxSize(width_size, 25), 0);
+  m_ls_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10 + width_size, 10 + ((max_instances + 4) * 25)), wxSize(width_size, 25), 0);
   m_ls_text->SetEditable(false);
   // host name
   sprintf(text, "host name: %s", oc_string(device->hostname));
-  m_hostname_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10, 10 + ((max_instances + 4) * 25)), wxSize(width_size, 25), 0);
+  m_hostname_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10, 10 + ((max_instances + 5) * 25)), wxSize(width_size, 25), 0);
   m_hostname_text->SetEditable(false);
   if (app_is_secure()) {
     strcpy(text, app_get_password());
@@ -320,7 +326,7 @@ MyFrame::MyFrame(char* str_serial_number)
   else {
     strcpy(text, "unsecured");
   }
-  m_secured_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10 + width_size,  10 + ((max_instances + 4) * 25)), wxSize(width_size, 25), wxTE_RICH);
+  m_secured_text = new wxTextCtrl(this, LS_TEXT, text, wxPoint(10 + width_size,  10 + ((max_instances + 5) * 25)), wxSize(width_size, 25), wxTE_RICH);
   m_secured_text->SetEditable(false);
   if (app_is_secure() == false) {
     m_secured_text->SetStyle(0, 100, (wxTextAttr(*wxRED)));
@@ -775,7 +781,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2022-12-05 11:49:13.196438");
+  strcat(text, "2022-12-08 10:59:41.143309");
   wxMessageBox(text, "KNX virtual Switching Actuator",
     wxOK | wxICON_NONE);
 }
@@ -824,6 +830,13 @@ void MyFrame::bool2text(bool on_off, char* text)
   }
 }
 
+void MyFrame::int2text(int value, char* text)
+{
+  char value_text[50];
+  sprintf(value_text," %d", value);
+  strcat(text,value_text);
+}
+
 void MyFrame::double2text(double value, char* text)
 {
   char new_text[200];
@@ -835,6 +848,7 @@ void  MyFrame::updateInfoButtons()
 {
   char text[200];
   bool p;
+  int p_int;
   double d;
   p = app_retrieve_bool_variable("/p/o_1_1"); // set button text of OnOff_1
   strcpy(text, "OnOff_1 ('/p/o_1_1')");
@@ -994,5 +1008,6 @@ void MyFrame::OnFault_ONOFF_4(wxCommandEvent& event)
   sprintf(my_text, "Actuator OnOff_4 (/p/o_7_7) Fault: %d to: /p/o_8_8", (int)p1);
   SetStatusText(my_text);
 }
+
 
 
