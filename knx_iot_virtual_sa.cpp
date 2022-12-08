@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2022-11-29 18:51:18.171219
+// 2022-12-05 11:49:13.196438
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -446,7 +446,7 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
       strcat(text, line);
       strcpy(line,"  ga : [");
       for (int i = 0; i < entry->ga_len; i++) {
-        sprintf(line2," %d", entry->ga[i]);
+        sprintf(line2," %u", entry->ga[i]);
         strcat(line, line2);
       }
       strcat(line," ]\n");
@@ -489,15 +489,15 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
         strcat(text, line);
       }
       if ( entry->iid >= 0) {
-        sprintf(line, "  iid: '%lld' ", entry->iid);
+        sprintf(line, "  iid: '%ld' ", entry->iid);
         strcat(text, line);
       }
       if ( entry->fid >= 0) {
-        sprintf(line, "  fid: '%lld' ", entry->fid);
+        sprintf(line, "  fid: '%ld' ", entry->fid);
         strcat(text, line);
       }
       if ( entry->grpid > 0) {
-        sprintf(line, "  grpid: '%d' ", entry->grpid);
+        sprintf(line, "  grpid: '%u' ", entry->grpid);
         strcat(text, line);
       }
       if (oc_string_len(entry->url) > 0) {
@@ -511,7 +511,7 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
       if ( entry->ga_len > 0) {
         strcpy(line,"  ga : [");
         for (int i = 0; i < entry->ga_len; i++) {
-          sprintf(line2," %d", entry->ga[i]);
+          sprintf(line2," %u", entry->ga[i]);
           strcat(line, line2);
         }
         strcat(line," ]\n");
@@ -563,7 +563,7 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
         strcat(text, line);
       }
       if ( entry->grpid >= 0) {
-        sprintf(line, "  grpid: '%d' ", entry->grpid);
+        sprintf(line, "  grpid: '%u' ", entry->grpid);
         strcat(text, line);
       }
       if (oc_string_len(entry->url) > 0) {
@@ -577,7 +577,7 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
       if ( entry->ga_len > 0) {
         strcpy(line,"  ga : [");
         for (int i = 0; i < entry->ga_len; i++) {
-          sprintf(line2," %d", entry->ga[i]);
+          sprintf(line2," %u", entry->ga[i]);
           strcat(line, line2);
         }
         strcat(line," ]\n");
@@ -723,7 +723,7 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
             sprintf(line, "  osc_ga : [");
             strcat(text, line);
             for (int i = 0; i < my_entry->ga_len; i++) {
-              sprintf(line, " %d", my_entry->ga[i]);
+              sprintf(line, " %u", my_entry->ga[i]);
               strcat(text, line);
             }
             sprintf(line, " ]\n");
@@ -775,7 +775,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2022-11-29 18:51:18.171219");
+  strcat(text, "2022-12-05 11:49:13.196438");
   wxMessageBox(text, "KNX virtual Switching Actuator",
     wxOK | wxICON_NONE);
 }
