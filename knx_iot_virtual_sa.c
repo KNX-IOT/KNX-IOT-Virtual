@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Switching Actuator
- * 2022-12-08 10:59:40.922551
+ * 2023-01-06 11:41:23.219340
  * ## Application Design
  *
  * support functions:
@@ -518,7 +518,7 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
  * - base path
  * - knx spec version 
  * - hardware version : [0, 1, 2]
- * - firmware version : [0, 0, 9]
+ * - firmware version : [0, 1, 0]
  * - hardware type    : Windows
  * - device model     : KNX virtual - SA
  *
@@ -539,8 +539,8 @@ app_init(void)
   oc_core_set_device_hwv(0, 0, 1, 2);
   
   
-  /* set the firmware version 0.0.9 */
-  oc_core_set_device_fwv(0, 0, 0, 9);
+  /* set the firmware version 0.1.0 */
+  oc_core_set_device_fwv(0, 0, 1, 0);
   
 
   /* set the hardware type*/
