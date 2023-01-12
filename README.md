@@ -270,10 +270,13 @@ Example (from the folder where the executable resides):
    cd KNX-IOT-Virtual
    mkdir build
    cd build
+   # create the msdev solution
    cmake ..
    ```
 
-   Note: The above set of commands is already in `build.sh`.
+   The above sequence of commands are also available via shell scripts that creates the solution AND create the executables
+   - build.sh for building the secure devices
+   - build_unsecured.sh  for building the same devices with security turned off.
 
 3. Steps using GitLab
 
