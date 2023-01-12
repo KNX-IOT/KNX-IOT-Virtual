@@ -21,7 +21,7 @@ jobs:
             os: windows-latest,
             build_type: "Release", cc: "cl", cxx: "cl",
             environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-            option: "-D OC_OSCORE_ENABLED=OFF",
+            option: "-D OC_OSCORE_ENABLED=OFF -DUSE_CONSOLE=OFF",
             option_name: "unsecured"
           }
         - {
@@ -29,8 +29,16 @@ jobs:
             os: windows-latest,
             build_type: "Release", cc: "cl", cxx: "cl",
             environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-            option: "-D OC_OSCORE_ENABLED=ON",
+            option: "-D OC_OSCORE_ENABLED=ON -DUSE_CONSOLE=OFF",
             option_name: "secured"
+          }
+        - {
+            name: "Windows Latest MSVC", artifact: "Windows-MSVC.tar.xz",
+            os: windows-latest,
+            build_type: "RelWithDebInfo", cc: "cl", cxx: "cl",
+            environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            option: "-D OC_OSCORE_ENABLED=ON -DUSE_CONSOLE=ON",
+            option_name: "secured_debuginfo"
           }
         #- {
         #    name: "Windows Latest MinGW", artifact: "Windows-MinGW.tar.xz",
@@ -160,7 +168,7 @@ jobs:
     - name: Upload executables ${{ matrix.config.option_name }}
       uses: actions/upload-artifact@v3
       with:
-        name: windows_${{ matrix.config.option_name }}
+        name: knx_iot_virtual_${{ matrix.config.option_name }}
         path: |
            D:/a/KNX-IOT-Virtual/KNX-IOT-Virtual/build_${{ matrix.config.option_name }}/knx_iot_virtual_gui_pb.exe
            D:/a/KNX-IOT-Virtual/KNX-IOT-Virtual/build_${{ matrix.config.option_name }}/knx_iot_virtual_gui_sa.exe
