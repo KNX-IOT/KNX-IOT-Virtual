@@ -1,6 +1,6 @@
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
- Copyright (c) 2022 Cascoda Ltd
+ Copyright (c) 2022-2023 Cascoda Ltd
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-01-06 11:41:22.811863
+// 2023-01-12 12:55:41.159467
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -43,7 +43,8 @@ enum
   REC_TABLE_ID = PUB_TABLE_ID + 1, // ID for the recipient table window
   PARAMETER_LIST_ID = REC_TABLE_ID + 1, // ID for the parameter window
   AT_TABLE_ID = PARAMETER_LIST_ID + 1, // ID for the auth/at window
-  CHECK_PM = AT_TABLE_ID + 1 , // programming mode check in menu bar
+  CHECK_GA_DISPLAY = AT_TABLE_ID + 1 , // ga display check
+  CHECK_PM = CHECK_GA_DISPLAY + 1 , // programming mode check in menu bar
   DP_ID_ONOFF_1 = CHECK_PM + 1, // OnOff_1 for /p/o_1_1
   DP_ID_INFOONOFF_1 = CHECK_PM + 2, // InfoOnOff_1 for /p/o_2_2
   DP_ID_ONOFF_2 = CHECK_PM + 3, // OnOff_2 for /p/o_3_3
@@ -61,6 +62,50 @@ static const wxCmdLineEntryDesc g_cmdLineDesc[] =
 };
 
 wxCmdLineParser* g_cmd;
+
+
+
+class CustomDialog : public wxDialog
+{
+public:
+  CustomDialog(const wxString& title, const wxString& text);
+
+private:
+  void on_close(wxCommandEvent& event);
+};
+
+void CustomDialog::on_close(wxCommandEvent& event)
+{
+  this->Destroy();
+}
+
+CustomDialog::CustomDialog(const wxString& title, const wxString& text)
+  : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(550, 300))
+{
+  int size_x = 520;
+  int size_y = 300;
+
+  wxPanel* panel = new wxPanel(this, -1);
+
+  wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+  wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+
+  wxTextCtrl* tc = new wxTextCtrl(panel, -1, text, wxPoint(10, 10),
+    wxSize(size_x, size_y), wxTE_MULTILINE | wxTE_READONLY);
+
+  wxButton* closeButton = new wxButton(this, -1, wxT("Close"),
+    wxDefaultPosition, wxDefaultSize);
+  closeButton->Bind(wxEVT_BUTTON, &CustomDialog::on_close, this);
+
+  hbox->Add(closeButton, 1, wxLEFT, 5);
+  vbox->Add(panel, 1);
+  vbox->Add(hbox, 0, wxALIGN_CENTER | wxTOP | wxBOTTOM, 10);
+
+  SetSizerAndFit(vbox);
+  Centre();
+  ShowModal();
+  Destroy();
+}
 
 class MyApp : public wxApp
 {
@@ -93,10 +138,11 @@ private:
   void updateInfoButtons();
   void updateTextButtons();
   void bool2text(bool on_off, char* text);
-  void int2text(int value, char* text);
+  void int2text(int value, char* text, bool as_ets=true);
   void double2text(double value, char* text);
 
   wxMenu* m_menuFile;
+  wxMenu* m_menuOptions;
   wxTimer m_timer;
 
   wxTextCtrl* m_ia_text;  // text control for internal address
@@ -170,10 +216,17 @@ MyFrame::MyFrame(char* str_serial_number)
   m_menuFile->Append(RESET, "Reset (ex-factory)", "Reset the Device to ex-factory state", false);
   m_menuFile->AppendSeparator();
   m_menuFile->Append(wxID_EXIT);
+  // display menu
+  m_menuOptions = new wxMenu;
+  m_menuOptions->Append(CHECK_GA_DISPLAY, "GA 3-level (ETS)", "Displays the group addresses as GA 3-Level or as integer", true);
+  m_menuOptions->Check(CHECK_GA_DISPLAY, true);
+  // help menu
   wxMenu *menuHelp = new wxMenu;
   menuHelp->Append(wxID_ABOUT);
+  // full menu bar
   wxMenuBar *menuBar = new wxMenuBar;
   menuBar->Append(m_menuFile, "&File");
+  menuBar->Append(m_menuOptions, "&Display");
   menuBar->Append(menuHelp, "&Help");
   SetMenuBar( menuBar );
   CreateStatusBar();
@@ -407,16 +460,19 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
   int device_index = 0;
   char text[1024 * 5];
   char line[200];
-  char line2[200];
   char windowtext[200];
+  bool my_val = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
 
   strcpy(text, "");
   oc_device_info_t* device = oc_core_get_device_info(device_index);
+  if (device == NULL) {
+    return;
+  }
   int total = oc_core_get_group_object_table_total_size();
   for (int index = 0; index < total; index++) {
     oc_group_object_table_t* entry = oc_core_get_group_object_table_entry(index);
 
-    if (entry->ga_len > 0) {
+    if (entry && entry->ga_len > 0) {
       sprintf(line, "Index %d \n", index);
       strcat(text, line);
       sprintf(line, "  id: '%d'  ", entry->id);
@@ -428,8 +484,7 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
       strcat(text, line);
       strcpy(line,"  ga : [");
       for (int i = 0; i < entry->ga_len; i++) {
-        sprintf(line2," %u", entry->ga[i]);
-        strcat(line, line2);
+        this->int2text(entry->ga[i], line, my_val);
       }
       strcat(line," ]\n");
       strcat(text, line);
@@ -437,8 +492,9 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
   }
   strcpy(windowtext, "Group Object Table  ");
   strcat(windowtext, oc_string(device->serialnumber));
-  wxMessageBox(text, windowtext,
-    wxOK | wxICON_NONE);
+  //wxMessageBox(text, windowtext,
+  //  wxOK | wxICON_NONE);
+  CustomDialog(windowtext, text);
   SetStatusText("List Group Object Table");
 }
 
@@ -452,16 +508,20 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
   int device_index = 0;
   char text[1024 * 5];
   char line[200];
-  char line2[200];
   char windowtext[200];
+  bool my_val = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
 
   strcpy(text, "");
   oc_device_info_t* device = oc_core_get_device_info(device_index);
+  if (device == NULL) {
+    return;
+  }
+  
   int total =  oc_core_get_publisher_table_size();
   for (int index = 0; index < total; index++) {
     oc_group_rp_table_t* entry = oc_core_get_publisher_table_entry(index);
 
-    if (entry->id >= 0) {
+    if (entry && entry->id >= 0) {
       sprintf(line, "Index %d \n", index);
       strcat(text, line);
       sprintf(line, "  id: '%d'  ", entry->id);
@@ -471,11 +531,11 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
         strcat(text, line);
       }
       if ( entry->iid >= 0) {
-        sprintf(line, "  iid: '%ld' ", entry->iid);
+        sprintf(line, "  iid: '%lld' ", entry->iid);
         strcat(text, line);
       }
       if ( entry->fid >= 0) {
-        sprintf(line, "  fid: '%ld' ", entry->fid);
+        sprintf(line, "  fid: '%lld' ", entry->fid);
         strcat(text, line);
       }
       if ( entry->grpid > 0) {
@@ -493,8 +553,9 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
       if ( entry->ga_len > 0) {
         strcpy(line,"  ga : [");
         for (int i = 0; i < entry->ga_len; i++) {
-          sprintf(line2," %u", entry->ga[i]);
-          strcat(line, line2);
+          this->int2text(entry->ga[i], line, my_val);
+          //sprintf(line2," %u", entry->ga[i]);
+          //strcat(line, line2);
         }
         strcat(line," ]\n");
         strcat(text, line);
@@ -503,8 +564,9 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
   }
   strcpy(windowtext, "Publisher Table  ");
   strcat(windowtext, oc_string(device->serialnumber));
-  wxMessageBox(text, windowtext,
-    wxOK | wxICON_NONE);
+  //wxMessageBox(text, windowtext,
+  //wxOK | wxICON_NONE);
+  CustomDialog(windowtext, text);
   SetStatusText("List Publisher Table");
 }
 
@@ -518,16 +580,20 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
   int device_index = 0;
   char text[1024 * 5];
   char line[200];
-  char line2[200];
   char windowtext[200];
+  bool my_val = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
 
   strcpy(text, "");
   oc_device_info_t* device = oc_core_get_device_info(device_index);
+  if (device == NULL) {
+    return;
+  }
+
   int total =  oc_core_get_recipient_table_size();
   for (int index = 0; index < total; index++) {
     oc_group_rp_table_t* entry = oc_core_get_recipient_table_entry(index);
 
-    if (entry->id >= 0) {
+    if (entry && entry->id >= 0) {
       sprintf(line, "Index %d \n", index);
       strcat(text, line);
       sprintf(line, "  id: '%d'  ", entry->id);
@@ -559,8 +625,7 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
       if ( entry->ga_len > 0) {
         strcpy(line,"  ga : [");
         for (int i = 0; i < entry->ga_len; i++) {
-          sprintf(line2," %u", entry->ga[i]);
-          strcat(line, line2);
+          this->int2text(entry->ga[i], line, my_val);
         }
         strcat(line," ]\n");
         strcat(text, line);
@@ -569,8 +634,9 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
   }
   strcpy(windowtext, "Recipient Table  ");
   strcat(windowtext, oc_string(device->serialnumber));
-  wxMessageBox(text, windowtext,
-    wxOK | wxICON_NONE);
+  //wxMessageBox(text, windowtext,
+  //  wxOK | wxICON_NONE);
+  CustomDialog(windowtext, text);
   SetStatusText("List Recipient Table");
 }
 /**
@@ -628,8 +694,9 @@ void MyFrame::OnParameterList(wxCommandEvent& event)
   }
   strcpy(windowtext, "Parameter List ");
   strcat(windowtext, oc_string(device->serialnumber));
-  wxMessageBox(text, windowtext,
-    wxOK | wxICON_NONE);
+  //wxMessageBox(text, windowtext,
+  //  wxOK | wxICON_NONE);
+  CustomDialog(windowtext, text);
   SetStatusText("List Parameters and their current set values");
 }
 
@@ -643,6 +710,7 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
   int device_index = 0;
   char text[1024 * 5];
   char line[200];
+  bool my_val = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
   char windowtext[200];
   int max_entries = oc_core_get_at_table_size();
   int index = 1;
@@ -705,14 +773,14 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
             sprintf(line, "  osc_ga : [");
             strcat(text, line);
             for (int i = 0; i < my_entry->ga_len; i++) {
-              sprintf(line, " %u", my_entry->ga[i]);
-              strcat(text, line);
+              this->int2text(my_entry->ga[i], text, my_val);
+              //strcat(text, line);
             }
             sprintf(line, " ]\n");
             strcat(text, line);
           } else {
-             sprintf(line, "  scope : %d ", my_entry->scope);
-             strcat(text, line);
+            sprintf(line, "  scope : %d \n", my_entry->scope);
+            strcat(text, line);
           }
         }
       }
@@ -721,8 +789,9 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
 
   strcpy(windowtext, "Auth AT Table ");
   strcat(windowtext, oc_string(device->serialnumber));
-  wxMessageBox(text, windowtext,
-    wxOK | wxICON_NONE);
+  //wxMessageBox(text, windowtext,
+  //  wxOK | wxICON_NONE);
+  CustomDialog(windowtext, text);
   SetStatusText("List security entries");
 }
 
@@ -757,9 +826,10 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-01-06 11:41:22.811863");
-  wxMessageBox(text, "KNX virtual Push Button",
-    wxOK | wxICON_NONE);
+  strcat(text, "2023-01-12 12:55:41.159467");
+  //wxMessageBox(text, "KNX virtual Push Button",
+  //  wxOK | wxICON_NONE);
+  CustomDialog("About", text);
 }
 
 /**
@@ -806,11 +876,31 @@ void MyFrame::bool2text(bool on_off, char* text)
   }
 }
 
-void MyFrame::int2text(int value, char* text)
+void MyFrame::int2text(int value, char* text, bool as_ets)
 {
   char value_text[50];
-  sprintf(value_text," %d", value);
-  strcat(text,value_text);
+
+  if (as_ets) {
+    /*
+    The so called Group Address structure correlates with its representation style in ETS,
+    see also the relevant ETS Professional article.
+    The information about the ETS Group Address representation style itself is NOT included in the Group Address.
+    '3-level' = main/middle/sub
+    main = D7+D6+D5+D4+D3 of the first octet (high address)
+    middle = D2+D1+D0 of the first octet (high address)
+    sub = the entire second octet (low address)
+    ranges: main = 0..31, middle = 0..7, sub = 0..255
+    */
+    uint32_t ga = value;
+    uint32_t ga_main = (ga >> 11);
+    uint32_t ga_middle = (ga >> 8) & 0x8;
+    uint32_t ga_sub = (ga & 0x000000FF);
+    sprintf(value_text, " %d/%d/%d", ga_main, ga_middle, ga_sub);
+    strcat(text, value_text);
+  } else {
+    sprintf(value_text, " %d", value);
+    strcat(text, value_text);
+  }
 }
 
 void MyFrame::double2text(double value, char* text)
