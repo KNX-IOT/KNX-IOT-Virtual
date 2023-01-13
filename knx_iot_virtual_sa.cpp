@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-01-12 16:48:14.512298
+// 2023-01-13 11:49:38.434737
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -44,7 +44,9 @@ enum
   PARAMETER_LIST_ID = REC_TABLE_ID + 1, // ID for the parameter window
   AT_TABLE_ID = PARAMETER_LIST_ID + 1, // ID for the auth/at window
   CHECK_GA_DISPLAY = AT_TABLE_ID + 1 , // ga display check
-  CHECK_PM = CHECK_GA_DISPLAY + 1 , // programming mode check in menu bar
+  CHECK_IID_DISPLAY = CHECK_GA_DISPLAY + 1, // iid display check
+  CHECK_GRPID_DISPLAY = CHECK_IID_DISPLAY + 1, // grpid display check
+  CHECK_PM = CHECK_GRPID_DISPLAY + 1 , // programming mode check in menu bar
   DP_FAULT_ID_ONOFF_1 = CHECK_PM + 100 + 1, // OnOff_1 for /p/o_1_1 
   DP_FAULT_ID_ONOFF_2 = CHECK_PM + 100 + 3, // OnOff_2 for /p/o_3_3 
   DP_FAULT_ID_ONOFF_3 = CHECK_PM + 100 + 5, // OnOff_3 for /p/o_5_5 
@@ -147,6 +149,7 @@ private:
   void updateTextButtons();
   void bool2text(bool on_off, char* text);
   void int2text(int value, char* text, bool as_ets=true);
+  void int2grpidtext(uint64_t value, char* text, bool as_ets);
   void double2text(double value, char* text);
 
   wxMenu* m_menuFile;
@@ -232,6 +235,10 @@ MyFrame::MyFrame(char* str_serial_number)
   m_menuOptions = new wxMenu;
   m_menuOptions->Append(CHECK_GA_DISPLAY, "GA 3-level (ETS)", "Displays the group addresses as GA 3-Level or as integer", true);
   m_menuOptions->Check(CHECK_GA_DISPLAY, true);
+  m_menuOptions->Append(CHECK_GRPID_DISPLAY, "GRPID as partial ipv6 address (ETS)", "Displays the grpid as integer", true);
+  m_menuOptions->Check(CHECK_GRPID_DISPLAY, true);
+  m_menuOptions->Append(CHECK_IID_DISPLAY, "IID as partial ipv6 address (ETS)", "Displays the iid as integer", true);
+  m_menuOptions->Check(CHECK_IID_DISPLAY, true);
   // help menu
   wxMenu *menuHelp = new wxMenu;
   menuHelp->Append(wxID_ABOUT);
@@ -342,11 +349,21 @@ MyFrame::MyFrame(char* str_serial_number)
   Statictext = new wxTextCtrl(this, wxID_ANY, text, wxPoint(10, 10 + ((max_instances + 1) * x_height)), wxSize(width_size*2, x_height), 0);
   Statictext->SetEditable(false);
   
-  // QR code
+  /* QR code
+    KNX:S:serno;P:password
+    where:
+    KNX: is a fixed prefix
+    S: means a KNX serial number follows, serno itself is encodced as 
+       12 upper-case hexadecimal characters
+    P: means a password follows, password itself is just 
+       the KNX IoT Point API password; 
+       this works as the allowed password characters do not interfere 
+       with the separator characters colon and semicolon and are in the Alphanumeric range.
+  */
   char qrtext[500];
   strcpy(qrtext, "QR info:   KNX:S:");
   strcat(qrtext, oc_string(device->serialnumber));
-  strcat(qrtext, ":P:");
+  strcat(qrtext, ";P:");
   strcat(qrtext, app_get_password());
   wxTextCtrl* Statictext2;
   Statictext2 = new wxTextCtrl(this, wxID_ANY, qrtext, wxPoint(10, 10 + ((max_instances + 2) * x_height)), wxSize(width_size*2, x_height), 0);
@@ -434,6 +451,7 @@ void MyFrame::updateTextButtons()
 
   char text[500];
   size_t device_index = 0;
+  bool iid_conversion = m_menuOptions->IsChecked(CHECK_IID_DISPLAY);
 
   // get the device data structure
   oc_device_info_t* device = oc_core_get_device_info(device_index);
@@ -451,7 +469,8 @@ void MyFrame::updateTextButtons()
   m_pm_text->SetLabelText(text);
   sprintf(text, "Programming Mode : % d", device->pm);
   m_ls_text->SetLabelText(text);
-  sprintf(text, "IID: %lld", device->iid);
+  strcpy(text, "IID: ");
+  this->int2grpidtext(device->iid, text, iid_conversion);
   m_iid_text->SetLabelText(text);
   sprintf(text, "host name: %s", oc_string(device->hostname));
   m_hostname_text->SetLabelText(text);
@@ -485,7 +504,7 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
   char text[1024 * 5];
   char line[200];
   char windowtext[200];
-  bool my_val = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
+  bool ga_conversion = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
 
   strcpy(text, "");
   oc_device_info_t* device = oc_core_get_device_info(device_index);
@@ -508,7 +527,7 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
       strcat(text, line);
       strcpy(line,"  ga : [");
       for (int i = 0; i < entry->ga_len; i++) {
-        this->int2text(entry->ga[i], line, my_val);
+        this->int2text(entry->ga[i], line, ga_conversion);
       }
       strcat(line," ]\n");
       strcat(text, line);
@@ -533,7 +552,9 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
   char text[1024 * 5];
   char line[200];
   char windowtext[200];
-  bool my_val = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
+  bool ga_conversion = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
+  bool grpid_conversion = m_menuOptions->IsChecked(CHECK_GRPID_DISPLAY);
+  bool iid_conversion = m_menuOptions->IsChecked(CHECK_IID_DISPLAY);
 
   strcpy(text, "");
   oc_device_info_t* device = oc_core_get_device_info(device_index);
@@ -555,7 +576,8 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
         strcat(text, line);
       }
       if ( entry->iid >= 0) {
-        sprintf(line, "  iid: '%lld' ", entry->iid);
+        strcpy(line, "  iid: ");
+        this->int2grpidtext(entry->iid, line, iid_conversion);
         strcat(text, line);
       }
       if ( entry->fid >= 0) {
@@ -563,7 +585,9 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
         strcat(text, line);
       }
       if ( entry->grpid > 0) {
-        sprintf(line, "  grpid: '%u' ", entry->grpid);
+        //sprintf(line, "  grpid: '%u' ", entry->grpid);
+        strcpy(line, "  grpid: ");
+        this->int2grpidtext(entry->grpid, line, grpid_conversion);
         strcat(text, line);
       }
       if (oc_string_len(entry->url) > 0) {
@@ -577,9 +601,7 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
       if ( entry->ga_len > 0) {
         strcpy(line,"  ga : [");
         for (int i = 0; i < entry->ga_len; i++) {
-          this->int2text(entry->ga[i], line, my_val);
-          //sprintf(line2," %u", entry->ga[i]);
-          //strcat(line, line2);
+          this->int2text(entry->ga[i], line, ga_conversion);
         }
         strcat(line," ]\n");
         strcat(text, line);
@@ -605,7 +627,9 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
   char text[1024 * 5];
   char line[200];
   char windowtext[200];
-  bool my_val = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
+  bool ga_conversion = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
+  bool grpid_conversion = m_menuOptions->IsChecked(CHECK_GRPID_DISPLAY);
+  bool iid_conversion = m_menuOptions->IsChecked(CHECK_IID_DISPLAY);
 
   strcpy(text, "");
   oc_device_info_t* device = oc_core_get_device_info(device_index);
@@ -627,7 +651,8 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
         strcat(text, line);
       }
       if ( entry->iid >= 0) {
-        sprintf(line, "  iid: '%lld' ", entry->iid);
+        strcpy(line, "  iid: ");
+        this->int2grpidtext(entry->iid, line, iid_conversion);
         strcat(text, line);
       }
       if ( entry->fid >= 0) {
@@ -635,7 +660,8 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
         strcat(text, line);
       }
       if ( entry->grpid >= 0) {
-        sprintf(line, "  grpid: '%u' ", entry->grpid);
+        strcpy(line, "  grpid: ");
+        this->int2grpidtext(entry->grpid, line, grpid_conversion);
         strcat(text, line);
       }
       if (oc_string_len(entry->url) > 0) {
@@ -649,7 +675,7 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
       if ( entry->ga_len > 0) {
         strcpy(line,"  ga : [");
         for (int i = 0; i < entry->ga_len; i++) {
-          this->int2text(entry->ga[i], line, my_val);
+          this->int2text(entry->ga[i], line, ga_conversion);
         }
         strcat(line," ]\n");
         strcat(text, line);
@@ -734,7 +760,7 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
   int device_index = 0;
   char text[1024 * 5];
   char line[200];
-  bool my_val = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
+  bool ga_conversion = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
   char windowtext[200];
   int max_entries = oc_core_get_at_table_size();
   int index = 1;
@@ -797,8 +823,7 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
             sprintf(line, "  osc_ga : [");
             strcat(text, line);
             for (int i = 0; i < my_entry->ga_len; i++) {
-              this->int2text(my_entry->ga[i], text, my_val);
-              //strcat(text, line);
+              this->int2text(my_entry->ga[i], text, ga_conversion);
             }
             sprintf(line, " ]\n");
             strcat(text, line);
@@ -850,7 +875,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-01-12 16:48:14.512298");
+  strcat(text, "2023-01-13 11:49:38.434737");
   //wxMessageBox(text, "KNX virtual Switching Actuator",
   //  wxOK | wxICON_NONE);
   CustomDialog("About", text);
@@ -923,6 +948,44 @@ void MyFrame::int2text(int value, char* text, bool as_ets)
     strcat(text, value_text);
   } else {
     sprintf(value_text, " %d", value);
+    strcat(text, value_text);
+  }
+}
+
+void MyFrame::int2grpidtext(uint64_t value, char* text, bool as_ets)
+{
+  char value_text[50];
+
+  if (as_ets) {
+    /*
+     create the multicast address from group and scope
+     FF3_:FD__:____:____:(8-f)___:____
+     FF35:30:<ULA-routing-prefix>::<group id>
+        | 5 == scope
+        | 3 == scope
+     Multicast prefix: FF35:0030:  [4 bytes]
+     ULA routing prefix: FD11:2222:3333::  [6 bytes + 2 empty bytes]
+     Group Identifier: 8000 : 0068 [4 bytes ]
+    */
+    // group number to the various bytes
+    uint8_t byte_1 = (uint8_t)value;
+    uint8_t byte_2 = (uint8_t)(value >> 8);
+    uint8_t byte_3 = (uint8_t)(value >> 16);
+    uint8_t byte_4 = (uint8_t)(value >> 24);
+    uint8_t byte_5 = (uint8_t)(value >> 32);
+
+    if (byte_5 == 0) {
+       sprintf(value_text, " %0x:%0x:%0x:%0x", byte_4, byte_3, byte_2, byte_1);
+    }
+    else {
+      sprintf(value_text, " %0x:%0x:%0x:%0x:%0x", byte_5, byte_4, byte_3, byte_2, byte_1);
+    }
+
+    strcat(text, value_text);
+  }
+  else {
+    //sprintf(text, "IID: %lld", device->iid);
+    sprintf(value_text, " %lld", value);
     strcat(text, value_text);
   }
 }
