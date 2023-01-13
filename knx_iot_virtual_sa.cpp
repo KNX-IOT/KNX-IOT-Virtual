@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-01-13 11:49:38.434737
+// 2023-01-13 12:13:19.798432
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -875,7 +875,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-01-13 11:49:38.434737");
+  strcat(text, "2023-01-13 12:13:19.798432");
   //wxMessageBox(text, "KNX virtual Switching Actuator",
   //  wxOK | wxICON_NONE);
   CustomDialog("About", text);
@@ -942,7 +942,7 @@ void MyFrame::int2text(int value, char* text, bool as_ets)
     */
     uint32_t ga = value;
     uint32_t ga_main = (ga >> 11);
-    uint32_t ga_middle = (ga >> 8) & 0x8;
+    uint32_t ga_middle = (ga >> 8) & 0x7;
     uint32_t ga_sub = (ga & 0x000000FF);
     sprintf(value_text, " %d/%d/%d", ga_main, ga_middle, ga_sub);
     strcat(text, value_text);
@@ -975,10 +975,10 @@ void MyFrame::int2grpidtext(uint64_t value, char* text, bool as_ets)
     uint8_t byte_5 = (uint8_t)(value >> 32);
 
     if (byte_5 == 0) {
-       sprintf(value_text, " %0x:%0x:%0x:%0x", byte_4, byte_3, byte_2, byte_1);
+       sprintf(value_text, " %0x%0x:%0x%0x", byte_4, byte_3, byte_2, byte_1);
     }
     else {
-      sprintf(value_text, " %0x:%0x:%0x:%0x:%0x", byte_5, byte_4, byte_3, byte_2, byte_1);
+      sprintf(value_text, " %0x:%0x%0x:%0x%0x", byte_5, byte_4, byte_3, byte_2, byte_1);
     }
 
     strcat(text, value_text);
