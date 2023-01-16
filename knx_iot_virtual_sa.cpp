@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-01-13 12:13:19.798432
+// 2023-01-16 09:32:51.734493
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -150,6 +150,7 @@ private:
   void bool2text(bool on_off, char* text);
   void int2text(int value, char* text, bool as_ets=true);
   void int2grpidtext(uint64_t value, char* text, bool as_ets);
+  void int2scopetext(uint32_t value, char* text);
   void double2text(double value, char* text);
 
   wxMenu* m_menuFile;
@@ -758,8 +759,8 @@ void MyFrame::OnParameterList(wxCommandEvent& event)
 void MyFrame::OnAuthTable(wxCommandEvent& event)
 {
   int device_index = 0;
-  char text[1024 * 5];
-  char line[200];
+  char text[1024 * 10];
+  char line[500];
   bool ga_conversion = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
   char windowtext[200];
   int max_entries = oc_core_get_at_table_size();
@@ -828,8 +829,10 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
             sprintf(line, " ]\n");
             strcat(text, line);
           } else {
-            sprintf(line, "  scope : %d \n", my_entry->scope);
+            sprintf(line, "  scope : ", my_entry->scope);
+            this->int2scopetext(my_entry->scope, line);
             strcat(text, line);
+            strcat(text, "\n");
           }
         }
       }
@@ -875,7 +878,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-01-13 12:13:19.798432");
+  strcat(text, "2023-01-16 09:32:51.734493");
   //wxMessageBox(text, "KNX virtual Switching Actuator",
   //  wxOK | wxICON_NONE);
   CustomDialog("About", text);
@@ -950,6 +953,29 @@ void MyFrame::int2text(int value, char* text, bool as_ets)
     sprintf(value_text, " %d", value);
     strcat(text, value_text);
   }
+}
+
+void MyFrame::int2scopetext(uint32_t value, char* text)
+{
+  char value_text[150];
+
+  sprintf(value_text, " [%d]", value);
+  strcat(text, value_text);
+  // should be the same as 
+  if (value & (1 << 1)) strcat(text, " if.i");
+  if (value & (1 << 2)) strcat(text, " if.o");
+  if (value & (1 << 3)) strcat(text, " if.g.s");
+  if (value & (1 << 4)) strcat(text, " if.c");
+  if (value & (1 << 5)) strcat(text, " if.p");
+  if (value & (1 << 6)) strcat(text, " if.d");
+  if (value & (1 << 7)) strcat(text, " if.a");
+  if (value & (1 << 8)) strcat(text, " if.s");
+  if (value & (1 << 9)) strcat(text, " if.ll");
+  if (value & (1 << 10)) strcat(text, " if.b");
+  if (value & (1 << 11)) strcat(text, " if.sec");
+  if (value & (1 << 12)) strcat(text, " if.swu");
+  if (value & (1 << 13)) strcat(text, " if.pm");
+  if (value & (1 << 14)) strcat(text, " if.m");
 }
 
 void MyFrame::int2grpidtext(uint64_t value, char* text, bool as_ets)
