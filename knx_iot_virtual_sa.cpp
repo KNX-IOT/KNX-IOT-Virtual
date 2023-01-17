@@ -15,7 +15,7 @@
  limitations under the License.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-01-16 09:32:51.734493
+// 2023-01-17 17:05:37.211043
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -863,7 +863,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   strcat(text,"model            : KNX virtual - SA\n");
   strcat(text,"hardware type    : Windows\n");
   strcat(text,"hardware version : [0, 1, 2]\n");
-  strcat(text,"firmware version : [0, 1, 1]\n\n");
+  strcat(text,"firmware version : [0, 1, 2]\n\n");
   
   strcat(text, "data points:\n");
   strcat(text,"url:/p/o_1_1 rt:urn:knx:dpa.417.61 if:if.a inst:1 name:OnOff_1\n");
@@ -878,7 +878,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-01-16 09:32:51.734493");
+  strcat(text, "2023-01-17 17:05:37.211043");
   //wxMessageBox(text, "KNX virtual Switching Actuator",
   //  wxOK | wxICON_NONE);
   CustomDialog("About", text);
