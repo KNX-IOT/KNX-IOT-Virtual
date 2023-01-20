@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Switching Actuator
- * 2023-01-17 17:05:36.942345
+ * 2023-01-20 11:13:00.044749
  * ## Application Design
  *
  * support functions:
@@ -517,8 +517,8 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
  * - serial number    : 00FA10010700
  * - base path
  * - knx spec version 
- * - hardware version : [0, 1, 2]
- * - firmware version : [0, 1, 2]
+ * - hardware version : [0, 1, 3]
+ * - firmware version : [0, 1, 3]
  * - hardware type    : Windows
  * - device model     : KNX virtual - SA
  *
@@ -535,12 +535,12 @@ app_init(void)
   PRINT("Serial Number: %s\n", oc_string(device->serialnumber));
 
   
-  /* set the hardware version 0.1.2 */
-  oc_core_set_device_hwv(0, 0, 1, 2);
+  /* set the hardware version 0.1.3 */
+  oc_core_set_device_hwv(0, 0, 1, 3);
   
   
-  /* set the firmware version 0.1.2 */
-  oc_core_set_device_fwv(0, 0, 1, 2);
+  /* set the firmware version 0.1.3 */
+  oc_core_set_device_fwv(0, 0, 1, 3);
   
 
   /* set the hardware type*/
@@ -1948,32 +1948,6 @@ hostname_cb(size_t device_index, oc_string_t host_name, void *data)
 }
 
 /**
- * @brief software update callback
- *
- * @param device_index the device index
- * @param offset the offset of the image
- * @param payload the image data
- * @param len the length of the image data
- * @param data the user data
- */
-void
-swu_cb(size_t device_index, size_t offset, uint8_t *payload, size_t len,
-       void *data)
-{
-  (void)device_index;
-  char *fname = (char *)data;
-  PRINT(" swu_cb %s block=%d size=%d \n", fname, (int)offset, (int)len);
-
-  FILE *fp = fopen(fname, "rw");
-  fseek(fp, offset, SEEK_SET);
-  size_t written = fwrite(payload, len, 1, fp);
-  if (written != len) {
-    PRINT(" swu_cb returned %d != %d (expected)\n", (int)written, (int)len);
-  }
-  fclose(fp);
-}
-
-/**
  * @brief initializes the global variables
  * for the resources 
  * for the parameters
@@ -2047,7 +2021,7 @@ int app_initialize_stack()
   oc_set_reset_cb(reset_cb, NULL);
   oc_set_restart_cb(restart_cb, NULL);
   oc_set_factory_presets_cb(factory_presets_cb, NULL);
-  oc_set_swu_cb(swu_cb, (void *)fname);
+  //oc_set_swu_cb(swu_cb, (void *)fname);
 
   /* start the stack */
   init = oc_main_init(&handler);
