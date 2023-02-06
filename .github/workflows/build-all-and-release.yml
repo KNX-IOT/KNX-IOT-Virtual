@@ -166,7 +166,7 @@ jobs:
     - name: Upload executable ${{ matrix.config.option_name }}
       uses: actions/upload-artifact@v3
       with:
-        name: windows_${{ matrix.config.option_name }}
+        name: windows_knx_iot_virtual_${{ matrix.config.option_name }}
         path: |
            ./win_build_${{ matrix.config.option_name }}/*.exe
         
@@ -240,57 +240,68 @@ jobs:
     needs: [windowsBuilds, linuxSecured, linuxUnsecured]
     name: Release archives
     runs-on: ubuntu-latest
+
+    # Checkout the code, and fetch all tags (for version)
     steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        path: knx-iot-virtual
     - run: |
-        echo "test"
+        cd knx-iot-virtual
+        git fetch --tags
+    # Figure out what to call the release
+    - name: Release info
+      id: releaseinfo
+      run: |
+        cd knx-iot-virtual
+        echo "version=$(git describe --tags --dirty --always --long | sed -E 's/-g[0-9a-f]+//g')" >> $GITHUB_OUTPUT
+        echo "title=$(git show -s --format=%B | head -n1)" >> $GITHUB_OUTPUT
+        msg=$(git show -s --format=%B)
+        #escape special chars
+        msg="${msg//'%'/'%25'}"
+        msg="${msg//$'\n'/'%0A'}"
+        msg="${msg//$'\r'/'%0D'}"
+        echo "msg=$msg" >> $GITHUB_OUTPUT
 
-    # # Checkout the code, and fetch all tags (for version)
-    # steps:
-    # - uses: actions/checkout@v2
-    #   with:
-    #     fetch-depth: 0
-    #     path: knx-iot-virtual
-    # - run: |
-    #     cd knx-iot-virtual
-    #     git fetch --tags
-    # # Figure out what to call the release
-    # - name: Release info
-    #   id: releaseinfo
-    #   run: |
-    #     cd knx-iot-virtual
-    #     echo "version=$(git describe --tags --dirty --always --long | sed -E 's/-g[0-9a-f]+//g')" >> $GITHUB_OUTPUT
-    #     echo "title=$(git show -s --format=%B | head -n1)" >> $GITHUB_OUTPUT
-    #     msg=$(git show -s --format=%B)
-    #     #escape special chars
-    #     msg="${msg//'%'/'%25'}"
-    #     msg="${msg//$'\n'/'%0A'}"
-    #     msg="${msg//$'\r'/'%0D'}"
-    #     echo "msg=$msg" >> $GITHUB_OUTPUT
+    # Create a release to publish to
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.releaseinfo.outputs.version }}
+        release_name: ${{ steps.releaseinfo.outputs.title }}
+        body: ${{ steps.releaseinfo.outputs.msg }}
 
-    # # Create a release to publish to
-    # - name: Create Release
-    #   id: create_release
-    #   uses: actions/create-release@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     tag_name: ${{ steps.releaseinfo.outputs.version }}
-    #     release_name: ${{ steps.releaseinfo.outputs.title }}
-    #     body: ${{ steps.releaseinfo.outputs.msg }}
-
-    # # Download all of the previously uploaded artifacts
+    # Download all of the previously uploaded artifacts
     # - uses: actions/download-artifact@v1
     #   with:
     #     name: linux_knx_iot_virtual_secured
     # - uses: actions/download-artifact@v1
     #   with:
     #     name: linux_knx_iot_virtual_unsecured
+    - uses: actions/download-artifact@v1
+      with:
+        name: windows_knx_iot_virtual_secured
+    - uses: actions/download-artifact@v1
+      with:
+        name: windows_knx_iot_virtual_unsecured
+    - uses: actions/download-artifact@v1
+      with:
+        name: windows_knx_iot_virtual_secured_debuginfo
 
-    # # Zip them
+    # Zip them
     # - name: Zip the release assets
     #   run: |
     #     zip -r linux_knx_iot_virtual_secured.zip linux_knx_iot_virtual_secured
     #     zip -r linux_knx_iot_virtual_unsecured.zip linux_knx_iot_virtual_unsecured
+    - name: Zip the release assets
+      run: |
+        zip -r windows_knx_iot_virtual_secured.zip windows_knx_iot_virtual_secured
+        zip -r windows_knx_iot_virtual_unsecured.zip windows_knx_iot_virtual_unsecured
+        zip -r windows_knx_iot_virtual_secured_debuginfo.zip windows_knx_iot_virtual_secured_debuginfo
 
     # - name: Release secured linux
     #   uses: actions/upload-release-asset@v1
@@ -311,3 +322,33 @@ jobs:
     #     asset_path: ./linux_knx_iot_virtual_unsecured.zip
     #     asset_name: linux_knx_iot_virtual_unsecured.zip
     #     asset_content_type: application/zip
+
+    - name: Release secured windows
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{steps.create_release.outputs.upload_url}}
+        asset_path: ./windows_knx_iot_virtual_secured.zip
+        asset_name: windows_knx_iot_virtual_secured.zip
+        asset_content_type: application/zip
+
+    - name: Release unsecured windows 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{steps.create_release.outputs.upload_url}}
+        asset_path: ./windows_knx_iot_virtual_unsecured.zip
+        asset_name: windows_knx_iot_virtual_unsecured.zip
+        asset_content_type: application/zip
+
+    - name: Release secured debuginfo windows
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{steps.create_release.outputs.upload_url}}
+        asset_path: ./windows_knx_iot_virtual_secured_debuginfo.zip
+        asset_name: windows_knx_iot_virtual_secured_debuginfo.zip
+        asset_content_type: application/zip
