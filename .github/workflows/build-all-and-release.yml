@@ -5,12 +5,42 @@ on:
     branches: [elie-release-script]
 
 jobs:
-  # Build linux secured
-  linuxSecured:
+  # # Build linux secured
+  # linuxSecured:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Build secured linux binaries
+  #       run: |
+  #         # https://github.com/actions/checkout/issues/81
+  #         auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+  #         git submodule sync --recursive
+  #         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+  #         # create the make files in a subfolder
+  #         mkdir linuxbuild
+  #         cd linuxbuild
+  #         cmake ../.
+  #         make all
+      
+  #     - name: View generated binaries
+  #       run: |
+  #         cd linuxbuild
+  #         ls
+
+  #     - name: Upload secured linux binaries
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: linux_knx_iot_virtual_secured
+  #         path: |
+  #           ./linuxbuild/knx_iot_virtual_sa
+  #           ./linuxbuild/knx_iot_virtual_pb
+
+  # Build linux unsecured
+  linuxUnsecured:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build secured linux binaries
+      - name: Build unsecured linux binaries
         run: |
           # https://github.com/actions/checkout/issues/81
           auth_header="$(git config --local --get http.https://github.com/.extraheader)"
@@ -19,7 +49,7 @@ jobs:
           # create the make files in a subfolder
           mkdir linuxbuild
           cd linuxbuild
-          cmake ../.
+          cmake ../. -DOC_OSCORE_ENABLED=OFF
           make all
       
       - name: View generated binaries
@@ -27,69 +57,69 @@ jobs:
           cd linuxbuild
           ls
 
-      - name: Upload secured linux binaries
-        uses: actions/upload-artifact@v3
-        with:
-          name: linux_knx_iot_virtual_secured
-          path: |
-            ./linuxbuild/knx_iot_virtual_sa
-            ./linuxbuild/knx_iot_virtual_pb
+      # - name: Upload secured linux binaries
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: linux_knx_iot_virtual_unsecured
+      #     path: |
+      #       ./linuxbuild/knx_iot_virtual_sa
+      #       ./linuxbuild/knx_iot_virtual_pb
 
-  makerelease:
-    needs: [linuxSecured]
-    name: Release archives
-    runs-on: ubuntu-latest
+  # makerelease:
+  #   needs: [linuxSecured]
+  #   name: Release archives
+  #   runs-on: ubuntu-latest
 
-    # Checkout the code, and fetch all tags (for version)
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-        path: knx-iot-virtual
-    - run: |
-        cd knx-iot-virtual
-        git fetch --tags
-    # Figure out what to call the release
-    - name: Release info
-      id: releaseinfo
-      run: |
-        cd knx-iot-virtual
-        echo "version=$(git describe --tags --dirty --always --long | sed -E 's/-g[0-9a-f]+//g')" >> $GITHUB_OUTPUT
-        echo "title=$(git show -s --format=%B | head -n1)" >> $GITHUB_OUTPUT
-        msg=$(git show -s --format=%B)
-        #escape special chars
-        msg="${msg//'%'/'%25'}"
-        msg="${msg//$'\n'/'%0A'}"
-        msg="${msg//$'\r'/'%0D'}"
-        echo "msg=$msg" >> $GITHUB_OUTPUT
+  #   # Checkout the code, and fetch all tags (for version)
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #     with:
+  #       fetch-depth: 0
+  #       path: knx-iot-virtual
+  #   - run: |
+  #       cd knx-iot-virtual
+  #       git fetch --tags
+  #   # Figure out what to call the release
+  #   - name: Release info
+  #     id: releaseinfo
+  #     run: |
+  #       cd knx-iot-virtual
+  #       echo "version=$(git describe --tags --dirty --always --long | sed -E 's/-g[0-9a-f]+//g')" >> $GITHUB_OUTPUT
+  #       echo "title=$(git show -s --format=%B | head -n1)" >> $GITHUB_OUTPUT
+  #       msg=$(git show -s --format=%B)
+  #       #escape special chars
+  #       msg="${msg//'%'/'%25'}"
+  #       msg="${msg//$'\n'/'%0A'}"
+  #       msg="${msg//$'\r'/'%0D'}"
+  #       echo "msg=$msg" >> $GITHUB_OUTPUT
 
-    # Create a release to publish to
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.releaseinfo.outputs.version }}
-        release_name: ${{ steps.releaseinfo.outputs.title }}
-        body: ${{ steps.releaseinfo.outputs.msg }}
+  #   # Create a release to publish to
+  #   - name: Create Release
+  #     id: create_release
+  #     uses: actions/create-release@v1
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     with:
+  #       tag_name: ${{ steps.releaseinfo.outputs.version }}
+  #       release_name: ${{ steps.releaseinfo.outputs.title }}
+  #       body: ${{ steps.releaseinfo.outputs.msg }}
 
-    # Download all of the previously uploaded artifacts
-    - uses: actions/download-artifact@v1
-      with:
-        name: linux_knx_iot_virtual_secured
+  #   # Download all of the previously uploaded artifacts
+  #   - uses: actions/download-artifact@v1
+  #     with:
+  #       name: linux_knx_iot_virtual_secured
 
-    # Zip them
-    - name: Zip the release assets
-      run: |
-        zip -r linux_knx_iot_virtual_secured.zip linux_knx_iot_virtual_secured
+  #   # Zip them
+  #   - name: Zip the release assets
+  #     run: |
+  #       zip -r linux_knx_iot_virtual_secured.zip linux_knx_iot_virtual_secured
 
-    - name: Release linux secured binaries
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{steps.create_release.outputs.upload_url}}
-        asset_path: ./linux_knx_iot_virtual_secured.zip
-        asset_name: linux_knx_iot_virtual_secured.zip
-        asset_content_type: application/zip
+  #   - name: Release linux secured binaries
+  #     uses: actions/upload-release-asset@v1
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     with:
+  #       upload_url: ${{steps.create_release.outputs.upload_url}}
+  #       asset_path: ./linux_knx_iot_virtual_secured.zip
+  #       asset_name: linux_knx_iot_virtual_secured.zip
+  #       asset_content_type: application/zip
