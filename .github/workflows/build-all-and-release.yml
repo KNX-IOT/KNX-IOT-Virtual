@@ -34,3 +34,62 @@ jobs:
           path: |
             ./linuxbuild/knx_iot_virtual_sa
             ./linuxbuild/knx_iot_virtual_pb
+
+  makerelease:
+    needs: [linuxSecured]
+    name: Release archives
+    runs-on: ubuntu-latest
+
+    # Checkout the code, and fetch all tags (for version)
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        path: knx-iot-virtual
+    - run: |
+        cd knx-iot-virtual
+        git fetch --tags
+    # Figure out what to call the release
+    - name: Release info
+      id: releaseinfo
+      run: |
+        cd knx-iot-virtual
+        echo "version=$(git describe --tags --dirty --always --long | sed -E 's/-g[0-9a-f]+//g')" >> $GITHUB_OUTPUT
+        echo "title=$(git show -s --format=%B | head -n1)" >> $GITHUB_OUTPUT
+        msg=$(git show -s --format=%B)
+        #escape special chars
+        msg="${msg//'%'/'%25'}"
+        msg="${msg//$'\n'/'%0A'}"
+        msg="${msg//$'\r'/'%0D'}"
+        echo "msg=$msg" >> $GITHUB_OUTPUT
+
+    # Create a release to publish to
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.releaseinfo.outputs.version }}
+        release_name: ${{ steps.releaseinfo.outputs.title }}
+        body: ${{ steps.releaseinfo.outputs.msg }}
+
+    # Download all of the previously uploaded artifacts
+    - uses: actions/download-artifact@v1
+      with:
+        name: linux_knx_iot_virtual_secured
+
+    # Zip them
+    - name: Zip the release assets
+      run: |
+        zip -r linux_knx_iot_virtual_secured.zip linux_knx_iot_virtual_secured
+
+    - name: Release linux secured binaries
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{steps.create_release.outputs.upload_url}}
+        asset_path: ./linux_knx_iot_virtual_secured.zip
+        asset_name: windows_KNX_virtual_LSAB_secured.zip
+        asset_content_type: application/zip
