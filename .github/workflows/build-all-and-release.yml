@@ -105,8 +105,8 @@ jobs:
         endif()
     - name: folder creation
       run: |
-        mkdir win_build_${{ matrix.config.folder }}_${{ matrix.config.option_name }}
-        cd win_build_${{ matrix.config.folder }}_${{ matrix.config.option_name }}
+        mkdir win_build_${{ matrix.config.option_name }}
+        cd win_build_${{ matrix.config.option_name }}
         ls
     - name: Configure
       shell: cmake -P {0}
@@ -128,11 +128,11 @@ jobs:
         file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/ninja" ninja_program)
         execute_process(
           COMMAND cmake
-            -S ${{ matrix.config.folder }}
-            -B win_build_${{ matrix.config.folder }}_${{ matrix.config.option_name }}
-            -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
+            -S .
+            -B win_build_${{ matrix.config.option_name }}
+            -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }} ${{ matrix.config.option }}
             -G Ninja
-            -D CMAKE_MAKE_PROGRAM=${ninja_program} ${{ matrix.config.option }}
+            -D CMAKE_MAKE_PROGRAM=${ninja_program}
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
@@ -152,7 +152,7 @@ jobs:
         endif()
         
         execute_process(
-          COMMAND cmake --build win_build_${{ matrix.config.folder }}_${{ matrix.config.option_name }}
+          COMMAND cmake --build win_build_${{ matrix.config.option_name }}
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
@@ -161,14 +161,14 @@ jobs:
     
     - name: ls
       run: |
-         cd win_build_${{ matrix.config.folder }}_${{ matrix.config.option_name }}
+         cd win_build_${{ matrix.config.option_name }}
          ls
     - name: Upload executable ${{ matrix.config.option_name }}
       uses: actions/upload-artifact@v3
       with:
-        name: windows_${{ matrix.config.folder }}_${{ matrix.config.option_name }}
+        name: windows_${{ matrix.config.option_name }}
         path: |
-           ./win_build_${{ matrix.config.folder }}_${{ matrix.config.option_name }}/*.exe
+           ./win_build_${{ matrix.config.option_name }}/*.exe
         
   # Build linux secured
   linuxSecured:
