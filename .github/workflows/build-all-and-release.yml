@@ -168,73 +168,70 @@ jobs:
       with:
         name: windows_knx_iot_virtual_${{ matrix.config.option_name }}
         path: |
-           ./win_build_${{ matrix.config.option_name }}/*.exe
+           ./win_build_${{ matrix.config.option_name }}/knx_iot_virtual_gui_sa.exe
+           ./win_build_${{ matrix.config.option_name }}/knx_iot_virtual_gui_pb.exe
         
   # Build linux secured
   linuxSecured:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-    - run: |
-        echo "hi"
-  #     - uses: actions/checkout@v2
-  #     - name: Build secured linux binaries
-  #       run: |
-  #         # https://github.com/actions/checkout/issues/81
-  #         auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-  #         git submodule sync --recursive
-  #         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-  #         # create the make files in a subfolder
-  #         mkdir linuxbuild
-  #         cd linuxbuild
-  #         cmake ../. -DOC_OSCORE_ENABLED=ON
-  #         make all
+      - uses: actions/checkout@v2
+      - name: Build secured linux binaries
+        run: |
+          # https://github.com/actions/checkout/issues/81
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          # create the make files in a subfolder
+          mkdir linuxbuild
+          cd linuxbuild
+          cmake ../. -DOC_OSCORE_ENABLED=ON
+          make all
       
-  #     - name: View generated binaries
-  #       run: |
-  #         cd linuxbuild
-  #         ls
+      - name: View generated binaries
+        run: |
+          cd linuxbuild
+          ls
 
-  #     - name: Upload secured linux binaries
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: linux_knx_iot_virtual_secured
-  #         path: |
-  #           ./linuxbuild/knx_iot_virtual_sa
-  #           ./linuxbuild/knx_iot_virtual_pb
+      - name: Upload secured linux binaries
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux_knx_iot_virtual_secured
+          path: |
+            ./linuxbuild/knx_iot_virtual_sa
+            ./linuxbuild/knx_iot_virtual_pb
 
   # Build linux unsecured
   linuxUnsecured:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-    - run: |
-        echo "hello"
-  #     - uses: actions/checkout@v2
-  #     - name: Build unsecured linux binaries
-  #       run: |
-  #         # https://github.com/actions/checkout/issues/81
-  #         auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-  #         git submodule sync --recursive
-  #         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-  #         # create the make files in a subfolder
-  #         mkdir linuxbuild
-  #         cd linuxbuild
-  #         cmake ../. -DOC_OSCORE_ENABLED=OFF
-  #         make all
+      - uses: actions/checkout@v2
+      - name: Build unsecured linux binaries
+        run: |
+          # https://github.com/actions/checkout/issues/81
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          # create the make files in a subfolder
+          mkdir linuxbuild
+          cd linuxbuild
+          cmake ../. -DOC_OSCORE_ENABLED=OFF
+          make all
       
-  #     - name: View generated binaries
-  #       run: |
-  #         cd linuxbuild
-  #         ls
+      - name: View generated binaries
+        run: |
+          cd linuxbuild
+          ls
 
-  #     - name: Upload secured linux binaries
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: linux_knx_iot_virtual_unsecured
-  #         path: |
-  #           ./linuxbuild/knx_iot_virtual_sa
-  #           ./linuxbuild/knx_iot_virtual_pb
+      - name: Upload secured linux binaries
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux_knx_iot_virtual_unsecured
+          path: |
+            ./linuxbuild/knx_iot_virtual_sa
+            ./linuxbuild/knx_iot_virtual_pb
 
   makerelease:
     needs: [windowsBuilds, linuxSecured, linuxUnsecured]
@@ -276,12 +273,12 @@ jobs:
         body: ${{ steps.releaseinfo.outputs.msg }}
 
     # Download all of the previously uploaded artifacts
-    # - uses: actions/download-artifact@v1
-    #   with:
-    #     name: linux_knx_iot_virtual_secured
-    # - uses: actions/download-artifact@v1
-    #   with:
-    #     name: linux_knx_iot_virtual_unsecured
+    - uses: actions/download-artifact@v1
+      with:
+        name: linux_knx_iot_virtual_secured
+    - uses: actions/download-artifact@v1
+      with:
+        name: linux_knx_iot_virtual_unsecured
     - uses: actions/download-artifact@v1
       with:
         name: windows_knx_iot_virtual_secured
@@ -293,35 +290,33 @@ jobs:
         name: windows_knx_iot_virtual_secured_debuginfo
 
     # Zip them
-    # - name: Zip the release assets
-    #   run: |
-    #     zip -r linux_knx_iot_virtual_secured.zip linux_knx_iot_virtual_secured
-    #     zip -r linux_knx_iot_virtual_unsecured.zip linux_knx_iot_virtual_unsecured
     - name: Zip the release assets
       run: |
+        zip -r linux_knx_iot_virtual_secured.zip linux_knx_iot_virtual_secured
+        zip -r linux_knx_iot_virtual_unsecured.zip linux_knx_iot_virtual_unsecured
         zip -r windows_knx_iot_virtual_secured.zip windows_knx_iot_virtual_secured
         zip -r windows_knx_iot_virtual_unsecured.zip windows_knx_iot_virtual_unsecured
         zip -r windows_knx_iot_virtual_secured_debuginfo.zip windows_knx_iot_virtual_secured_debuginfo
 
-    # - name: Release secured linux
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{steps.create_release.outputs.upload_url}}
-    #     asset_path: ./linux_knx_iot_virtual_secured.zip
-    #     asset_name: linux_knx_iot_virtual_secured.zip
-    #     asset_content_type: application/zip
+    - name: Release secured linux
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{steps.create_release.outputs.upload_url}}
+        asset_path: ./linux_knx_iot_virtual_secured.zip
+        asset_name: linux_knx_iot_virtual_secured.zip
+        asset_content_type: application/zip
 
-    # - name: Release unsecured linux
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{steps.create_release.outputs.upload_url}}
-    #     asset_path: ./linux_knx_iot_virtual_unsecured.zip
-    #     asset_name: linux_knx_iot_virtual_unsecured.zip
-    #     asset_content_type: application/zip
+    - name: Release unsecured linux
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{steps.create_release.outputs.upload_url}}
+        asset_path: ./linux_knx_iot_virtual_unsecured.zip
+        asset_name: linux_knx_iot_virtual_unsecured.zip
+        asset_content_type: application/zip
 
     - name: Release secured windows
       uses: actions/upload-release-asset@v1
