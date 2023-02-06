@@ -1,8 +1,8 @@
 name: BuildAllAndRelease
 
 on:
-  push:
-    branches: [elie-release-script]
+  workflow_dispatch:
+    branches: [main]
 
 env:
   MATRIX: "{ 
