@@ -21,3 +21,15 @@ jobs:
           cd linuxbuild
           cmake ../.
           make all
+      
+      - name: View generated binaries
+        run: |
+          cd linuxbuild
+          ls
+
+      # - name: Upload secured linux binaries
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: linux_knx_iot_virtual_secured
+      #     path: |
+      #       ./
