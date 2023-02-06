@@ -5,7 +5,19 @@ on:
     branches: [elie-release-script]
 
 jobs:
-  testjob:
+  # Build linux secured
+  linuxSecured:
     runs-on: ubuntu-latest
     steps:
-    - run: echo "hello this is a test"
+      - uses: actions/checkout@v2
+      - name: Build secured linux binaries
+        run: |
+          # https://github.com/actions/checkout/issues/81
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          # create the make files in a subfolder
+          mkdir linuxbuild
+          cd linuxbuild
+          cmake ../.
+          make all
