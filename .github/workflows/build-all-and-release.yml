@@ -1,0 +1,11 @@
+name: BuildAllAndRelease
+
+on:
+  push:
+    branches: [elie-release-script]
+
+jobs:
+  testjob:
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "hello this is a test"
