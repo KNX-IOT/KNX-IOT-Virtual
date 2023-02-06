@@ -27,9 +27,10 @@ jobs:
           cd linuxbuild
           ls
 
-      # - name: Upload secured linux binaries
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: linux_knx_iot_virtual_secured
-      #     path: |
-      #       ./
+      - name: Upload secured linux binaries
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux_knx_iot_virtual_secured
+          path: |
+            ./linuxbuild/knx_iot_virtual_sa
+            ./linuxbuild/knx_iot_virtual_pb
