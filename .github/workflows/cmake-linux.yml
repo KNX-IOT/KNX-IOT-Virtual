@@ -33,7 +33,7 @@ jobs:
           # create the make files in a subfolder
           mkdir linuxbuild
           cd linuxbuild
-          cmake ../. 
+          cmake ../. -DOC_OSCORE_ENABLED=ON
           make all
           
   unsecured:
