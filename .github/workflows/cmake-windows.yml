@@ -172,4 +172,5 @@ jobs:
         path: |
            D:/a/KNX-IOT-Virtual/KNX-IOT-Virtual/build_${{ matrix.config.option_name }}/knx_iot_virtual_gui_pb.exe
            D:/a/KNX-IOT-Virtual/KNX-IOT-Virtual/knx_iot_virtual_pb_KNX_S_00FA10010400_P_ABY8B77J50YXMUDW3DG4.png
-           D:/a/KNX-IOT-Virtual/KNX-IOT-Virtual/build_${{ matrix.config.option_name D:/a/KNX-IOT-Virtual/KNX-IOT-Virtual/knx_iot_virtual_sa_KNX_S_00FA10010700_P_0MK4U5LV950ST3VRXL8G.png
+           D:/a/KNX-IOT-Virtual/KNX-IOT-Virtual/build_${{ matrix.config.option_name }}/knx_iot_virtual_gui_sa.exe
+           D:/a/KNX-IOT-Virtual/KNX-IOT-Virtual/knx_iot_virtual_sa_KNX_S_00FA10010700_P_0MK4U5LV950ST3VRXL8G.png
