@@ -42,7 +42,7 @@ The general structure of these programs are:
 
 ```
    _________________
-  |    GUI CODE     |   <---- WxWidget, Python, Printf
+  |    GUI CODE     |   <---- WxWidget, Printf
   |_________________|
   |  POINT API CODE |   <---- Generic code handling all Point API CoAP code
   |_________________|
@@ -52,7 +52,9 @@ The general structure of these programs are:
   General structure
 ```
 
-Note: In the structure diagram above, the "GUI CODE" can be replaced with something else, for example, with an "EMBEDDED CODE" layer which provides an interface for running a KNX device on embedded platforms (see [KNX IoT Embedded repository](https://github.com/KNX-IOT/KNX-IOT-Embedded)). This is possible because that upper layer is decoupled from the layers below it. The "POINT API CODE" layer is completely generic and does not need to be modified.
+Note: In the structure diagram above, the "GUI CODE" can be replaced with something else like a CLI.
+This is possible because that upper layer is decoupled from the layers below it.
+ The "POINT API CODE" layer is completely generic and does not need to be modified.
 
 The Point API Code is shared code that can be used:
 
@@ -64,6 +66,9 @@ The point code has an API so that one can:
 - set/retrieve data from an URL
 - callback on PUT data changes
 - functions to figure out what type of data the url conveys
+
+Note: Although the applications are called virtual, they are real KNX IOT Applications.
+They are only running on a PC instead of on actual hardware.
 
 ### 1.1. The knx_iot_virtual_pb Application
 
@@ -400,9 +405,4 @@ which cmake
 
 ## 5. Installation tools
 
-The installation tools in a zip called `app_release_no_security_win32.zip` can be found in the release page of
-[GitHub](https://github.com/KNX-IOT/KNX-IOT-STACK/releases) or in the release page of [GitLab](https://gitlab.knx.org/shared-projects/knx-iot-point-api-public-stack/-/releases).
-
-- Download the zip file
-- unzip the file on your local (windows machine)
-- read the README.md file located in the created folder
+please download the x-copy of ETS 6.
