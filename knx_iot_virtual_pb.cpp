@@ -13,9 +13,10 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
+
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-01-20 11:12:59.195095
+// 2023-03-29 14:46:26.886967
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -32,11 +33,12 @@
 
 enum
 {
-  RESET = wxID_HIGHEST + 1,  // ID for reset button in the menu
-  IA_TEXT = RESET + 1,       // ID for internal address text 
-  IID_TEXT = IA_TEXT + 1,    // ID for installation id text 
-  PM_TEXT = IID_TEXT + 1,    // ID for programming mode text 
-  LS_TEXT = PM_TEXT + 1,     // ID for load status text 
+  RESET = wxID_HIGHEST + 1,   // ID for reset button in the menu
+  RESET_TABLE = RESET + 1,    // ID for clear table button in the menu
+  IA_TEXT = RESET_TABLE + 1,  // ID for internal address text 
+  IID_TEXT = IA_TEXT + 1,     // ID for installation id text 
+  PM_TEXT = IID_TEXT + 1,     // ID for programming mode text 
+  LS_TEXT = PM_TEXT + 1,      // ID for load status text 
   HOSTNAME_TEXT = LS_TEXT + 1, // ID for hostname text 
   GOT_TABLE_ID = HOSTNAME_TEXT + 1, // ID for the Group object window
   PUB_TABLE_ID = GOT_TABLE_ID + 1, // ID for the publisher table window
@@ -127,7 +129,7 @@ private:
   void OnAuthTable(wxCommandEvent& event);
   void OnProgrammingMode(wxCommandEvent& event);
   void OnReset(wxCommandEvent& event);
-
+  void OnClearTables(wxCommandEvent& event);
   void OnExit(wxCommandEvent& event);
   void OnAbout(wxCommandEvent& event);
   void OnTimer(wxTimerEvent& event);
@@ -217,7 +219,8 @@ MyFrame::MyFrame(char* str_serial_number)
   m_menuFile->Append(PARAMETER_LIST_ID, "List Parameters", "List the parameters of the device", false);
   m_menuFile->Append(AT_TABLE_ID, "List Auth/AT Table", "List the security data of the device", false);
   m_menuFile->Append(CHECK_PM, "Programming Mode", "Sets the application in programming mode", true);
-  m_menuFile->Append(RESET, "Reset (ex-factory)", "Reset the Device to ex-factory state", false);
+  m_menuFile->Append(RESET_TABLE, "Reset (7) (Tables)", "Reset 7 (Reset to default without IA).", false);
+  m_menuFile->Append(RESET, "Reset (2)(ex-factory)", "Reset 2 (Reset to default state)", false);
   m_menuFile->AppendSeparator();
   m_menuFile->Append(wxID_EXIT);
   // display menu
@@ -240,6 +243,7 @@ MyFrame::MyFrame(char* str_serial_number)
   CreateStatusBar();
   SetStatusText("Welcome to KNX virtual Push Button!");
   Bind(wxEVT_MENU, &MyFrame::OnReset, this, RESET);
+  Bind(wxEVT_MENU, &MyFrame::OnClearTables, this, RESET_TABLE);
   Bind(wxEVT_MENU, &MyFrame::OnGroupObjectTable, this, GOT_TABLE_ID);
   Bind(wxEVT_MENU, &MyFrame::OnPublisherTable, this, PUB_TABLE_ID);
   Bind(wxEVT_MENU, &MyFrame::OnRecipientTable, this, REC_TABLE_ID);
@@ -249,7 +253,6 @@ MyFrame::MyFrame(char* str_serial_number)
   Bind(wxEVT_MENU, &MyFrame::OnReset, this, RESET);
   Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
   Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
-
   int x_width = 230; /* width of the widgets */
   int x_height = 25; /* height of the widgets */
   int max_instances = 4;
@@ -456,6 +459,21 @@ void MyFrame::updateTextButtons()
 }
 
 /**
+ * @brief clear the tables of the device
+ * 
+ * @param event command triggered by button in the menu
+ */
+void MyFrame::OnClearTables(wxCommandEvent& event)
+{
+  int device_index = 0;
+  SetStatusText("Clear Tables");
+  // reset the device
+  oc_knx_device_storage_reset(device_index, 7);
+  // update the UI
+  this->updateTextButtons();
+}
+
+/**
  * @brief reset the device
  * 
  * @param event command triggered by button in the menu
@@ -512,8 +530,6 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
   }
   strcpy(windowtext, "Group Object Table  ");
   strcat(windowtext, oc_string(device->serialnumber));
-  //wxMessageBox(text, windowtext,
-  //  wxOK | wxICON_NONE);
   CustomDialog(windowtext, text);
   SetStatusText("List Group Object Table");
 }
@@ -587,8 +603,6 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
   }
   strcpy(windowtext, "Publisher Table  ");
   strcat(windowtext, oc_string(device->serialnumber));
-  //wxMessageBox(text, windowtext,
-  //wxOK | wxICON_NONE);
   CustomDialog(windowtext, text);
   SetStatusText("List Publisher Table");
 }
@@ -661,8 +675,6 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
   }
   strcpy(windowtext, "Recipient Table  ");
   strcat(windowtext, oc_string(device->serialnumber));
-  //wxMessageBox(text, windowtext,
-  //  wxOK | wxICON_NONE);
   CustomDialog(windowtext, text);
   SetStatusText("List Recipient Table");
 }
@@ -817,8 +829,6 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
 
   strcpy(windowtext, "Auth AT Table ");
   strcat(windowtext, oc_string(device->serialnumber));
-  //wxMessageBox(text, windowtext,
-  //  wxOK | wxICON_NONE);
   CustomDialog(windowtext, text);
   SetStatusText("List security entries");
 }
@@ -836,10 +846,11 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   oc_device_info_t* device = oc_core_get_device_info(0);
   strcat(text, oc_string(device->serialnumber));
   strcat(text,"\n");
+  strcat(text,"manufactorer     : cascoda\n");
   strcat(text,"model            : KNX virtual - PB\n");
   strcat(text,"hardware type    : Linux/windows\n");
   strcat(text,"hardware version : [0, 1, 3]\n");
-  strcat(text,"firmware version : [0, 1, 3]\n\n");
+  strcat(text,"firmware version : [0, 1, 4]\n\n");
   
   strcat(text, "data points:\n");
   strcat(text,"url:/p/o_1_1 rt:urn:knx:dpa.421.61 if:if.s inst:1 name:OnOff_1\n");
@@ -854,9 +865,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-01-20 11:12:59.195095");
-  //wxMessageBox(text, "KNX virtual Push Button",
-  //  wxOK | wxICON_NONE);
+  strcat(text, "2023-03-29 14:46:26.886967");
   CustomDialog("About", text);
 }
 
@@ -880,6 +889,14 @@ void MyFrame::OnTimer(wxTimerEvent& event)
   this->updateTextButtons();
 }
 
+
+/**
+ * @brief update the UI e.g. check boxes in the UI
+ * updates:
+ * does a oc_main_poll to give a tick to the stack
+ * 
+ * @param event triggered by a timer
+ */
 void  MyFrame::updateInfoCheckBoxes()
 {
   bool p;
@@ -894,6 +911,12 @@ void  MyFrame::updateInfoCheckBoxes()
 
 }
 
+/**
+ * @brief convert the boolean to text for display
+ * 
+ * @param on_off the boolean
+ * @param text the text to add the boolean as text
+ */
 void MyFrame::bool2text(bool on_off, char* text)
 {
   if (on_off) {
@@ -904,6 +927,13 @@ void MyFrame::bool2text(bool on_off, char* text)
   }
 }
 
+/**
+ * @brief convert the integer to text for display
+ * 
+ * @param on_off the integer
+ * @param text the text to add info too
+ * @param as_ets the text as terminology as used in ets
+ */
 void MyFrame::int2text(int value, char* text, bool as_ets)
 {
   char value_text[50];
@@ -931,6 +961,12 @@ void MyFrame::int2text(int value, char* text, bool as_ets)
   }
 }
 
+/**
+ * @brief convert the scope to text for display
+ * 
+ * @param value the scope
+ * @param text the text to add info too
+ */
 void MyFrame::int2scopetext(uint32_t value, char* text)
 {
   char value_text[150];
@@ -954,6 +990,13 @@ void MyFrame::int2scopetext(uint32_t value, char* text)
   if (value & (1 << 14)) strcat(text, " if.m");
 }
 
+/**
+ * @brief convert the group id to text for display
+ * 
+ * @param value the group id
+ * @param text the text to add info too
+ * @param as_ets the text as terminology as used in ets
+ */
 void MyFrame::int2grpidtext(uint64_t value, char* text, bool as_ets)
 {
   char value_text[50];
@@ -992,6 +1035,12 @@ void MyFrame::int2grpidtext(uint64_t value, char* text, bool as_ets)
   }
 }
 
+/**
+ * @brief convert the double (e.g. float)  to text for display
+ * 
+ * @param value the vlue
+ * @param text the text to add info too
+ */
 void MyFrame::double2text(double value, char* text)
 {
   char new_text[200];
@@ -999,6 +1048,10 @@ void MyFrame::double2text(double value, char* text)
   strcat(text, new_text);
 }
 
+/**
+ * @brief update the buttons
+ * 
+ */
 void  MyFrame::updateInfoButtons()
 {
   char text[200];
@@ -1035,7 +1088,6 @@ void MyFrame::OnPressed_OnOff_1(wxCommandEvent& event)
     p = true;
   }
   app_set_bool_variable(url, p);
-  oc_do_s_mode_with_scope(2, url, "w");
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "OnOff_1 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
@@ -1052,7 +1104,6 @@ void MyFrame::OnPressed_OnOff_2(wxCommandEvent& event)
     p = true;
   }
   app_set_bool_variable(url, p);
-  oc_do_s_mode_with_scope(2, url, "w");
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "OnOff_2 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
@@ -1069,7 +1120,6 @@ void MyFrame::OnPressed_OnOff_3(wxCommandEvent& event)
     p = true;
   }
   app_set_bool_variable(url, p);
-  oc_do_s_mode_with_scope(2, url, "w");
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "OnOff_3 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
@@ -1086,7 +1136,6 @@ void MyFrame::OnPressed_OnOff_4(wxCommandEvent& event)
     p = true;
   }
   app_set_bool_variable(url, p);
-  oc_do_s_mode_with_scope(2, url, "w");
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "OnOff_4 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);

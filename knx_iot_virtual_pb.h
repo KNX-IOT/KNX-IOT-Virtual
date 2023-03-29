@@ -1,6 +1,6 @@
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
- Copyright (c) 2022 Cascoda Ltd
+ Copyright (c) 2022-2023 Cascoda Ltd
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
+ 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 /**
@@ -23,7 +24,7 @@
  * e.g. if the c code is compiled without main then 
  * these functions can be used to call all generated code
  *
- * 2023-01-20 11:12:59.047855
+ * 2023-03-29 14:46:26.745444
  */
 
 #include "oc_api.h"
@@ -33,6 +34,16 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// URL defines
+#define URL_ONOFF_1 "/p/o_1_1" // define URL OnOff_1 for /p/o_1_1
+#define URL_INFOONOFF_1 "/p/o_2_2" // define URL InfoOnOff_1 for /p/o_2_2
+#define URL_ONOFF_2 "/p/o_3_3" // define URL OnOff_2 for /p/o_3_3
+#define URL_INFOONOFF_2 "/p/o_4_4" // define URL InfoOnOff_2 for /p/o_4_4
+#define URL_ONOFF_3 "/p/o_5_5" // define URL OnOff_3 for /p/o_5_5
+#define URL_INFOONOFF_3 "/p/o_6_6" // define URL InfoOnOff_3 for /p/o_6_6
+#define URL_ONOFF_4 "/p/o_7_7" // define URL OnOff_4 for /p/o_7_7
+#define URL_INFOONOFF_4 "/p/o_8_8" // define URL InfoOnOff_4 for /p/o_8_8
 
 /**
  * Callback invoked by the stack when a successfull put is done
@@ -137,6 +148,9 @@ int app_retrieve_int_variable(char* url);
  * @param url the url of the resource/data point
  * @param value the integer value to be set
  */
+ 
+void app_set_int_variable(char* url, int value);
+
 void app_set_integer_variable(char* url, int value);
 
 /**
@@ -214,16 +228,6 @@ char* app_get_parameter_url(int index);
 char* app_get_parameter_name(int index);
 
 /**
- * @brief retrieve the fault state of the url/data point
- * the caller needs to know if the resource/data point implements a fault situation
- * 
- * @param url the url of the resource/data point
- * @return true value is true
- * @return false value is false or error.
- */
-bool app_retrieve_fault_variable(char* url);
-
-/**
  * @brief sets the fault state of the url/data point 
  * the caller needs to know if the resource/data point implements a fault situation
  * 
@@ -231,6 +235,15 @@ bool app_retrieve_fault_variable(char* url);
  * @param value the boolean fault value to be set
  */
 void app_set_fault_variable(char* url, bool value);
+
+/**
+ * @brief checks if the url is in use (e.g. used in the Group Object Table)
+ * 
+ * @param url the url of the resource/data point
+ * @return true: entry in Group Object Table has the URL
+ * @return false: No entry in Group Object Table has the URL
+ */
+bool app_is_url_in_use(char* url);
 
 /**
  * @brief function to report if the (oscore) security is turn on for this instance
@@ -247,6 +260,13 @@ bool app_is_secure();
  */
 char* app_get_password();
 
+/**
+ * @brief Function to be used as a callback for when a button is pressed.
+ *        This function will toggle the value of the url, and send a message.
+ * 
+ * @param url the url of the resource/data point
+ */
+void dev_btn_toggle_cb(char *url);
 
 #ifdef __cplusplus
 }
