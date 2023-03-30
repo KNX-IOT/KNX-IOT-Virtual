@@ -10,7 +10,6 @@ FetchContent_Declare(
     GIT_TAG master
 )
 
-
 FetchContent_Declare(
     knx-iot-stack-gitlab
     GIT_REPOSITORY https://gitlab.knx.org/shared-projects/knx-iot-point-api-public-stack.git
@@ -83,6 +82,7 @@ if(WIN32)
         LINK_FLAGS /SUBSYSTEM:CONSOLE
         )
     endif()
+    add_definitions(-DOC_USE_MULTICAST_SCOPE_2)
 endif()
 
 if(UNIX)
