@@ -21,6 +21,8 @@ endif()
 
 set(USE_GITLAB OFF CACHE BOOL "use gitlab as source for KNX IoT Stack")
 set(USE_CONSOLE ON CACHE BOOL "use console (for output logging)")
+# force using scope 2 for PC applications
+set(OC_USE_MULTICAST_SCOPE_2 ON CACHE BOOL "devices send also group multicast events with scope2." FORCE)
 
 if(USE_GITLAB)
     message(STATUS "Fetching KNX-IoT Source Code, please wait...")
@@ -82,7 +84,6 @@ if(WIN32)
         LINK_FLAGS /SUBSYSTEM:CONSOLE
         )
     endif()
-    add_definitions(-DOC_USE_MULTICAST_SCOPE_2)
 endif()
 
 if(UNIX)
