@@ -10,7 +10,6 @@ FetchContent_Declare(
     GIT_TAG master
 )
 
-
 FetchContent_Declare(
     knx-iot-stack-gitlab
     GIT_REPOSITORY https://gitlab.knx.org/shared-projects/knx-iot-point-api-public-stack.git
@@ -22,6 +21,8 @@ endif()
 
 set(USE_GITLAB OFF CACHE BOOL "use gitlab as source for KNX IoT Stack")
 set(USE_CONSOLE ON CACHE BOOL "use console (for output logging)")
+# force using scope 2 for PC applications
+set(OC_USE_MULTICAST_SCOPE_2 ON CACHE BOOL "devices send also group multicast events with scope2." FORCE)
 
 if(USE_GITLAB)
     message(STATUS "Fetching KNX-IoT Source Code, please wait...")
