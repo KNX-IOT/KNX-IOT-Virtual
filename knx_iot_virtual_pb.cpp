@@ -16,7 +16,7 @@
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-03-29 14:46:26.886967
+// 2023-03-30 16:22:22.023134
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -865,7 +865,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-03-29 14:46:26.886967");
+  strcat(text, "2023-03-30 16:22:22.023134");
   CustomDialog("About", text);
 }
 
@@ -1088,6 +1088,7 @@ void MyFrame::OnPressed_OnOff_1(wxCommandEvent& event)
     p = true;
   }
   app_set_bool_variable(url, p);
+  oc_do_s_mode_with_scope(2, url, "w");
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "OnOff_1 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
@@ -1104,6 +1105,7 @@ void MyFrame::OnPressed_OnOff_2(wxCommandEvent& event)
     p = true;
   }
   app_set_bool_variable(url, p);
+  oc_do_s_mode_with_scope(2, url, "w");
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "OnOff_2 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
@@ -1120,6 +1122,7 @@ void MyFrame::OnPressed_OnOff_3(wxCommandEvent& event)
     p = true;
   }
   app_set_bool_variable(url, p);
+  oc_do_s_mode_with_scope(2, url, "w");
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "OnOff_3 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
@@ -1136,6 +1139,7 @@ void MyFrame::OnPressed_OnOff_4(wxCommandEvent& event)
     p = true;
   }
   app_set_bool_variable(url, p);
+  oc_do_s_mode_with_scope(2, url, "w");
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "OnOff_4 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
