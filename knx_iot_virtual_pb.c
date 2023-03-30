@@ -1,6 +1,6 @@
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
- Copyright (c) 2022 Cascoda Ltd
+ Copyright (c) 2022-2023 Cascoda Ltd
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Push Button
- * 2023-01-20 11:12:58.618553
+ * 2023-03-29 14:46:26.695031
  * ## Application Design
  *
  * support functions:
@@ -274,9 +274,14 @@ bool app_is_int_url(char* url)
  * @param url the url indicating the global variable
  * @param value the value to be set
  */
-void app_set_integer_variable(char* url, int value)
+void app_set_int_variable(char* url, int value)
 {
 }
+void app_set_integer_variable(char* url, int value)
+{
+  app_set_int_variable(url, value);
+}
+
 /**
  * @brief retrieve the global integer variable at the url
  *
@@ -448,6 +453,28 @@ int app_init(void);
 }
 #endif
 
+// DEVBOARD code
+
+/**
+ * @brief devboard button toggle callback
+ *
+ */
+void dev_btn_toggle_cb(char *url)
+{
+  printf("Handling %s\n", url);
+  bool val = app_retrieve_bool_variable(url);
+  if (val == true)
+  {
+    val = false;
+  }
+  else
+  {
+    val = true;
+  }
+  app_set_bool_variable(url, val);
+  oc_do_s_mode_with_scope(5, url, "w");
+}
+
 /**
  * @brief s-mode response callback
  * will be called when a response is received on an s-mode read request
@@ -474,7 +501,7 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
  * - base path
  * - knx spec version 
  * - hardware version : [0, 1, 3]
- * - firmware version : [0, 1, 3]
+ * - firmware version : [0, 1, 4]
  * - hardware type    : Linux/windows
  * - device model     : KNX virtual - PB
  *
@@ -488,15 +515,14 @@ app_init(void)
   ret |= oc_add_device(MY_NAME, "1.0.0", "//", g_serial_number, NULL, NULL);
 
   oc_device_info_t *device = oc_core_get_device_info(0);
-  PRINT("Serial Number: %s\n", oc_string(device->serialnumber));
 
   
   /* set the hardware version 0.1.3 */
   oc_core_set_device_hwv(0, 0, 1, 3);
   
   
-  /* set the firmware version 0.1.3 */
-  oc_core_set_device_fwv(0, 0, 1, 3);
+  /* set the firmware version 0.1.4 */
+  oc_core_set_device_fwv(0, 0, 1, 4);
   
 
   /* set the hardware type*/
@@ -509,8 +535,9 @@ app_init(void)
 #define PASSWORD "ABY8B77J50YXMUDW3DG4"
 #ifdef OC_SPAKE
   oc_spake_set_password(PASSWORD);
-  PRINT(" SPAKE password %s\n", PASSWORD);
 
+
+  printf("\n === QR Code: KNX:S:%s;P:%s ===\n", oc_string(device->serialnumber), PASSWORD);
 #endif
 
   return ret;
@@ -529,7 +556,7 @@ char* app_get_password()
 
 /**
  * @brief CoAP GET method for data point "OnOff_1" resource at url CH1_URL_ONOFF_1 ("/p/o_1_1").
- * resource types: ['urn:knx:dpa.421.61', 'urn:knx:dpt.switch']
+ * resource types: ['urn:knx:dpa.421.61']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -637,7 +664,7 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "InfoOnOff_1" resource at url CH1_URL_INFOONOFF_1 ("/p/o_2_2").
- * resource types: ['urn:knx:dpa.421.51', 'urn:knx:dpt.switch']
+ * resource types: ['urn:knx:dpa.421.51']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -744,7 +771,7 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
  
 /**
  * @brief CoAP PUT method for data point "InfoOnOff_1" resource at url "/p/o_2_2".
- * resource types: ['urn:knx:dpa.421.51', 'urn:knx:dpt.switch']
+ * resource types: ['urn:knx:dpa.421.51']
  * The function has as input the request body, which are the input values of the
  * PUT method.
  * The input values (as a set) are checked if all supplied values are correct.
@@ -794,7 +821,7 @@ put_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "OnOff_2" resource at url CH2_URL_ONOFF_2 ("/p/o_3_3").
- * resource types: ['urn:knx:dpa.421.61', 'urn:knx:dpt.switch']
+ * resource types: ['urn:knx:dpa.421.61']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -902,7 +929,7 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "InfoOnOff_2" resource at url CH2_URL_INFOONOFF_2 ("/p/o_4_4").
- * resource types: ['urn:knx:dpa.421.51', 'urn:knx:dpt.switch']
+ * resource types: ['urn:knx:dpa.421.51']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -1009,7 +1036,7 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
  
 /**
  * @brief CoAP PUT method for data point "InfoOnOff_2" resource at url "/p/o_4_4".
- * resource types: ['urn:knx:dpa.421.51', 'urn:knx:dpt.switch']
+ * resource types: ['urn:knx:dpa.421.51']
  * The function has as input the request body, which are the input values of the
  * PUT method.
  * The input values (as a set) are checked if all supplied values are correct.
@@ -1059,7 +1086,7 @@ put_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "OnOff_3" resource at url CH3_URL_ONOFF_3 ("/p/o_5_5").
- * resource types: ['urn:knx:dpa.421.61', 'urn:knx:dpt.switch']
+ * resource types: ['urn:knx:dpa.421.61']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -1167,7 +1194,7 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "InfoOnOff_3" resource at url CH3_URL_INFOONOFF_3 ("/p/o_6_6").
- * resource types: ['urn:knx:dpa.421.51', 'urn:knx:dpt.switch']
+ * resource types: ['urn:knx:dpa.421.51']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -1274,7 +1301,7 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
  
 /**
  * @brief CoAP PUT method for data point "InfoOnOff_3" resource at url "/p/o_6_6".
- * resource types: ['urn:knx:dpa.421.51', 'urn:knx:dpt.switch']
+ * resource types: ['urn:knx:dpa.421.51']
  * The function has as input the request body, which are the input values of the
  * PUT method.
  * The input values (as a set) are checked if all supplied values are correct.
@@ -1324,7 +1351,7 @@ put_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "OnOff_4" resource at url CH4_URL_ONOFF_4 ("/p/o_7_7").
- * resource types: ['urn:knx:dpa.421.61', 'urn:knx:dpt.switch']
+ * resource types: ['urn:knx:dpa.421.61']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -1432,7 +1459,7 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 
 /**
  * @brief CoAP GET method for data point "InfoOnOff_4" resource at url CH4_URL_INFOONOFF_4 ("/p/o_8_8").
- * resource types: ['urn:knx:dpa.421.51', 'urn:knx:dpt.switch']
+ * resource types: ['urn:knx:dpa.421.51']
  * function is called to initialize the return values of the GET method.
  * initialization of the returned values are done from the global property
  * values. 
@@ -1539,7 +1566,7 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
  
 /**
  * @brief CoAP PUT method for data point "InfoOnOff_4" resource at url "/p/o_8_8".
- * resource types: ['urn:knx:dpa.421.51', 'urn:knx:dpt.switch']
+ * resource types: ['urn:knx:dpa.421.51']
  * The function has as input the request body, which are the input values of the
  * PUT method.
  * The input values (as a set) are checked if all supplied values are correct.
@@ -1610,10 +1637,9 @@ register_resources(void)
 {
   PRINT("Register Resource 'OnOff_1' with local path \"%s\"\n", CH1_URL_ONOFF_1);
   oc_resource_t *res_OnOff_1 =
-    oc_new_resource("OnOff_1", CH1_URL_ONOFF_1, 2, 0);
+    oc_new_resource("OnOff_1", CH1_URL_ONOFF_1, 1, 0);
   oc_resource_bind_resource_type(res_OnOff_1, "urn:knx:dpa.421.61");
-  oc_resource_bind_resource_type(res_OnOff_1, "urn:knx:dpt.switch");
-  oc_resource_bind_dpt(res_OnOff_1, "");
+  oc_resource_bind_dpt(res_OnOff_1, "urn:knx:dpt.switch");
   oc_resource_bind_content_type(res_OnOff_1, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_OnOff_1, OC_IF_S); /* if.s */ 
   oc_resource_set_function_block_instance(res_OnOff_1, 1); /* instance 1 */ 
@@ -1631,10 +1657,9 @@ register_resources(void)
   oc_add_resource(res_OnOff_1);
   PRINT("Register Resource 'InfoOnOff_1' with local path \"%s\"\n", CH1_URL_INFOONOFF_1);
   oc_resource_t *res_InfoOnOff_1 =
-    oc_new_resource("InfoOnOff_1", CH1_URL_INFOONOFF_1, 2, 0);
+    oc_new_resource("InfoOnOff_1", CH1_URL_INFOONOFF_1, 1, 0);
   oc_resource_bind_resource_type(res_InfoOnOff_1, "urn:knx:dpa.421.51");
-  oc_resource_bind_resource_type(res_InfoOnOff_1, "urn:knx:dpt.switch");
-  oc_resource_bind_dpt(res_InfoOnOff_1, "");
+  oc_resource_bind_dpt(res_InfoOnOff_1, "urn:knx:dpt.switch");
   oc_resource_bind_content_type(res_InfoOnOff_1, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_InfoOnOff_1, OC_IF_A); /* if.a */ 
   oc_resource_set_function_block_instance(res_InfoOnOff_1, 1); /* instance 1 */ 
@@ -1653,10 +1678,9 @@ register_resources(void)
   oc_add_resource(res_InfoOnOff_1);
   PRINT("Register Resource 'OnOff_2' with local path \"%s\"\n", CH2_URL_ONOFF_2);
   oc_resource_t *res_OnOff_2 =
-    oc_new_resource("OnOff_2", CH2_URL_ONOFF_2, 2, 0);
+    oc_new_resource("OnOff_2", CH2_URL_ONOFF_2, 1, 0);
   oc_resource_bind_resource_type(res_OnOff_2, "urn:knx:dpa.421.61");
-  oc_resource_bind_resource_type(res_OnOff_2, "urn:knx:dpt.switch");
-  oc_resource_bind_dpt(res_OnOff_2, "");
+  oc_resource_bind_dpt(res_OnOff_2, "urn:knx:dpt.switch");
   oc_resource_bind_content_type(res_OnOff_2, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_OnOff_2, OC_IF_S); /* if.s */ 
   oc_resource_set_function_block_instance(res_OnOff_2, 2); /* instance 2 */ 
@@ -1674,10 +1698,9 @@ register_resources(void)
   oc_add_resource(res_OnOff_2);
   PRINT("Register Resource 'InfoOnOff_2' with local path \"%s\"\n", CH2_URL_INFOONOFF_2);
   oc_resource_t *res_InfoOnOff_2 =
-    oc_new_resource("InfoOnOff_2", CH2_URL_INFOONOFF_2, 2, 0);
+    oc_new_resource("InfoOnOff_2", CH2_URL_INFOONOFF_2, 1, 0);
   oc_resource_bind_resource_type(res_InfoOnOff_2, "urn:knx:dpa.421.51");
-  oc_resource_bind_resource_type(res_InfoOnOff_2, "urn:knx:dpt.switch");
-  oc_resource_bind_dpt(res_InfoOnOff_2, "");
+  oc_resource_bind_dpt(res_InfoOnOff_2, "urn:knx:dpt.switch");
   oc_resource_bind_content_type(res_InfoOnOff_2, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_InfoOnOff_2, OC_IF_A); /* if.a */ 
   oc_resource_set_function_block_instance(res_InfoOnOff_2, 2); /* instance 2 */ 
@@ -1696,10 +1719,9 @@ register_resources(void)
   oc_add_resource(res_InfoOnOff_2);
   PRINT("Register Resource 'OnOff_3' with local path \"%s\"\n", CH3_URL_ONOFF_3);
   oc_resource_t *res_OnOff_3 =
-    oc_new_resource("OnOff_3", CH3_URL_ONOFF_3, 2, 0);
+    oc_new_resource("OnOff_3", CH3_URL_ONOFF_3, 1, 0);
   oc_resource_bind_resource_type(res_OnOff_3, "urn:knx:dpa.421.61");
-  oc_resource_bind_resource_type(res_OnOff_3, "urn:knx:dpt.switch");
-  oc_resource_bind_dpt(res_OnOff_3, "");
+  oc_resource_bind_dpt(res_OnOff_3, "urn:knx:dpt.switch");
   oc_resource_bind_content_type(res_OnOff_3, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_OnOff_3, OC_IF_S); /* if.s */ 
   oc_resource_set_function_block_instance(res_OnOff_3, 3); /* instance 3 */ 
@@ -1717,10 +1739,9 @@ register_resources(void)
   oc_add_resource(res_OnOff_3);
   PRINT("Register Resource 'InfoOnOff_3' with local path \"%s\"\n", CH3_URL_INFOONOFF_3);
   oc_resource_t *res_InfoOnOff_3 =
-    oc_new_resource("InfoOnOff_3", CH3_URL_INFOONOFF_3, 2, 0);
+    oc_new_resource("InfoOnOff_3", CH3_URL_INFOONOFF_3, 1, 0);
   oc_resource_bind_resource_type(res_InfoOnOff_3, "urn:knx:dpa.421.51");
-  oc_resource_bind_resource_type(res_InfoOnOff_3, "urn:knx:dpt.switch");
-  oc_resource_bind_dpt(res_InfoOnOff_3, "");
+  oc_resource_bind_dpt(res_InfoOnOff_3, "urn:knx:dpt.switch");
   oc_resource_bind_content_type(res_InfoOnOff_3, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_InfoOnOff_3, OC_IF_A); /* if.a */ 
   oc_resource_set_function_block_instance(res_InfoOnOff_3, 3); /* instance 3 */ 
@@ -1739,10 +1760,9 @@ register_resources(void)
   oc_add_resource(res_InfoOnOff_3);
   PRINT("Register Resource 'OnOff_4' with local path \"%s\"\n", CH4_URL_ONOFF_4);
   oc_resource_t *res_OnOff_4 =
-    oc_new_resource("OnOff_4", CH4_URL_ONOFF_4, 2, 0);
+    oc_new_resource("OnOff_4", CH4_URL_ONOFF_4, 1, 0);
   oc_resource_bind_resource_type(res_OnOff_4, "urn:knx:dpa.421.61");
-  oc_resource_bind_resource_type(res_OnOff_4, "urn:knx:dpt.switch");
-  oc_resource_bind_dpt(res_OnOff_4, "");
+  oc_resource_bind_dpt(res_OnOff_4, "urn:knx:dpt.switch");
   oc_resource_bind_content_type(res_OnOff_4, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_OnOff_4, OC_IF_S); /* if.s */ 
   oc_resource_set_function_block_instance(res_OnOff_4, 4); /* instance 4 */ 
@@ -1760,10 +1780,9 @@ register_resources(void)
   oc_add_resource(res_OnOff_4);
   PRINT("Register Resource 'InfoOnOff_4' with local path \"%s\"\n", CH4_URL_INFOONOFF_4);
   oc_resource_t *res_InfoOnOff_4 =
-    oc_new_resource("InfoOnOff_4", CH4_URL_INFOONOFF_4, 2, 0);
+    oc_new_resource("InfoOnOff_4", CH4_URL_INFOONOFF_4, 1, 0);
   oc_resource_bind_resource_type(res_InfoOnOff_4, "urn:knx:dpa.421.51");
-  oc_resource_bind_resource_type(res_InfoOnOff_4, "urn:knx:dpt.switch");
-  oc_resource_bind_dpt(res_InfoOnOff_4, "");
+  oc_resource_bind_dpt(res_InfoOnOff_4, "urn:knx:dpt.switch");
   oc_resource_bind_content_type(res_InfoOnOff_4, APPLICATION_CBOR);
   oc_resource_bind_resource_interface(res_InfoOnOff_4, OC_IF_A); /* if.a */ 
   oc_resource_set_function_block_instance(res_InfoOnOff_4, 4); /* instance 4 */ 
@@ -1802,21 +1821,6 @@ factory_presets_cb(size_t device_index, void *data)
 }
 
 /**
- * @brief application reset
- *
- * @param device_index the device identifier of the list of devices
- * @param reset_value the knx reset value
- * @param data the supplied data.
- */
-void
-reset_cb(size_t device_index, int reset_value, void *data)
-{
-  (void)device_index;
-
-  PRINT("reset_cb %d\n", reset_value);
-}
-
-/**
  * @brief restart the device (application depended)
  *
  * @param device_index the device identifier of the list of devices
@@ -1845,6 +1849,56 @@ hostname_cb(size_t device_index, oc_string_t host_name, void *data)
   (void)data;
 
   PRINT("-----host name ------- %s\n", oc_string(host_name));
+}
+
+static oc_event_callback_retval_t send_delayed_response(void *context)
+{
+  oc_separate_response_t *response = (oc_separate_response_t *)context;
+
+  if (response->active)
+  {
+    oc_set_separate_response_buffer(response);
+    oc_send_separate_response(response, OC_STATUS_CHANGED);
+    printf("Delayed response sent\n");
+  }
+  else
+  {
+    printf("Delayed response NOT active\n");
+  }
+
+  return OC_EVENT_DONE;
+}
+
+/**
+ * @brief software update callback
+ *
+ * @param device the device index
+ * @param response the instance of an internal struct that is used to track
+ *       		   the state of the separate response
+ * @param binary_size the full size of the binary
+ * @param offset the offset of the image
+ * @param payload the image data
+ * @param len the length of the image data
+ * @param data the user data
+ */
+void swu_cb(size_t device,
+            oc_separate_response_t *response,
+            size_t binary_size,
+            size_t offset,
+            uint8_t *payload,
+            size_t len,
+            void *data)
+{
+  (void)device;
+  (void)binary_size;
+  char filename[] = "./downloaded.bin";
+  PRINT(" swu_cb %s block=%d size=%d \n", filename, (int)offset, (int)len);
+
+  FILE *write_ptr = fopen("downloaded_bin", "ab");
+  size_t r = fwrite(payload, sizeof(*payload), len, write_ptr);
+  fclose(write_ptr);
+
+  oc_set_delayed_callback(response, &send_delayed_response, 0);
 }
 
 /**
@@ -1896,7 +1950,7 @@ int app_initialize_stack()
    post fix.
   */
 #ifdef WIN32
-  char storage[40];
+  char storage[400];
   sprintf(storage,"./knx_iot_virtual_pb_%s",g_serial_number);  
   PRINT("\tstorage at '%s' \n",storage);
   oc_storage_config(storage);
@@ -1918,10 +1972,9 @@ int app_initialize_stack()
 
   /* set the application callbacks */
   oc_set_hostname_cb(hostname_cb, NULL);
-  oc_set_reset_cb(reset_cb, NULL);
   oc_set_restart_cb(restart_cb, NULL);
   oc_set_factory_presets_cb(factory_presets_cb, NULL);
-  //oc_set_swu_cb(swu_cb, (void *)fname);
+  oc_set_swu_cb(swu_cb, (void *)fname);
 
   /* start the stack */
   init = oc_main_init(&handler);
