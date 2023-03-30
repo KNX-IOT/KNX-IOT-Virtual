@@ -16,7 +16,7 @@
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-03-29 14:46:27.489274
+// 2023-03-30 16:22:22.657382
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -889,7 +889,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-03-29 14:46:27.489274");
+  strcat(text, "2023-03-30 16:22:22.657382");
   CustomDialog("About", text);
 }
 
@@ -1128,6 +1128,7 @@ void MyFrame::OnPressed_InfoOnOff_1(wxCommandEvent& event)
     p = true;
   }
   app_set_bool_variable(url, p);
+  oc_do_s_mode_with_scope(2, url, "w");
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "InfoOnOff_1 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
@@ -1144,6 +1145,7 @@ void MyFrame::OnPressed_InfoOnOff_2(wxCommandEvent& event)
     p = true;
   }
   app_set_bool_variable(url, p);
+  oc_do_s_mode_with_scope(2, url, "w");
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "InfoOnOff_2 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
@@ -1160,6 +1162,7 @@ void MyFrame::OnPressed_InfoOnOff_3(wxCommandEvent& event)
     p = true;
   }
   app_set_bool_variable(url, p);
+  oc_do_s_mode_with_scope(2, url, "w");
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "InfoOnOff_3 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
@@ -1176,6 +1179,7 @@ void MyFrame::OnPressed_InfoOnOff_4(wxCommandEvent& event)
     p = true;
   }
   app_set_bool_variable(url, p);
+  oc_do_s_mode_with_scope(2, url, "w");
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "InfoOnOff_4 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
@@ -1188,6 +1192,7 @@ void MyFrame::OnFault_ONOFF_1(wxCommandEvent& event)
   app_set_fault_variable(url, p1);
 
   // there is a fault: update the info
+  oc_do_s_mode_with_scope(2, "/p/o_2_2", "w");
   oc_do_s_mode_with_scope(5, "/p/o_2_2", "w");
 
   sprintf(my_text, "Actuator OnOff_1 (/p/o_1_1) Fault: %d to: /p/o_2_2", (int)p1);
@@ -1201,6 +1206,7 @@ void MyFrame::OnFault_ONOFF_2(wxCommandEvent& event)
   app_set_fault_variable(url, p1);
 
   // there is a fault: update the info
+  oc_do_s_mode_with_scope(2, "/p/o_4_4", "w");
   oc_do_s_mode_with_scope(5, "/p/o_4_4", "w");
 
   sprintf(my_text, "Actuator OnOff_2 (/p/o_3_3) Fault: %d to: /p/o_4_4", (int)p1);
@@ -1214,6 +1220,7 @@ void MyFrame::OnFault_ONOFF_3(wxCommandEvent& event)
   app_set_fault_variable(url, p1);
 
   // there is a fault: update the info
+  oc_do_s_mode_with_scope(2, "/p/o_6_6", "w");
   oc_do_s_mode_with_scope(5, "/p/o_6_6", "w");
 
   sprintf(my_text, "Actuator OnOff_3 (/p/o_5_5) Fault: %d to: /p/o_6_6", (int)p1);
@@ -1227,6 +1234,7 @@ void MyFrame::OnFault_ONOFF_4(wxCommandEvent& event)
   app_set_fault_variable(url, p1);
 
   // there is a fault: update the info
+  oc_do_s_mode_with_scope(2, "/p/o_8_8", "w");
   oc_do_s_mode_with_scope(5, "/p/o_8_8", "w");
 
   sprintf(my_text, "Actuator OnOff_4 (/p/o_7_7) Fault: %d to: /p/o_8_8", (int)p1);
