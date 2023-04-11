@@ -17,6 +17,12 @@
   - [4.1. Push Button wxWidget GUI](#41-push-button-wxwidget-gui)
   - [4.2. Switch Actuator wxWidget GUI](#42-switch-actuator-wxwidget-gui)
   - [4.3. Override the serial number (wxWidgets GUI apps only)](#43-override-the-serial-number-wxwidgets-gui-apps-only)
+  - [4.4 Options (windows application)](#44-options-windows-application)
+  - [4.4.1 Display option](#441-display-option)
+    - [4.4.1.1 Group Address](#4411-group-address)
+    - [4.4.1.1 GRPID](#4411-grpid)
+    - [4.4.1.1 Installation ID](#4411-installation-id)
+  - [4.4.1 Sleepy option](#441-sleepy-option)
   - [4.4. Building the applications on Windows](#44-building-the-applications-on-windows)
     - [4.4.1. Running the application on windows](#441-running-the-application-on-windows)
       - [4.4.1.1. Python utility `restart_app.py`](#4411-python-utility-restart_apppy)
@@ -253,6 +259,42 @@ Example (from the folder where the executable resides):
 .\knx_iot_virtual_gui_sa.exe -s 00FA10010401
 ```
 
+### 4.4 Options (windows application)
+
+### 4.4.1 Display option
+
+The Individual address is always shown in:
+
+- decimal integer
+- 3 level address, similar as ETS is using in the UI
+
+#### 4.4.1.1 Group Address
+
+The Group address (GA) can be shown in the UI as:
+
+- decimal integer
+- 3 level address, similar as ETS is using in the UI
+
+#### 4.4.1.1 GRPID
+
+The Group ID (recipient/publisher table) can be shown in the UI as:
+
+- decimal integer
+- 2 level notation, similar as ETS is using in the UI
+
+#### 4.4.1.1 Installation ID
+
+The Installation ID (IID) can be shown in the UI as:
+
+- decimal integer
+- 2 level notation, similar as ETS is using in the UI
+
+### 4.4.1 Sleepy option
+
+The windows device can simulate the sleepy device.
+When enabled the device interacts with the network at 20 seconds intervals.
+The when the programming mode is enabled then the device will temporarily disable the sleep interval.
+
 ### 4.4. Building the applications on Windows
 
 1. Install all prerequisits:
@@ -280,8 +322,8 @@ Example (from the folder where the executable resides):
    ```
 
    The above sequence of commands are also available via shell scripts that creates the solution AND create the executables
-   - build.sh for building the secure devices
-   - build_unsecured.sh  for building the same devices with security turned off.
+   - build.sh for building the secure devices with mDNS
+   - build_unsecured.sh  for building the same devices with security turned off (no mDNS).
 
 3. Steps using GitLab
 
@@ -295,6 +337,7 @@ Example (from the folder where the executable resides):
    git clone https://gitlab.knx.org/shared-projects/knx-iot-virtual.git
       # go into the created folder
    cd knx-iot-virtual
+   # secure, no mDNS
    mkdir build
    cd build 
    cmake .. -DUSE_GITLAB=true
@@ -332,7 +375,10 @@ So if the applications are started from the commmand line, then the `restart` co
 This utility can start an application, and if the application quits it will restart the application automatically.
 
 Note: Please stop the process by doing `Ctrl-C` in the window where python command is started.
-The `Ctrl-C` is only handled when the application stops, e.g. `Ctrl-C` won't be honored when the application is running. 
+The `Ctrl-C` is only handled when the application stops, e.g. `Ctrl-C` won't be honored when the application is running.
+
+Note: according to the specifications the restart is not an actual restart of the device, but just a partial restart of the stack.
+Hence to simulate a full restart this utility can be used.
 
 ### 4.5. Prerequisites windows
 

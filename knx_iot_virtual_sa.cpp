@@ -16,7 +16,7 @@
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-03-30 16:22:22.657382
+// 2023-04-11 09:38:41.765304
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -30,6 +30,7 @@
 #include "api/oc_knx_dev.h"
 #include "api/oc_knx_sec.h"
 #include "api/oc_knx_fp.h"
+#include "port/dns-sd.h"
 
 enum
 {
@@ -48,7 +49,8 @@ enum
   CHECK_GA_DISPLAY = AT_TABLE_ID + 1 , // ga display check
   CHECK_IID_DISPLAY = CHECK_GA_DISPLAY + 1, // iid display check
   CHECK_GRPID_DISPLAY = CHECK_IID_DISPLAY + 1, // grpid display check
-  CHECK_PM = CHECK_GRPID_DISPLAY + 1 , // programming mode check in menu bar
+  CHECK_SLEEPY = CHECK_GRPID_DISPLAY + 1 , // sleepy check
+  CHECK_PM = CHECK_SLEEPY + 1 , // programming mode check in menu bar
   DP_FAULT_ID_ONOFF_1 = CHECK_PM + 100 + 1, // OnOff_1 for /p/o_1_1 
   DP_FAULT_ID_ONOFF_2 = CHECK_PM + 100 + 3, // OnOff_2 for /p/o_3_3 
   DP_FAULT_ID_ONOFF_3 = CHECK_PM + 100 + 5, // OnOff_3 for /p/o_5_5 
@@ -132,6 +134,7 @@ private:
   void OnParameterList(wxCommandEvent& event);
   void OnAuthTable(wxCommandEvent& event);
   void OnProgrammingMode(wxCommandEvent& event);
+  void OnSleepyMode(wxCommandEvent& event);
   void OnReset(wxCommandEvent& event);
   void OnClearTables(wxCommandEvent& event);
   void OnExit(wxCommandEvent& event);
@@ -156,8 +159,13 @@ private:
   void double2text(double value, char* text);
 
   wxMenu* m_menuFile;
+  wxMenu* m_menuDisplay;
   wxMenu* m_menuOptions;
   wxTimer m_timer;
+  
+  // sleepy information
+  int m_sleep_counter = 0;
+  int m_sleep_seconds = 20;
 
   wxTextCtrl* m_ia_text;  // text control for internal address
   wxTextCtrl* m_iid_text; // text control for installation id
@@ -236,20 +244,26 @@ MyFrame::MyFrame(char* str_serial_number)
   m_menuFile->AppendSeparator();
   m_menuFile->Append(wxID_EXIT);
   // display menu
+   // display menu
+  m_menuDisplay = new wxMenu;
+  m_menuDisplay->Append(CHECK_GA_DISPLAY, "GA 3-level (ETS)", "Displays the group addresses as GA 3-Level or as integer", true);
+  m_menuDisplay->Check(CHECK_GA_DISPLAY, true);
+  m_menuDisplay->Append(CHECK_GRPID_DISPLAY, "GRPID as partial ipv6 address (ETS)", "Displays the grpid as integer", true);
+  m_menuDisplay->Check(CHECK_GRPID_DISPLAY, true);
+  m_menuDisplay->Append(CHECK_IID_DISPLAY, "IID as partial ipv6 address (ETS)", "Displays the iid as integer", true);
+  m_menuDisplay->Check(CHECK_IID_DISPLAY, true);
+  // Option menu
   m_menuOptions = new wxMenu;
-  m_menuOptions->Append(CHECK_GA_DISPLAY, "GA 3-level (ETS)", "Displays the group addresses as GA 3-Level or as integer", true);
-  m_menuOptions->Check(CHECK_GA_DISPLAY, true);
-  m_menuOptions->Append(CHECK_GRPID_DISPLAY, "GRPID as partial ipv6 address (ETS)", "Displays the grpid as integer", true);
-  m_menuOptions->Check(CHECK_GRPID_DISPLAY, true);
-  m_menuOptions->Append(CHECK_IID_DISPLAY, "IID as partial ipv6 address (ETS)", "Displays the iid as integer", true);
-  m_menuOptions->Check(CHECK_IID_DISPLAY, true);
+  m_menuOptions->Append(CHECK_SLEEPY, "Act as Sleepy Device", "Sleeps for 20 seconds", true);
+  m_menuOptions->Check(CHECK_SLEEPY, false);
   // help menu
   wxMenu *menuHelp = new wxMenu;
   menuHelp->Append(wxID_ABOUT);
   // full menu bar
   wxMenuBar *menuBar = new wxMenuBar;
   menuBar->Append(m_menuFile, "&File");
-  menuBar->Append(m_menuOptions, "&Display");
+  menuBar->Append(m_menuDisplay, "&Display");
+  menuBar->Append(m_menuOptions, "&Options");
   menuBar->Append(menuHelp, "&Help");
   SetMenuBar( menuBar );
   CreateStatusBar();
@@ -262,6 +276,7 @@ MyFrame::MyFrame(char* str_serial_number)
   Bind(wxEVT_MENU, &MyFrame::OnParameterList, this, PARAMETER_LIST_ID);
   Bind(wxEVT_MENU, &MyFrame::OnAuthTable, this, AT_TABLE_ID);
   Bind(wxEVT_MENU, &MyFrame::OnProgrammingMode, this, CHECK_PM);
+  Bind(wxEVT_MENU, &MyFrame::OnSleepyMode, this, CHECK_SLEEPY);
   Bind(wxEVT_MENU, &MyFrame::OnReset, this, RESET);
   Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
   Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
@@ -440,6 +455,31 @@ void MyFrame::OnProgrammingMode(wxCommandEvent& event)
 
   // update the UI
   this->updateTextButtons();
+  // update mdns
+  knx_publish_service(oc_string(device->serialnumber), device->ia, device->iid, device->pm);
+}
+
+
+/**
+ * @brief checks/unchecks the sleepy mode
+ * 
+ * @param event command triggered by the menu button
+ */
+void MyFrame::OnSleepyMode(wxCommandEvent& event)
+{
+ int device_index = 0;
+  SetStatusText("Changing sleepy mode");
+
+  bool my_sleepy = m_menuOptions->IsChecked(CHECK_SLEEPY);
+  oc_device_info_t* device = oc_core_get_device_info(0);
+  
+  if (my_sleepy) {
+    knx_service_sleep_period(20);
+  } else {
+    knx_service_sleep_period(0);
+  }
+  // update mdns
+  knx_publish_service(oc_string(device->serialnumber), device->ia, device->iid, device->pm);
 }
 
 /**
@@ -455,7 +495,7 @@ void MyFrame::updateTextButtons()
 
   char text[500];
   size_t device_index = 0;
-  bool iid_conversion = m_menuOptions->IsChecked(CHECK_IID_DISPLAY);
+  bool iid_conversion = m_menuDisplay->IsChecked(CHECK_IID_DISPLAY);
 
   // get the device data structure
   oc_device_info_t* device = oc_core_get_device_info(device_index);
@@ -523,7 +563,7 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
   char text[1024 * 5];
   char line[200];
   char windowtext[200];
-  bool ga_conversion = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
+  bool ga_conversion = m_menuDisplay->IsChecked(CHECK_GA_DISPLAY);
 
   strcpy(text, "");
   oc_device_info_t* device = oc_core_get_device_info(device_index);
@@ -569,9 +609,9 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
   char text[1024 * 5];
   char line[200];
   char windowtext[200];
-  bool ga_conversion = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
-  bool grpid_conversion = m_menuOptions->IsChecked(CHECK_GRPID_DISPLAY);
-  bool iid_conversion = m_menuOptions->IsChecked(CHECK_IID_DISPLAY);
+  bool ga_conversion = m_menuDisplay->IsChecked(CHECK_GA_DISPLAY);
+  bool grpid_conversion = m_menuDisplay->IsChecked(CHECK_GRPID_DISPLAY);
+  bool iid_conversion = m_menuDisplay->IsChecked(CHECK_IID_DISPLAY);
 
   strcpy(text, "");
   oc_device_info_t* device = oc_core_get_device_info(device_index);
@@ -642,9 +682,9 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
   char text[1024 * 5];
   char line[200];
   char windowtext[200];
-  bool ga_conversion = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
-  bool grpid_conversion = m_menuOptions->IsChecked(CHECK_GRPID_DISPLAY);
-  bool iid_conversion = m_menuOptions->IsChecked(CHECK_IID_DISPLAY);
+  bool ga_conversion = m_menuDisplay->IsChecked(CHECK_GA_DISPLAY);
+  bool grpid_conversion = m_menuDisplay->IsChecked(CHECK_GRPID_DISPLAY);
+  bool iid_conversion = m_menuDisplay->IsChecked(CHECK_IID_DISPLAY);
 
   strcpy(text, "");
   oc_device_info_t* device = oc_core_get_device_info(device_index);
@@ -773,7 +813,7 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
   int device_index = 0;
   char text[1024 * 10];
   char line[500];
-  bool ga_conversion = m_menuOptions->IsChecked(CHECK_GA_DISPLAY);
+  bool ga_conversion = m_menuDisplay->IsChecked(CHECK_GA_DISPLAY);
   char windowtext[200];
   int max_entries = oc_core_get_at_table_size();
   int index = 1;
@@ -889,7 +929,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-03-30 16:22:22.657382");
+  strcat(text, "2023-04-11 09:38:41.765304");
   CustomDialog("About", text);
 }
 
@@ -900,14 +940,35 @@ void MyFrame::OnAbout(wxCommandEvent& event)
  * - info buttons
  * - text buttons
  * does a oc_main_poll to give a tick to the stack
- * 
+ * takes into account if the device is sleepy
+ * e.g. then it only does an poll each 20 seconds
  * @param event triggered by a timer
  */
 void MyFrame::OnTimer(wxTimerEvent& event)
 {
+  bool do_poll = true;
+  bool sleepy = m_menuOptions->IsChecked(CHECK_SLEEPY);
   // do whatever you want to do every millisecond here
-  oc_clock_time_t next_event;
-  next_event = oc_main_poll();
+  if (sleepy)
+  {
+    do_poll = false;
+    m_sleep_counter++;
+    if ((m_sleep_counter / 1000) > m_sleep_seconds) {
+      // only do a poll each x (20) seconds
+      do_poll = true;
+      m_sleep_counter = 0;
+    }
+    if (oc_knx_device_in_programming_mode(0)) {
+      // make sure that the device is reactive in programming mode
+      // e.g. keep on polling
+      do_poll = true;
+    }
+  }
+
+  if (do_poll) {
+    oc_clock_time_t next_event;
+   next_event = oc_main_poll();
+  }
   this->updateInfoCheckBoxes();
   this->updateInfoButtons(); 
   this->updateTextButtons();
