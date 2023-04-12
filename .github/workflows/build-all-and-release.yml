@@ -3,6 +3,10 @@ name: BuildAllAndRelease
 on:
   workflow_dispatch:
     branches: [main]
+    inputs:
+      release_tag_name:
+        description: 'release tag name e.g. "knx_vx.y.z"'
+        required: true
 
 env:
   MATRIX: "{ 
@@ -263,8 +267,10 @@ jobs:
       id: releaseinfo
       run: |
         cd knx-iot-virtual
-        echo "version=$(git describe --tags --dirty --always --long | sed -E 's/-g[0-9a-f]+//g')" >> $GITHUB_OUTPUT
-        echo "title=$(git show -s --format=%B | head -n1)" >> $GITHUB_OUTPUT
+        #echo "version=$(git describe --tags --dirty --always --long | sed -E 's/-g[0-9a-f]+//g')" >> $GITHUB_OUTPUT
+        echo "version=${{ github.event.inputs.release_tag_name }} " >> $GITHUB_OUTPUT
+        #echo "title=$(git show -s --format=%B | head -n1)" >> $GITHUB_OUTPUT
+        echo "title=${{ github.event.inputs.release_tag_name }}" >> $GITHUB_OUTPUT
         msg=$(git show -s --format=%B)
         #escape special chars
         msg="${msg//'%'/'%25'}"
