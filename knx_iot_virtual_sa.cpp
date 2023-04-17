@@ -16,7 +16,7 @@
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-04-11 09:38:41.765304
+// 2023-04-17 14:49:17.607013
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -914,7 +914,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   strcat(text,"model            : KNX virtual - SA\n");
   strcat(text,"hardware type    : Windows\n");
   strcat(text,"hardware version : [0, 1, 3]\n");
-  strcat(text,"firmware version : [0, 1, 4]\n\n");
+  strcat(text,"firmware version : [0, 1, 5]\n\n");
   
   strcat(text, "data points:\n");
   strcat(text,"url:/p/o_1_1 rt:urn:knx:dpa.417.61 if:if.a inst:1 name:OnOff_1\n");
@@ -929,7 +929,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-04-11 09:38:41.765304");
+  strcat(text, "2023-04-17 14:49:17.607013");
   CustomDialog("About", text);
 }
 
