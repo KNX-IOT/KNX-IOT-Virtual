@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Push Button
- * 2023-04-11 09:38:40.990089
+ * 2023-04-17 14:49:13.923484
  * ## Application Design
  *
  * support functions:
@@ -501,7 +501,7 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
  * - base path
  * - knx spec version 
  * - hardware version : [0, 1, 3]
- * - firmware version : [0, 1, 4]
+ * - firmware version : [0, 1, 5]
  * - hardware type    : Linux/windows
  * - device model     : KNX virtual - PB
  *
@@ -521,8 +521,8 @@ app_init(void)
   oc_core_set_device_hwv(0, 0, 1, 3);
   
   
-  /* set the firmware version 0.1.4 */
-  oc_core_set_device_fwv(0, 0, 1, 4);
+  /* set the firmware version 0.1.5 */
+  oc_core_set_device_fwv(0, 0, 1, 5);
   
 
   /* set the hardware type*/
