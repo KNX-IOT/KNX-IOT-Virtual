@@ -16,7 +16,7 @@
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-04-17 14:49:14.324366
+// 2023-05-16 16:31:58.388963
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -432,7 +432,7 @@ void MyFrame::OnProgrammingMode(wxCommandEvent& event)
   // update the UI
   this->updateTextButtons();
   // update mdns
-  knx_publish_service(oc_string(device->serialnumber), device->ia, device->iid, device->pm);
+  knx_publish_service(oc_string(device->serialnumber), device->iid, device->ia, device->pm);
 }
 
 
@@ -455,7 +455,7 @@ void MyFrame::OnSleepyMode(wxCommandEvent& event)
     knx_service_sleep_period(0);
   }
   // update mdns
-  knx_publish_service(oc_string(device->serialnumber), device->ia, device->iid, device->pm);
+  knx_publish_service(oc_string(device->serialnumber), device->iid, device->ia, device->pm);
 }
 
 /**
@@ -905,7 +905,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-04-17 14:49:14.324366");
+  strcat(text, "2023-05-16 16:31:58.388963");
   CustomDialog("About", text);
 }
 

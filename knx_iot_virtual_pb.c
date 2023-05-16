@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Push Button
- * 2023-04-17 14:49:13.923484
+ * 2023-05-16 16:31:58.110366
  * ## Application Design
  *
  * support functions:
@@ -580,7 +580,7 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 
   PRINT("-- Begin get_OnOff_1 %s \n", CH1_URL_ONOFF_1);
   /* check if the accept header is CBOR */
-  if (request->accept != APPLICATION_CBOR) {
+  if (oc_check_accept_header(request, APPLICATION_CBOR) == false) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
@@ -688,7 +688,7 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
 
   PRINT("-- Begin get_InfoOnOff_1 %s \n", CH1_URL_INFOONOFF_1);
   /* check if the accept header is CBOR */
-  if (request->accept != APPLICATION_CBOR) {
+  if (oc_check_accept_header(request, APPLICATION_CBOR) == false) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
@@ -845,7 +845,7 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 
   PRINT("-- Begin get_OnOff_2 %s \n", CH2_URL_ONOFF_2);
   /* check if the accept header is CBOR */
-  if (request->accept != APPLICATION_CBOR) {
+  if (oc_check_accept_header(request, APPLICATION_CBOR) == false) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
@@ -953,7 +953,7 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
 
   PRINT("-- Begin get_InfoOnOff_2 %s \n", CH2_URL_INFOONOFF_2);
   /* check if the accept header is CBOR */
-  if (request->accept != APPLICATION_CBOR) {
+  if (oc_check_accept_header(request, APPLICATION_CBOR) == false) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
@@ -1110,7 +1110,7 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 
   PRINT("-- Begin get_OnOff_3 %s \n", CH3_URL_ONOFF_3);
   /* check if the accept header is CBOR */
-  if (request->accept != APPLICATION_CBOR) {
+  if (oc_check_accept_header(request, APPLICATION_CBOR) == false) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
@@ -1218,7 +1218,7 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
 
   PRINT("-- Begin get_InfoOnOff_3 %s \n", CH3_URL_INFOONOFF_3);
   /* check if the accept header is CBOR */
-  if (request->accept != APPLICATION_CBOR) {
+  if (oc_check_accept_header(request, APPLICATION_CBOR) == false) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
@@ -1375,7 +1375,7 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 
   PRINT("-- Begin get_OnOff_4 %s \n", CH4_URL_ONOFF_4);
   /* check if the accept header is CBOR */
-  if (request->accept != APPLICATION_CBOR) {
+  if (oc_check_accept_header(request, APPLICATION_CBOR) == false) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
@@ -1483,7 +1483,7 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
 
   PRINT("-- Begin get_InfoOnOff_4 %s \n", CH4_URL_INFOONOFF_4);
   /* check if the accept header is CBOR */
-  if (request->accept != APPLICATION_CBOR) {
+  if (oc_check_accept_header(request, APPLICATION_CBOR) == false) {
     oc_send_response(request, OC_STATUS_BAD_OPTION);
     return;
   }
