@@ -16,7 +16,7 @@
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-05-18 08:55:41.790245
+// 2023-05-18 15:00:12.519991
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -821,15 +821,35 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
           }
         }
         if (my_entry->profile == OC_PROFILE_COAP_OSCORE) {
-          if (oc_string_len(my_entry->osc_id) > 0) {
-            sprintf(line, "  osc_id : %s\n",
-              oc_string(my_entry->osc_id));
+          if (oc_byte_string_len(my_entry->osc_id) > 0) {
+            sprintf(line, "  osc_id [%d]: ", (int)oc_byte_string_len(my_entry->osc_id));
+            strcat(text, line);
+            char* ms = oc_string(my_entry->osc_id);
+            int length = (int)oc_byte_string_len(my_entry->osc_id);
+            for (int i = 0; i < length; i++) {
+              sprintf(line, "%02x", (unsigned char)ms[i]);
+              strcat(text, line);
+            }
+            sprintf(line, "\n");
             strcat(text, line);
           }
-          if (oc_string_len(my_entry->osc_ms) > 0) {
-            sprintf(line, "  osc_ms : ");
+
+          if (oc_byte_string_len(my_entry->osc_rid) > 0) {
+            sprintf(line, "  osc_rid [%d]: ", (int)oc_byte_string_len(my_entry->osc_rid));
             strcat(text, line);
-            int length = (int)oc_string_len(my_entry->osc_ms);
+            char* ms = oc_string(my_entry->osc_rid);
+            int length = (int)oc_byte_string_len(my_entry->osc_rid);
+            for (int i = 0; i < length; i++) {
+              sprintf(line, "%02x", (unsigned char)ms[i]);
+              strcat(text, line);
+            }
+            sprintf(line, "\n");
+            strcat(text, line);
+          }
+          if (oc_byte_string_len(my_entry->osc_ms) > 0) {
+            sprintf(line, "  osc_ms [%d]: ",(int)oc_byte_string_len(my_entry->osc_ms));
+            strcat(text, line);
+            int length = (int)oc_byte_string_len(my_entry->osc_ms);
             char* ms = oc_string(my_entry->osc_ms);
             for (int i = 0; i < length; i++) {
               sprintf(line, "%02x", (unsigned char)ms[i]);
@@ -838,14 +858,27 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
             sprintf(line, "\n");
             strcat(text, line);
           }
-          //if (oc_string_len(my_entry->osc_alg) > 0) {
-          //  sprintf(line, "  osc_alg : %s\n",
-          //    oc_string(my_entry->osc_alg));
-          //  strcat(text, line);
-          //}
-          if (oc_string_len(my_entry->osc_contextid) > 0) {
-            sprintf(line, "  osc_contextid : %s\n",
-              oc_string(my_entry->osc_contextid));
+          if (oc_byte_string_len(my_entry->osc_contextid) > 0) {
+            sprintf(line, "  osc_contextid (o)[%d]: ", (int)oc_byte_string_len(my_entry->osc_contextid));
+            strcat(text, line);
+            char* ms = oc_string(my_entry->osc_contextid);
+            int length = (int)oc_byte_string_len(my_entry->osc_contextid);
+            for (int i = 0; i < length; i++) {
+              sprintf(line, "%02x", (unsigned char)ms[i]);
+              strcat(text, line);
+            }
+            sprintf(line, "\n");
+            strcat(text, line);
+          }
+          if (oc_byte_string_len(my_entry->aud) > 0) {
+            sprintf(line, "  osc_aud [%d]: ", (int)oc_byte_string_len(my_entry->aud));
+            char* ms = oc_string(my_entry->aud);
+            int length = (int)oc_byte_string_len(my_entry->aud);
+            for (int i = 0; i < length; i++) {
+              sprintf(line, "%02x", (unsigned char)ms[i]);
+              strcat(text, line);
+            }
+            sprintf(line, "\n");
             strcat(text, line);
           }
           if (my_entry->ga_len > 0) {
@@ -905,7 +938,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-05-18 08:55:41.790245");
+  strcat(text, "2023-05-18 15:00:12.519991");
   CustomDialog("About", text);
 }
 
