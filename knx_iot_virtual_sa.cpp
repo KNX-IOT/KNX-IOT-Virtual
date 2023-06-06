@@ -16,7 +16,7 @@
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-05-18 15:00:13.172180
+// 2023-05-31 11:27:15.465023
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -74,6 +74,13 @@ static const wxCmdLineEntryDesc g_cmdLineDesc[] =
 wxCmdLineParser* g_cmd;
 
 
+void toUpper(char *str){
+    while (*str != '\0')
+    {
+        *str = toupper(*str);
+        str++;
+    }
+}
 
 class CustomDialog : public wxDialog
 {
@@ -384,6 +391,7 @@ MyFrame::MyFrame(char* str_serial_number)
   strcat(qrtext, oc_string(device->serialnumber));
   strcat(qrtext, ";P:");
   strcat(qrtext, app_get_password());
+  toUpper(qrtext);
   wxTextCtrl* Statictext2;
   Statictext2 = new wxTextCtrl(this, wxID_ANY, qrtext, wxPoint(10, 10 + ((max_instances + 2) * x_height)), wxSize(width_size*2, x_height), 0);
   Statictext2->SetEditable(false);
@@ -962,7 +970,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-05-18 15:00:13.172180");
+  strcat(text, "2023-05-31 11:27:15.465023");
   CustomDialog("About", text);
 }
 
