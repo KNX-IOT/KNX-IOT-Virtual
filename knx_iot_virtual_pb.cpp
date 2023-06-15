@@ -16,7 +16,7 @@
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-05-31 11:27:14.777319
+// 2023-06-09 10:11:25.389717
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -68,15 +68,6 @@ static const wxCmdLineEntryDesc g_cmdLineDesc[] =
 };
 
 wxCmdLineParser* g_cmd;
-
-
-void toUpper(char *str){
-    while (*str != '\0')
-    {
-        *str = toupper(*str);
-        str++;
-    }
-}
 
 class CustomDialog : public wxDialog
 {
@@ -367,7 +358,7 @@ MyFrame::MyFrame(char* str_serial_number)
   strcat(qrtext, oc_string(device->serialnumber));
   strcat(qrtext, ";P:");
   strcat(qrtext, app_get_password());
-  toUpper(qrtext);
+  app_str_to_upper(qrtext);
   wxTextCtrl* Statictext2;
   Statictext2 = new wxTextCtrl(this, wxID_ANY, qrtext, wxPoint(10, 10 + ((max_instances + 2) * x_height)), wxSize(width_size*2, x_height), 0);
   Statictext2->SetEditable(false);
@@ -946,7 +937,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-05-31 11:27:14.777319");
+  strcat(text, "2023-06-09 10:11:25.389717");
   CustomDialog("About", text);
 }
 
@@ -1122,10 +1113,10 @@ void MyFrame::int2grpidtext(uint64_t value, char* text, bool as_ets)
     uint8_t byte_5 = (uint8_t)(value >> 32);
 
     if (byte_5 == 0) {
-       sprintf(value_text, " %0x%0x:%0x%0x", byte_4, byte_3, byte_2, byte_1);
+       sprintf(value_text, " %02x%02x:%02x%02x", byte_4, byte_3, byte_2, byte_1);
     }
     else {
-      sprintf(value_text, " %0x:%0x%0x:%0x%0x", byte_5, byte_4, byte_3, byte_2, byte_1);
+      sprintf(value_text, " %02x:%02x%02x:%02x%02x", byte_5, byte_4, byte_3, byte_2, byte_1);
     }
 
     strcat(text, value_text);
