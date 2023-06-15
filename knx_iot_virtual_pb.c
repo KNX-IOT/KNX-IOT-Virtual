@@ -20,7 +20,7 @@
  * @file
  * 
  * KNX virtual Push Button
- * 2023-05-31 11:27:14.621366
+ * 2023-06-09 10:11:25.069428
  * ## Application Design
  *
  * support functions:
@@ -80,6 +80,7 @@
 #include "knx_iot_virtual_pb.h"
 
 #include <stdlib.h>
+#include <ctype.h>
 
 #ifdef __linux__
 /** linux specific code */
@@ -461,7 +462,7 @@ int app_init(void);
  */
 void dev_btn_toggle_cb(char *url)
 {
-  printf("Handling %s\n", url);
+  PRINT_APP("Handling %s\n", url);
   bool val = app_retrieve_bool_variable(url);
   if (val == true)
   {
@@ -492,6 +493,22 @@ oc_add_s_mode_response_cb(char *url, oc_rep_t *rep, oc_rep_t *rep_value)
   PRINT("oc_add_s_mode_response_cb %s\n", url);
 }
 
+
+
+/**
+ * @brief function to set the input string to upper case
+ *
+ * @param str the string to make upper case
+ *
+ */
+void app_str_to_upper(char *str){
+    while (*str != '\0')
+    {
+        *str = toupper(*str);
+        str++;
+    }
+}
+
 /**
  * @brief function to set up the device.
  *
@@ -510,6 +527,7 @@ int
 app_init(void)
 {
   int ret = oc_init_platform("cascoda", NULL, NULL);
+  char serial_number_uppercase[20];
 
   /* set the application name, version, base url, device serial number */
   ret |= oc_add_device(MY_NAME, "1.0.0", "//", g_serial_number, NULL, NULL);
@@ -537,7 +555,9 @@ app_init(void)
   oc_spake_set_password(PASSWORD);
 
 
-  printf("\n === QR Code: KNX:S:%s;P:%s ===\n", oc_string(device->serialnumber), PASSWORD);
+  strncpy(serial_number_uppercase, oc_string(device->serialnumber), 19);
+  app_str_to_upper(serial_number_uppercase);
+  printf("\n === QR Code: KNX:S:%s;P:%s ===\n", serial_number_uppercase, PASSWORD);
 #endif
 
   return ret;
@@ -1859,11 +1879,11 @@ static oc_event_callback_retval_t send_delayed_response(void *context)
   {
     oc_set_separate_response_buffer(response);
     oc_send_separate_response(response, OC_STATUS_CHANGED);
-    printf("Delayed response sent\n");
+    PRINT_APP("Delayed response sent\n");
   }
   else
   {
-    printf("Delayed response NOT active\n");
+    PRINT_APP("Delayed response NOT active\n");
   }
 
   return OC_EVENT_DONE;
@@ -2098,7 +2118,7 @@ main(int argc, char *argv[])
 #endif
 
   for (int i = 0; i < argc; i++) {
-    printf("argv[%d] = %s\n", i, argv[i]);
+    PRINT_APP("argv[%d] = %s\n", i, argv[i]);
   }
   if (argc > 1) {
     if (strcmp(argv[1], "reset") == 0) {

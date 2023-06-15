@@ -24,7 +24,7 @@
  * e.g. if the c code is compiled without main then 
  * these functions can be used to call all generated code
  *
- * 2023-05-31 11:27:14.676532
+ * 2023-06-09 10:11:25.258108
  */
 
 #include "oc_api.h"
@@ -259,6 +259,14 @@ bool app_is_secure();
  * @return password (as string)
  */
 char* app_get_password();
+
+/**
+ * @brief function to set the input string to upper case
+ *
+ * @param str the string to make upper case
+ *
+ */
+void app_str_to_upper(char *str);
 
 /**
  * @brief Function to be used as a callback for when a button is pressed.
