@@ -24,7 +24,7 @@
  * e.g. if the c code is compiled without main then 
  * these functions can be used to call all generated code
  *
- * 2023-06-09 10:11:25.258108
+ 
  */
 
 #include "oc_api.h"
