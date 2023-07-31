@@ -64,6 +64,8 @@
  */
 #include "oc_api.h"
 #include "oc_core_res.h"
+#include "oc_rep.h"
+#include "oc_helpers.h"
 #include "api/oc_knx_fp.h"
 #include "port/oc_clock.h"
 #include <signal.h>
@@ -114,17 +116,8 @@ volatile int quit = 0;  /**< stop variable, used by handle_signal */
 bool g_reset = false;   /**< reset variable, set by commandline arguments */
 char g_serial_number[20] = "00FA10010400";
 
-/* list all object urls as defines */
-#define CH1_URL_ONOFF_1 "/p/o_1_1"   /**< define for url "/p/o_1_1" of "OnOff_1" */
-#define CH1_URL_INFOONOFF_1 "/p/o_2_2"   /**< define for url "/p/o_2_2" of "InfoOnOff_1" */
-#define CH2_URL_ONOFF_2 "/p/o_3_3"   /**< define for url "/p/o_3_3" of "OnOff_2" */
-#define CH2_URL_INFOONOFF_2 "/p/o_4_4"   /**< define for url "/p/o_4_4" of "InfoOnOff_2" */
-#define CH3_URL_ONOFF_3 "/p/o_5_5"   /**< define for url "/p/o_5_5" of "OnOff_3" */
-#define CH3_URL_INFOONOFF_3 "/p/o_6_6"   /**< define for url "/p/o_6_6" of "InfoOnOff_3" */
-#define CH4_URL_ONOFF_4 "/p/o_7_7"   /**< define for url "/p/o_7_7" of "OnOff_4" */
-#define CH4_URL_INFOONOFF_4 "/p/o_8_8"   /**< define for url "/p/o_8_8" of "InfoOnOff_4" */
 
-/* list all parameter urls as defines */
+
 
 
 volatile bool g_OnOff_1;   /**< global variable for OnOff_1 */
@@ -143,6 +136,7 @@ volatile bool g_fault_InfoOnOff_4;   /**< global variable for fault InfoOnOff_4 
 
 
 
+
 // BOOLEAN code
 
 /**
@@ -155,28 +149,28 @@ bool app_is_bool_url(char* url)
 {
   if ( strcmp(url, URL_ONOFF_1) == 0) { 
     return true; /**< OnOff_1 is a boolean */
-  } 
+  }
   if ( strcmp(url, URL_INFOONOFF_1) == 0) { 
     return true; /**< InfoOnOff_1 is a boolean */
-  } 
+  }
   if ( strcmp(url, URL_ONOFF_2) == 0) { 
     return true; /**< OnOff_2 is a boolean */
-  } 
+  }
   if ( strcmp(url, URL_INFOONOFF_2) == 0) { 
     return true; /**< InfoOnOff_2 is a boolean */
-  } 
+  }
   if ( strcmp(url, URL_ONOFF_3) == 0) { 
     return true; /**< OnOff_3 is a boolean */
-  } 
+  }
   if ( strcmp(url, URL_INFOONOFF_3) == 0) { 
     return true; /**< InfoOnOff_3 is a boolean */
-  } 
+  }
   if ( strcmp(url, URL_ONOFF_4) == 0) { 
     return true; /**< OnOff_4 is a boolean */
-  } 
+  }
   if ( strcmp(url, URL_INFOONOFF_4) == 0) { 
     return true; /**< InfoOnOff_4 is a boolean */
-  } 
+  }
   return false;
 }
 
@@ -231,133 +225,29 @@ void app_set_bool_variable(char* url, bool value)
 bool app_retrieve_bool_variable(char* url) 
 {
   if ( strcmp(url, URL_ONOFF_1) == 0) { 
-    return g_OnOff_1;   /**< global variable for OnOff_1 */
-  }
+    return g_OnOff_1; /**< global variable for OnOff_1 */
+  } 
   if ( strcmp(url, URL_INFOONOFF_1) == 0) { 
-    return g_InfoOnOff_1;   /**< global variable for InfoOnOff_1 */
-  }
+    return g_InfoOnOff_1; /**< global variable for InfoOnOff_1 */
+  } 
   if ( strcmp(url, URL_ONOFF_2) == 0) { 
-    return g_OnOff_2;   /**< global variable for OnOff_2 */
-  }
+    return g_OnOff_2; /**< global variable for OnOff_2 */
+  } 
   if ( strcmp(url, URL_INFOONOFF_2) == 0) { 
-    return g_InfoOnOff_2;   /**< global variable for InfoOnOff_2 */
-  }
+    return g_InfoOnOff_2; /**< global variable for InfoOnOff_2 */
+  } 
   if ( strcmp(url, URL_ONOFF_3) == 0) { 
-    return g_OnOff_3;   /**< global variable for OnOff_3 */
-  }
+    return g_OnOff_3; /**< global variable for OnOff_3 */
+  } 
   if ( strcmp(url, URL_INFOONOFF_3) == 0) { 
-    return g_InfoOnOff_3;   /**< global variable for InfoOnOff_3 */
-  }
+    return g_InfoOnOff_3; /**< global variable for InfoOnOff_3 */
+  } 
   if ( strcmp(url, URL_ONOFF_4) == 0) { 
-    return g_OnOff_4;   /**< global variable for OnOff_4 */
-  }
+    return g_OnOff_4; /**< global variable for OnOff_4 */
+  } 
   if ( strcmp(url, URL_INFOONOFF_4) == 0) { 
-    return g_InfoOnOff_4;   /**< global variable for InfoOnOff_4 */
-  }
-  return false;
-}
-
-// INTEGER code
-
-/**
- * @brief function to check if the url is represented by a integer
- *
- * @param true = url value is a integer
- * @param false = url is not a integer
- */
-bool app_is_int_url(char* url)
-{
-  return false;
-}
-/**
- * @brief sets the global int variable at the url
- *
- * @param url the url indicating the global variable
- * @param value the value to be set
- */
-void app_set_int_variable(char* url, int value)
-{
-}
-void app_set_integer_variable(char* url, int value)
-{
-  app_set_int_variable(url, value);
-}
-
-/**
- * @brief retrieve the global integer variable at the url
- *
- * @param url the url indicating the global variable
- * @return the value of the variable
- */
-int app_retrieve_int_variable(char* url)
-{
-  return -1;
-}
-
-// DOUBLE code
-
-/**
- * @brief function to check if the url is represented by a double
- *
- * @param true = url value is a double
- * @param false = url is not a double
- */
-bool app_is_double_url(char* url)
-{
-  return false;
-}
-/**
- * @brief sets the global double variable at the url
- *
- * @param url the url indicating the global variable
- * @param value the value to be set
- */
-void app_set_double_variable(char* url, double value)
-{
-}
-/**
- * @brief retrieve the global double variable at the url
- *
- * @param url the url indicating the global variable
- * @return the value of the variable
- */
-double app_retrieve_double_variable(char* url)
-{
-  return -1;
-}
-
-// STRING code
-
-/**
- * @brief function to check if the url is represented by a string
- *
- * @param true = url value is a string
- * @param false = url is not a string
- */
-bool app_is_string_url(char* url)
-{
-  return false;
-}
-
-/**
- * @brief sets the global string variable at the url
- *
- * @param url the url indicating the global variable
- * @param value the value to be set
- */
-void app_set_string_variable(char* url, char* value)
-{
-}
-
-/**
- * @brief retrieve the global string variable at the url
- *
- * @param url the url indicating the global variable
- * @return the value of the variable
- */
-char* app_retrieve_string_variable(char* url)
-{
-  return NULL;
+    return g_InfoOnOff_4; /**< global variable for InfoOnOff_4 */
+  } 
 }
 
 // FAULT code
@@ -460,21 +350,22 @@ int app_init(void);
  * @brief devboard button toggle callback
  *
  */
-void dev_btn_toggle_cb(char *url)
-{
-  PRINT_APP("Handling %s\n", url);
-  bool val = app_retrieve_bool_variable(url);
-  if (val == true)
-  {
-    val = false;
-  }
-  else
-  {
-    val = true;
-  }
-  app_set_bool_variable(url, val);
-  oc_do_s_mode_with_scope(5, url, "w");
-}
+// we no longer have app_set_bool_variable
+//void dev_btn_toggle_cb(char *url)
+//{
+//  PRINT_APP("Handling %s\n", url);
+//  bool val = app_retrieve_bool_variable(url);
+//  if (val == true)
+//  {
+//    val = false;
+//  }
+//  else
+//  {
+//    val = true;
+//  }
+//  app_set_bool_variable(url, val);
+//  oc_do_s_mode_with_scope(5, url, "w");
+//}
 
 /**
  * @brief s-mode response callback
@@ -518,8 +409,8 @@ void app_str_to_upper(char *str){
  * - base path
  * - knx spec version 
  * - hardware version : [0, 1, 3]
- * - firmware version : [0, 1, 8]
- * - hardware type    : Linux/windows
+ * - firmware version : [0, 1, 9]
+ * - hardware type    : LW0001
  * - device model     : KNX virtual - PB
  *
  */
@@ -539,12 +430,12 @@ app_init(void)
   oc_core_set_device_hwv(0, 0, 1, 3);
   
   
-  /* set the firmware version 0.1.8 */
-  oc_core_set_device_fwv(0, 0, 1, 8);
+  /* set the firmware version 0.1.9 */
+  oc_core_set_device_fwv(0, 0, 1, 9);
   
 
   /* set the hardware type*/
-  oc_core_set_device_hwt(0, "Linux/windows");
+  oc_core_set_device_hwt(0, "LW0001");
 
   /* set the model */
   oc_core_set_device_model(0, "KNX virtual - PB");
@@ -552,12 +443,13 @@ app_init(void)
   oc_set_s_mode_response_cb(oc_add_s_mode_response_cb);
 #define PASSWORD "ABY8B77J50YXMUDW3DG4"
 #ifdef OC_SPAKE
-  oc_spake_set_password(PASSWORD);
+  if (strlen(oc_spake_get_password()) == 0)
+    oc_spake_set_password(PASSWORD);
 
 
   strncpy(serial_number_uppercase, oc_string(device->serialnumber), 19);
   app_str_to_upper(serial_number_uppercase);
-  printf("\n === QR Code: KNX:S:%s;P:%s ===\n", serial_number_uppercase, PASSWORD);
+  printf("\n === QR Code: KNX:S:%s;P:%s ===\n", serial_number_uppercase, oc_spake_get_password());
 #endif
 
   return ret;
@@ -619,7 +511,7 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
       oc_rep_begin_root_object();
       while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
         // unique identifier
-        if ((strncmp(m, "id", m_len) == 0) | 
+        if ((strncmp(m, "id", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           char mystring[100];
           snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
@@ -627,21 +519,21 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
           oc_rep_i_set_text_string(root, 9, mystring);
         }
         // resource types
-        if ((strncmp(m, "rt", m_len) == 0) | 
+        if ((strncmp(m, "rt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.61"); 
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.61");
         }
         // interfaces
-        if ((strncmp(m, "if", m_len) == 0) | 
+        if ((strncmp(m, "if", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, if, "if.s");
         }
-        if ((strncmp(m, "dpt", m_len) == 0) | 
+        if ((strncmp(m, "dpt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt));
         }
         // ga
-        if ((strncmp(m, "ga", m_len) == 0) | 
+        if ((strncmp(m, "ga", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
           if (index > -1) {
@@ -651,7 +543,7 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
              }
           }
         }
-        if ((strncmp(m, "desc", m_len) == 0) | 
+        if ((strncmp(m, "desc", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, desc, "On/Off push button 1");
         }
@@ -663,11 +555,11 @@ get_OnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
     }
     oc_send_cbor_response(request, OC_STATUS_OK);
     return;
-  } 
-
+  }
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_OnOff_1);
-  oc_rep_end_root_object();
+  oc_rep_end_root_object(); 
+  
   if (g_err) {
     error_state = true;
   }
@@ -727,7 +619,7 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
       oc_rep_begin_root_object();
       while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
         // unique identifier
-        if ((strncmp(m, "id", m_len) == 0) | 
+        if ((strncmp(m, "id", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           char mystring[100];
           snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
@@ -735,21 +627,21 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
           oc_rep_i_set_text_string(root, 9, mystring);
         }
         // resource types
-        if ((strncmp(m, "rt", m_len) == 0) | 
+        if ((strncmp(m, "rt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.51"); 
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.51");
         }
         // interfaces
-        if ((strncmp(m, "if", m_len) == 0) | 
+        if ((strncmp(m, "if", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, if, "if.a");
         }
-        if ((strncmp(m, "dpt", m_len) == 0) | 
+        if ((strncmp(m, "dpt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt));
         }
         // ga
-        if ((strncmp(m, "ga", m_len) == 0) | 
+        if ((strncmp(m, "ga", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
           if (index > -1) {
@@ -759,7 +651,7 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
              }
           }
         }
-        if ((strncmp(m, "desc", m_len) == 0) | 
+        if ((strncmp(m, "desc", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, desc, "Feedback 1");
         }
@@ -771,11 +663,11 @@ get_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
     }
     oc_send_cbor_response(request, OC_STATUS_OK);
     return;
-  } 
-
+  }
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_InfoOnOff_1);
-  oc_rep_end_root_object();
+  oc_rep_end_root_object(); 
+  
   if (g_err) {
     error_state = true;
   }
@@ -811,28 +703,30 @@ put_InfoOnOff_1(oc_request_t *request, oc_interface_mask_t interfaces,
   bool error_state = true;
   PRINT("-- Begin put_InfoOnOff_1:\n");
 
-  oc_rep_t *req = NULL;
+  oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
   if (oc_is_redirected_request(request)) {
     PRINT("  redirected request..\n");
   }
-  req = request->request_payload;
+  rep = request->request_payload;
   /* loop over all the entries in the request */
-  while (req != NULL) {
+  /* handle the type of payload correctly. */
+  error_state = true;
+  while (rep != NULL) {
     /* handle the type of payload correctly. */
-    if ((req->iname == 1) && (req->type == OC_REP_BOOL)) {
-      PRINT("  put_InfoOnOff_1 received : %d\n", req->value.boolean);
-      g_InfoOnOff_1 = req->value.boolean;
+    if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
+      PRINT("  put_InfoOnOff_1 received : %d\n", rep->value.boolean);
+      g_InfoOnOff_1 = rep->value.boolean;
       error_state = false;
-      if (error_state == false){
-        /* input is valid, so handle the response */
-        oc_send_cbor_response(request, OC_STATUS_CHANGED);
-        do_put_cb(URL_INFOONOFF_1);
-        PRINT("-- End put_InfoOnOff_1\n");
-        return;
-      }
+      break;
     }
-    req = req->next;
+  }
+
+  if (error_state == false){
+      oc_send_cbor_response(request, OC_STATUS_CHANGED); 
+      do_put_cb(URL_INFOONOFF_1);
+      PRINT("-- End put_InfoOnOff_1\n");
+      return;
   }
   /* request data was not recognized, so it was a bad request */
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
@@ -884,7 +778,7 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
       oc_rep_begin_root_object();
       while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
         // unique identifier
-        if ((strncmp(m, "id", m_len) == 0) | 
+        if ((strncmp(m, "id", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           char mystring[100];
           snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
@@ -892,21 +786,21 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
           oc_rep_i_set_text_string(root, 9, mystring);
         }
         // resource types
-        if ((strncmp(m, "rt", m_len) == 0) | 
+        if ((strncmp(m, "rt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.61"); 
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.61");
         }
         // interfaces
-        if ((strncmp(m, "if", m_len) == 0) | 
+        if ((strncmp(m, "if", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, if, "if.s");
         }
-        if ((strncmp(m, "dpt", m_len) == 0) | 
+        if ((strncmp(m, "dpt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt));
         }
         // ga
-        if ((strncmp(m, "ga", m_len) == 0) | 
+        if ((strncmp(m, "ga", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
           if (index > -1) {
@@ -916,7 +810,7 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
              }
           }
         }
-        if ((strncmp(m, "desc", m_len) == 0) | 
+        if ((strncmp(m, "desc", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, desc, "On/Off push button 2");
         }
@@ -928,11 +822,11 @@ get_OnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
     }
     oc_send_cbor_response(request, OC_STATUS_OK);
     return;
-  } 
-
+  }
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_OnOff_2);
-  oc_rep_end_root_object();
+  oc_rep_end_root_object(); 
+  
   if (g_err) {
     error_state = true;
   }
@@ -992,7 +886,7 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
       oc_rep_begin_root_object();
       while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
         // unique identifier
-        if ((strncmp(m, "id", m_len) == 0) | 
+        if ((strncmp(m, "id", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           char mystring[100];
           snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
@@ -1000,21 +894,21 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
           oc_rep_i_set_text_string(root, 9, mystring);
         }
         // resource types
-        if ((strncmp(m, "rt", m_len) == 0) | 
+        if ((strncmp(m, "rt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.51"); 
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.51");
         }
         // interfaces
-        if ((strncmp(m, "if", m_len) == 0) | 
+        if ((strncmp(m, "if", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, if, "if.a");
         }
-        if ((strncmp(m, "dpt", m_len) == 0) | 
+        if ((strncmp(m, "dpt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt));
         }
         // ga
-        if ((strncmp(m, "ga", m_len) == 0) | 
+        if ((strncmp(m, "ga", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
           if (index > -1) {
@@ -1024,7 +918,7 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
              }
           }
         }
-        if ((strncmp(m, "desc", m_len) == 0) | 
+        if ((strncmp(m, "desc", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, desc, "Feedback 2");
         }
@@ -1036,11 +930,11 @@ get_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
     }
     oc_send_cbor_response(request, OC_STATUS_OK);
     return;
-  } 
-
+  }
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_InfoOnOff_2);
-  oc_rep_end_root_object();
+  oc_rep_end_root_object(); 
+  
   if (g_err) {
     error_state = true;
   }
@@ -1076,28 +970,30 @@ put_InfoOnOff_2(oc_request_t *request, oc_interface_mask_t interfaces,
   bool error_state = true;
   PRINT("-- Begin put_InfoOnOff_2:\n");
 
-  oc_rep_t *req = NULL;
+  oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
   if (oc_is_redirected_request(request)) {
     PRINT("  redirected request..\n");
   }
-  req = request->request_payload;
+  rep = request->request_payload;
   /* loop over all the entries in the request */
-  while (req != NULL) {
+  /* handle the type of payload correctly. */
+  error_state = true;
+  while (rep != NULL) {
     /* handle the type of payload correctly. */
-    if ((req->iname == 1) && (req->type == OC_REP_BOOL)) {
-      PRINT("  put_InfoOnOff_2 received : %d\n", req->value.boolean);
-      g_InfoOnOff_2 = req->value.boolean;
+    if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
+      PRINT("  put_InfoOnOff_2 received : %d\n", rep->value.boolean);
+      g_InfoOnOff_2 = rep->value.boolean;
       error_state = false;
-      if (error_state == false){
-        /* input is valid, so handle the response */
-        oc_send_cbor_response(request, OC_STATUS_CHANGED);
-        do_put_cb(URL_INFOONOFF_2);
-        PRINT("-- End put_InfoOnOff_2\n");
-        return;
-      }
+      break;
     }
-    req = req->next;
+  }
+
+  if (error_state == false){
+      oc_send_cbor_response(request, OC_STATUS_CHANGED); 
+      do_put_cb(URL_INFOONOFF_2);
+      PRINT("-- End put_InfoOnOff_2\n");
+      return;
   }
   /* request data was not recognized, so it was a bad request */
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
@@ -1149,7 +1045,7 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
       oc_rep_begin_root_object();
       while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
         // unique identifier
-        if ((strncmp(m, "id", m_len) == 0) | 
+        if ((strncmp(m, "id", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           char mystring[100];
           snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
@@ -1157,21 +1053,21 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
           oc_rep_i_set_text_string(root, 9, mystring);
         }
         // resource types
-        if ((strncmp(m, "rt", m_len) == 0) | 
+        if ((strncmp(m, "rt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.61"); 
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.61");
         }
         // interfaces
-        if ((strncmp(m, "if", m_len) == 0) | 
+        if ((strncmp(m, "if", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, if, "if.s");
         }
-        if ((strncmp(m, "dpt", m_len) == 0) | 
+        if ((strncmp(m, "dpt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt));
         }
         // ga
-        if ((strncmp(m, "ga", m_len) == 0) | 
+        if ((strncmp(m, "ga", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
           if (index > -1) {
@@ -1181,7 +1077,7 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
              }
           }
         }
-        if ((strncmp(m, "desc", m_len) == 0) | 
+        if ((strncmp(m, "desc", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, desc, "On/Off push button 3");
         }
@@ -1193,11 +1089,11 @@ get_OnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
     }
     oc_send_cbor_response(request, OC_STATUS_OK);
     return;
-  } 
-
+  }
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_OnOff_3);
-  oc_rep_end_root_object();
+  oc_rep_end_root_object(); 
+  
   if (g_err) {
     error_state = true;
   }
@@ -1257,7 +1153,7 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
       oc_rep_begin_root_object();
       while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
         // unique identifier
-        if ((strncmp(m, "id", m_len) == 0) | 
+        if ((strncmp(m, "id", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           char mystring[100];
           snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
@@ -1265,21 +1161,21 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
           oc_rep_i_set_text_string(root, 9, mystring);
         }
         // resource types
-        if ((strncmp(m, "rt", m_len) == 0) | 
+        if ((strncmp(m, "rt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.51"); 
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.51");
         }
         // interfaces
-        if ((strncmp(m, "if", m_len) == 0) | 
+        if ((strncmp(m, "if", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, if, "if.a");
         }
-        if ((strncmp(m, "dpt", m_len) == 0) | 
+        if ((strncmp(m, "dpt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt));
         }
         // ga
-        if ((strncmp(m, "ga", m_len) == 0) | 
+        if ((strncmp(m, "ga", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
           if (index > -1) {
@@ -1289,7 +1185,7 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
              }
           }
         }
-        if ((strncmp(m, "desc", m_len) == 0) | 
+        if ((strncmp(m, "desc", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, desc, "Feedback 3");
         }
@@ -1301,11 +1197,11 @@ get_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
     }
     oc_send_cbor_response(request, OC_STATUS_OK);
     return;
-  } 
-
+  }
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_InfoOnOff_3);
-  oc_rep_end_root_object();
+  oc_rep_end_root_object(); 
+  
   if (g_err) {
     error_state = true;
   }
@@ -1341,28 +1237,30 @@ put_InfoOnOff_3(oc_request_t *request, oc_interface_mask_t interfaces,
   bool error_state = true;
   PRINT("-- Begin put_InfoOnOff_3:\n");
 
-  oc_rep_t *req = NULL;
+  oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
   if (oc_is_redirected_request(request)) {
     PRINT("  redirected request..\n");
   }
-  req = request->request_payload;
+  rep = request->request_payload;
   /* loop over all the entries in the request */
-  while (req != NULL) {
+  /* handle the type of payload correctly. */
+  error_state = true;
+  while (rep != NULL) {
     /* handle the type of payload correctly. */
-    if ((req->iname == 1) && (req->type == OC_REP_BOOL)) {
-      PRINT("  put_InfoOnOff_3 received : %d\n", req->value.boolean);
-      g_InfoOnOff_3 = req->value.boolean;
+    if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
+      PRINT("  put_InfoOnOff_3 received : %d\n", rep->value.boolean);
+      g_InfoOnOff_3 = rep->value.boolean;
       error_state = false;
-      if (error_state == false){
-        /* input is valid, so handle the response */
-        oc_send_cbor_response(request, OC_STATUS_CHANGED);
-        do_put_cb(URL_INFOONOFF_3);
-        PRINT("-- End put_InfoOnOff_3\n");
-        return;
-      }
+      break;
     }
-    req = req->next;
+  }
+
+  if (error_state == false){
+      oc_send_cbor_response(request, OC_STATUS_CHANGED); 
+      do_put_cb(URL_INFOONOFF_3);
+      PRINT("-- End put_InfoOnOff_3\n");
+      return;
   }
   /* request data was not recognized, so it was a bad request */
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
@@ -1414,7 +1312,7 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
       oc_rep_begin_root_object();
       while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
         // unique identifier
-        if ((strncmp(m, "id", m_len) == 0) | 
+        if ((strncmp(m, "id", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           char mystring[100];
           snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
@@ -1422,21 +1320,21 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
           oc_rep_i_set_text_string(root, 9, mystring);
         }
         // resource types
-        if ((strncmp(m, "rt", m_len) == 0) | 
+        if ((strncmp(m, "rt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.61"); 
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.61");
         }
         // interfaces
-        if ((strncmp(m, "if", m_len) == 0) | 
+        if ((strncmp(m, "if", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, if, "if.s");
         }
-        if ((strncmp(m, "dpt", m_len) == 0) | 
+        if ((strncmp(m, "dpt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt));
         }
         // ga
-        if ((strncmp(m, "ga", m_len) == 0) | 
+        if ((strncmp(m, "ga", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
           if (index > -1) {
@@ -1446,7 +1344,7 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
              }
           }
         }
-        if ((strncmp(m, "desc", m_len) == 0) | 
+        if ((strncmp(m, "desc", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, desc, "On/Off push button 4");
         }
@@ -1458,11 +1356,11 @@ get_OnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
     }
     oc_send_cbor_response(request, OC_STATUS_OK);
     return;
-  } 
-
+  }
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_OnOff_4);
-  oc_rep_end_root_object();
+  oc_rep_end_root_object(); 
+  
   if (g_err) {
     error_state = true;
   }
@@ -1522,7 +1420,7 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
       oc_rep_begin_root_object();
       while (oc_iterate_query(request, &m_key, &m_key_len, &m, &m_len) != -1) {
         // unique identifier
-        if ((strncmp(m, "id", m_len) == 0) | 
+        if ((strncmp(m, "id", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           char mystring[100];
           snprintf(mystring,99,"urn:knx:sn:%s%s",oc_string(device->serialnumber),
@@ -1530,21 +1428,21 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
           oc_rep_i_set_text_string(root, 9, mystring);
         }
         // resource types
-        if ((strncmp(m, "rt", m_len) == 0) | 
+        if ((strncmp(m, "rt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.51"); 
+          oc_rep_set_text_string(root, rt, "urn:knx:dpa.421.51");
         }
         // interfaces
-        if ((strncmp(m, "if", m_len) == 0) | 
+        if ((strncmp(m, "if", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, if, "if.a");
         }
-        if ((strncmp(m, "dpt", m_len) == 0) | 
+        if ((strncmp(m, "dpt", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
-          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt)); 
+          oc_rep_set_text_string(root, dpt, oc_string(request->resource->dpt));
         }
         // ga
-        if ((strncmp(m, "ga", m_len) == 0) | 
+        if ((strncmp(m, "ga", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           int index = oc_core_find_group_object_table_url(oc_string(request->resource->uri));
           if (index > -1) {
@@ -1554,7 +1452,7 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
              }
           }
         }
-        if ((strncmp(m, "desc", m_len) == 0) | 
+        if ((strncmp(m, "desc", m_len) == 0) |
             (strncmp(m, "*", m_len) == 0) ) {
           oc_rep_set_text_string(root, desc, "Feedback 4");
         }
@@ -1566,11 +1464,11 @@ get_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
     }
     oc_send_cbor_response(request, OC_STATUS_OK);
     return;
-  } 
-
+  }
   oc_rep_begin_root_object();
   oc_rep_i_set_boolean(root, 1, g_InfoOnOff_4);
-  oc_rep_end_root_object();
+  oc_rep_end_root_object(); 
+  
   if (g_err) {
     error_state = true;
   }
@@ -1606,28 +1504,30 @@ put_InfoOnOff_4(oc_request_t *request, oc_interface_mask_t interfaces,
   bool error_state = true;
   PRINT("-- Begin put_InfoOnOff_4:\n");
 
-  oc_rep_t *req = NULL;
+  oc_rep_t *rep = NULL;
   /* handle the different requests e.g. via s-mode or normal CoAP call*/
   if (oc_is_redirected_request(request)) {
     PRINT("  redirected request..\n");
   }
-  req = request->request_payload;
+  rep = request->request_payload;
   /* loop over all the entries in the request */
-  while (req != NULL) {
+  /* handle the type of payload correctly. */
+  error_state = true;
+  while (rep != NULL) {
     /* handle the type of payload correctly. */
-    if ((req->iname == 1) && (req->type == OC_REP_BOOL)) {
-      PRINT("  put_InfoOnOff_4 received : %d\n", req->value.boolean);
-      g_InfoOnOff_4 = req->value.boolean;
+    if ((rep->iname == 1) && (rep->type == OC_REP_BOOL)) {
+      PRINT("  put_InfoOnOff_4 received : %d\n", rep->value.boolean);
+      g_InfoOnOff_4 = rep->value.boolean;
       error_state = false;
-      if (error_state == false){
-        /* input is valid, so handle the response */
-        oc_send_cbor_response(request, OC_STATUS_CHANGED);
-        do_put_cb(URL_INFOONOFF_4);
-        PRINT("-- End put_InfoOnOff_4\n");
-        return;
-      }
+      break;
     }
-    req = req->next;
+  }
+
+  if (error_state == false){
+      oc_send_cbor_response(request, OC_STATUS_CHANGED); 
+      do_put_cb(URL_INFOONOFF_4);
+      PRINT("-- End put_InfoOnOff_4\n");
+      return;
   }
   /* request data was not recognized, so it was a bad request */
   oc_send_response(request, OC_STATUS_BAD_REQUEST);
@@ -1916,15 +1816,18 @@ initialize_variables(void)
 {
   /* initialize global variables for resources */
   /* if wanted read them from persistent storage */
-  g_OnOff_1 = false;   /**< global variable for OnOff_1 */ 
-  g_InfoOnOff_1 = false;   /**< global variable for InfoOnOff_1 */ 
-  g_OnOff_2 = false;   /**< global variable for OnOff_2 */ 
-  g_InfoOnOff_2 = false;   /**< global variable for InfoOnOff_2 */ 
-  g_OnOff_3 = false;   /**< global variable for OnOff_3 */ 
-  g_InfoOnOff_3 = false;   /**< global variable for InfoOnOff_3 */ 
-  g_OnOff_4 = false;   /**< global variable for OnOff_4 */ 
-  g_InfoOnOff_4 = false;   /**< global variable for InfoOnOff_4 */ 
+  //g_OnOff_1 = false;   /**< global variable for OnOff_1 */ 
+  //g_InfoOnOff_1 = false;   /**< global variable for InfoOnOff_1 */ 
+  //g_OnOff_2 = false;   /**< global variable for OnOff_2 */ 
+  //g_InfoOnOff_2 = false;   /**< global variable for InfoOnOff_2 */ 
+  //g_OnOff_3 = false;   /**< global variable for OnOff_3 */ 
+  //g_InfoOnOff_3 = false;   /**< global variable for InfoOnOff_3 */ 
+  //g_OnOff_4 = false;   /**< global variable for OnOff_4 */ 
+  //g_InfoOnOff_4 = false;   /**< global variable for InfoOnOff_4 */ 
   /* parameter variables */
+  uint8_t oc_storage_buf[32];
+  long ret;
+  bool err;
 
 }
 
