@@ -16,7 +16,7 @@
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-// 2023-06-29 11:52:17.768606
+// 2023-07-31 10:49:06.406279
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
@@ -141,7 +141,7 @@ private:
   void OnFault_ONOFF_1(wxCommandEvent& event); 
   void OnFault_ONOFF_2(wxCommandEvent& event); 
   void OnFault_ONOFF_3(wxCommandEvent& event); 
-  void OnFault_ONOFF_4(wxCommandEvent& event); 
+  void OnFault_ONOFF_4(wxCommandEvent& event);                 
   void OnPressed_InfoOnOff_1(wxCommandEvent& event); 
   void OnPressed_InfoOnOff_2(wxCommandEvent& event); 
   void OnPressed_InfoOnOff_3(wxCommandEvent& event); 
@@ -172,21 +172,21 @@ private:
   wxTextCtrl* m_hostname_text; // text control for host name
   wxTextCtrl* m_secured_text; // text secure/not secure
   //DP_ID_ONOFF_1 bool
-  wxCheckBox* m_ONOFF_1 ; // OnOff_1 if.a 
+  wxCheckBox* m_ONOFF_1 ; // OnOff_1 if.a  
   //DP_ID_INFOONOFF_1 bool
-  wxButton* m_INFOONOFF_1; // InfoOnOff_1 if.s 
+  wxButton* m_INFOONOFF_1; // InfoOnOff_1 if.s  
   //DP_ID_ONOFF_2 bool
-  wxCheckBox* m_ONOFF_2 ; // OnOff_2 if.a 
+  wxCheckBox* m_ONOFF_2 ; // OnOff_2 if.a  
   //DP_ID_INFOONOFF_2 bool
-  wxButton* m_INFOONOFF_2; // InfoOnOff_2 if.s 
+  wxButton* m_INFOONOFF_2; // InfoOnOff_2 if.s  
   //DP_ID_ONOFF_3 bool
-  wxCheckBox* m_ONOFF_3 ; // OnOff_3 if.a 
+  wxCheckBox* m_ONOFF_3 ; // OnOff_3 if.a  
   //DP_ID_INFOONOFF_3 bool
-  wxButton* m_INFOONOFF_3; // InfoOnOff_3 if.s 
+  wxButton* m_INFOONOFF_3; // InfoOnOff_3 if.s  
   //DP_ID_ONOFF_4 bool
-  wxCheckBox* m_ONOFF_4 ; // OnOff_4 if.a 
+  wxCheckBox* m_ONOFF_4 ; // OnOff_4 if.a  
   //DP_ID_INFOONOFF_4 bool
-  wxButton* m_INFOONOFF_4; // InfoOnOff_4 if.s 
+  wxButton* m_INFOONOFF_4; // InfoOnOff_4 if.s  
   wxCheckBox* m_fault_ONOFF_1 ; // OnOff_1 if.a 
   wxCheckBox* m_fault_ONOFF_2 ; // OnOff_2 if.a 
   wxCheckBox* m_fault_ONOFF_3 ; // OnOff_3 if.a 
@@ -291,7 +291,7 @@ MyFrame::MyFrame(char* str_serial_number)
   column = (index % max_dp_count) - column_offset;
   //DP_ID_ONOFF_1 
   m_ONOFF_1 = new wxCheckBox(this, DP_ID_ONOFF_1, _T("OnOff_1 ('/p/o_1_1')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
-  m_ONOFF_1->Enable(false);      
+  m_ONOFF_1->Enable(false);          
   index = 2-1;
   row = 1 -1;
   column = (index % max_dp_count) - column_offset;
@@ -299,13 +299,13 @@ MyFrame::MyFrame(char* str_serial_number)
   // if.s  ==> sensor == possible to change value in UI
   m_INFOONOFF_1 = new wxButton(this, DP_ID_INFOONOFF_1, _T("InfoOnOff_1 ('/p/o_2_2')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
   m_INFOONOFF_1->Bind(wxEVT_BUTTON, &MyFrame::OnPressed_InfoOnOff_1, this);
-  m_INFOONOFF_1->Enable(false);        
+  m_INFOONOFF_1->Enable(false);            
   index = 3-1;
   row = 2 -1;
   column = (index % max_dp_count) - column_offset;
   //DP_ID_ONOFF_2 
   m_ONOFF_2 = new wxCheckBox(this, DP_ID_ONOFF_2, _T("OnOff_2 ('/p/o_3_3')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
-  m_ONOFF_2->Enable(false);      
+  m_ONOFF_2->Enable(false);          
   index = 4-1;
   row = 2 -1;
   column = (index % max_dp_count) - column_offset;
@@ -313,13 +313,13 @@ MyFrame::MyFrame(char* str_serial_number)
   // if.s  ==> sensor == possible to change value in UI
   m_INFOONOFF_2 = new wxButton(this, DP_ID_INFOONOFF_2, _T("InfoOnOff_2 ('/p/o_4_4')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
   m_INFOONOFF_2->Bind(wxEVT_BUTTON, &MyFrame::OnPressed_InfoOnOff_2, this);
-  m_INFOONOFF_2->Enable(false);        
+  m_INFOONOFF_2->Enable(false);            
   index = 5-1;
   row = 3 -1;
   column = (index % max_dp_count) - column_offset;
   //DP_ID_ONOFF_3 
   m_ONOFF_3 = new wxCheckBox(this, DP_ID_ONOFF_3, _T("OnOff_3 ('/p/o_5_5')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
-  m_ONOFF_3->Enable(false);      
+  m_ONOFF_3->Enable(false);          
   index = 6-1;
   row = 3 -1;
   column = (index % max_dp_count) - column_offset;
@@ -327,13 +327,13 @@ MyFrame::MyFrame(char* str_serial_number)
   // if.s  ==> sensor == possible to change value in UI
   m_INFOONOFF_3 = new wxButton(this, DP_ID_INFOONOFF_3, _T("InfoOnOff_3 ('/p/o_6_6')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
   m_INFOONOFF_3->Bind(wxEVT_BUTTON, &MyFrame::OnPressed_InfoOnOff_3, this);
-  m_INFOONOFF_3->Enable(false);        
+  m_INFOONOFF_3->Enable(false);            
   index = 7-1;
   row = 4 -1;
   column = (index % max_dp_count) - column_offset;
   //DP_ID_ONOFF_4 
   m_ONOFF_4 = new wxCheckBox(this, DP_ID_ONOFF_4, _T("OnOff_4 ('/p/o_7_7')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
-  m_ONOFF_4->Enable(false);      
+  m_ONOFF_4->Enable(false);          
   index = 8-1;
   row = 4 -1;
   column = (index % max_dp_count) - column_offset;
@@ -341,7 +341,7 @@ MyFrame::MyFrame(char* str_serial_number)
   // if.s  ==> sensor == possible to change value in UI
   m_INFOONOFF_4 = new wxButton(this, DP_ID_INFOONOFF_4, _T("InfoOnOff_4 ('/p/o_8_8')"), wxPoint(10 + column*x_width, 10 + (x_height*row)), wxSize(x_width, x_height), 0); 
   m_INFOONOFF_4->Bind(wxEVT_BUTTON, &MyFrame::OnPressed_InfoOnOff_4, this);
-  m_INFOONOFF_4->Enable(false);        
+  m_INFOONOFF_4->Enable(false);            
   m_fault_ONOFF_1 = new wxCheckBox(this, DP_FAULT_ID_ONOFF_1, _T("Fault OnOff_1"),  wxPoint(20 + (2* x_width), 10 + ((1/2 ) * x_height)), wxSize(x_width, x_height), 0);
   m_fault_ONOFF_1->Bind(wxEVT_CHECKBOX, &MyFrame:: OnFault_ONOFF_1, this); 
   m_fault_ONOFF_2 = new wxCheckBox(this, DP_FAULT_ID_ONOFF_2, _T("Fault OnOff_2"),  wxPoint(20 + (2* x_width), 10 + ((3/2 ) * x_height)), wxSize(x_width, x_height), 0);
@@ -775,22 +775,12 @@ void MyFrame::OnParameterList(wxCommandEvent& event)
       sprintf(line, "  name: '%s'  ", app_get_parameter_name(index));
       strcat(text, line);
     }
-    if (app_is_bool_url(url)) {
-      sprintf(line, "  value : '%d'  ", app_retrieve_bool_variable(url));
-      strcat(text, line);
-    }
-    if (app_is_int_url(url)) {
-      sprintf(line, "  value : '%d'  ", app_retrieve_int_variable(url));
-      strcat(text, line);
-    }
-    if (app_is_double_url(url)) {
-      sprintf(line, "  value : '%f'  ", (float)app_retrieve_double_variable(url));
-      strcat(text, line);
-    }
-    if (app_is_string_url(url)) {
-      sprintf(line, "  value : '%s'  ", app_retrieve_string_variable(url));
-      strcat(text, line);
-    }
+    
+    
+    //if (app_is_string_url(url)) {
+    //  sprintf(line, "  value : '%s'  ", app_retrieve_string_variable(url));
+    //  strcat(text, line);
+    //}
     index++;
     url = app_get_parameter_url(index);
   }
@@ -944,9 +934,9 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   strcat(text,"\n");
   strcat(text,"manufactorer     : cascoda\n");
   strcat(text,"model            : KNX virtual - SA\n");
-  strcat(text,"hardware type    : Windows\n");
+  strcat(text,"hardware type    : LW0001\n");
   strcat(text,"hardware version : [0, 1, 3]\n");
-  strcat(text,"firmware version : [0, 1, 8]\n\n");
+  strcat(text,"firmware version : [0, 1, 9]\n\n");
   
   strcat(text, "data points:\n");
   strcat(text,"url:/p/o_1_1 rt:urn:knx:dpa.417.61 if:if.a inst:1 name:OnOff_1\n");
@@ -961,7 +951,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   
   strcat(text, "(c) Cascoda Ltd\n");
   strcat(text, "(c) KNX.org\n");
-  strcat(text, "2023-06-29 11:52:17.768606");
+  strcat(text, "2023-07-31 10:49:06.406279");
   CustomDialog("About", text);
 }
 
@@ -1017,14 +1007,14 @@ void MyFrame::OnTimer(wxTimerEvent& event)
 void  MyFrame::updateInfoCheckBoxes()
 {
   bool p;
-  p = app_retrieve_bool_variable("/p/o_1_1"); // set toggle of OnOff_1
-  m_ONOFF_1->SetValue(p); 
-  p = app_retrieve_bool_variable("/p/o_3_3"); // set toggle of OnOff_2
-  m_ONOFF_2->SetValue(p); 
-  p = app_retrieve_bool_variable("/p/o_5_5"); // set toggle of OnOff_3
-  m_ONOFF_3->SetValue(p); 
-  p = app_retrieve_bool_variable("/p/o_7_7"); // set toggle of OnOff_4
-  m_ONOFF_4->SetValue(p); 
+  p = app_retrieve_bool_variable(URL_ONOFF_1);
+  m_ONOFF_1->SetValue(p);    
+  p = app_retrieve_bool_variable(URL_ONOFF_2);
+  m_ONOFF_2->SetValue(p);    
+  p = app_retrieve_bool_variable(URL_ONOFF_3);
+  m_ONOFF_3->SetValue(p);    
+  p = app_retrieve_bool_variable(URL_ONOFF_4);
+  m_ONOFF_4->SetValue(p);    
 
 }
 
@@ -1174,41 +1164,34 @@ void  MyFrame::updateInfoButtons()
   char text[200];
   bool p;
   int p_int;
+  float f;
   double d;
-  p = app_retrieve_bool_variable("/p/o_1_1"); // set button text of OnOff_1
-  strcpy(text, "OnOff_1 ('/p/o_1_1')");
+  p = app_retrieve_bool_variable(URL_ONOFF_1);  strcpy(text, "OnOff_1 ('/p/o_1_1')");
   this->bool2text(p, text);
-  m_ONOFF_1->SetLabel(text); 
-  p = app_retrieve_bool_variable("/p/o_3_3"); // set button text of OnOff_2
-  strcpy(text, "OnOff_2 ('/p/o_3_3')");
+  m_ONOFF_1->SetLabel(text);  
+  p = app_retrieve_bool_variable(URL_INFOONOFF_1);  strcpy(text, "InfoOnOff_1 ('/p/o_2_2')");
   this->bool2text(p, text);
-  m_ONOFF_2->SetLabel(text); 
-  p = app_retrieve_bool_variable("/p/o_5_5"); // set button text of OnOff_3
-  strcpy(text, "OnOff_3 ('/p/o_5_5')");
+  m_INFOONOFF_1->SetLabel(text);  
+  p = app_retrieve_bool_variable(URL_ONOFF_2);  strcpy(text, "OnOff_2 ('/p/o_3_3')");
   this->bool2text(p, text);
-  m_ONOFF_3->SetLabel(text); 
-  p = app_retrieve_bool_variable("/p/o_7_7"); // set button text of OnOff_4
-  strcpy(text, "OnOff_4 ('/p/o_7_7')");
+  m_ONOFF_2->SetLabel(text);  
+  p = app_retrieve_bool_variable(URL_INFOONOFF_2);  strcpy(text, "InfoOnOff_2 ('/p/o_4_4')");
   this->bool2text(p, text);
-  m_ONOFF_4->SetLabel(text); 
-  p = app_retrieve_bool_variable("/p/o_2_2"); // set button text of InfoOnOff_1
-  strcpy(text, "InfoOnOff_1 ('/p/o_2_2')");
+  m_INFOONOFF_2->SetLabel(text);  
+  p = app_retrieve_bool_variable(URL_ONOFF_3);  strcpy(text, "OnOff_3 ('/p/o_5_5')");
   this->bool2text(p, text);
-  m_INFOONOFF_1->SetLabel(text); 
-  p = app_retrieve_bool_variable("/p/o_4_4"); // set button text of InfoOnOff_2
-  strcpy(text, "InfoOnOff_2 ('/p/o_4_4')");
+  m_ONOFF_3->SetLabel(text);  
+  p = app_retrieve_bool_variable(URL_INFOONOFF_3);  strcpy(text, "InfoOnOff_3 ('/p/o_6_6')");
   this->bool2text(p, text);
-  m_INFOONOFF_2->SetLabel(text); 
-  p = app_retrieve_bool_variable("/p/o_6_6"); // set button text of InfoOnOff_3
-  strcpy(text, "InfoOnOff_3 ('/p/o_6_6')");
+  m_INFOONOFF_3->SetLabel(text);  
+  p = app_retrieve_bool_variable(URL_ONOFF_4);  strcpy(text, "OnOff_4 ('/p/o_7_7')");
   this->bool2text(p, text);
-  m_INFOONOFF_3->SetLabel(text); 
-  p = app_retrieve_bool_variable("/p/o_8_8"); // set button text of InfoOnOff_4
-  strcpy(text, "InfoOnOff_4 ('/p/o_8_8')");
+  m_ONOFF_4->SetLabel(text);  
+  p = app_retrieve_bool_variable(URL_INFOONOFF_4);  strcpy(text, "InfoOnOff_4 ('/p/o_8_8')");
   this->bool2text(p, text);
-  m_INFOONOFF_4->SetLabel(text); 
+  m_INFOONOFF_4->SetLabel(text);  
 
-}
+} 
 void MyFrame::OnPressed_InfoOnOff_1(wxCommandEvent& event)
 {
   char url[] = "/p/o_2_2";
@@ -1225,7 +1208,7 @@ void MyFrame::OnPressed_InfoOnOff_1(wxCommandEvent& event)
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "InfoOnOff_1 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
-} 
+}   
 void MyFrame::OnPressed_InfoOnOff_2(wxCommandEvent& event)
 {
   char url[] = "/p/o_4_4";
@@ -1242,7 +1225,7 @@ void MyFrame::OnPressed_InfoOnOff_2(wxCommandEvent& event)
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "InfoOnOff_2 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
-} 
+}   
 void MyFrame::OnPressed_InfoOnOff_3(wxCommandEvent& event)
 {
   char url[] = "/p/o_6_6";
@@ -1259,7 +1242,7 @@ void MyFrame::OnPressed_InfoOnOff_3(wxCommandEvent& event)
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "InfoOnOff_3 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
-} 
+}   
 void MyFrame::OnPressed_InfoOnOff_4(wxCommandEvent& event)
 {
   char url[] = "/p/o_8_8";
@@ -1276,7 +1259,7 @@ void MyFrame::OnPressed_InfoOnOff_4(wxCommandEvent& event)
   oc_do_s_mode_with_scope(5, url, "w");
   sprintf(my_text, "InfoOnOff_4 ('%s') pressed: %d", url, (int)p);
   SetStatusText(my_text);
-} 
+}  
 void MyFrame::OnFault_ONOFF_1(wxCommandEvent& event)
 {
   char url[] = "/p/o_1_1";
@@ -1332,7 +1315,7 @@ void MyFrame::OnFault_ONOFF_4(wxCommandEvent& event)
 
   sprintf(my_text, "Actuator OnOff_4 (/p/o_7_7) Fault: %d to: /p/o_8_8", (int)p1);
   SetStatusText(my_text);
-}
+}        
 
 
 
