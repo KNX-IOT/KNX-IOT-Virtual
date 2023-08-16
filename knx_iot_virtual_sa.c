@@ -453,7 +453,7 @@ void app_str_to_upper(char *str){
  * - base path
  * - knx spec version 
  * - hardware version : [0, 1, 3]
- * - firmware version : [0, 1, 9]
+ * - firmware version : [0, 2, 0]
  * - hardware type    : LW0001
  * - device model     : KNX virtual - SA
  *
@@ -474,8 +474,8 @@ app_init(void)
   oc_core_set_device_hwv(0, 0, 1, 3);
   
   
-  /* set the firmware version 0.1.9 */
-  oc_core_set_device_fwv(0, 0, 1, 9);
+  /* set the firmware version 0.2.0 */
+  oc_core_set_device_fwv(0, 0, 2, 0);
   
 
   /* set the hardware type*/
