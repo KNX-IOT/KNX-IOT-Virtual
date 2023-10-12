@@ -429,7 +429,6 @@ app_init(void)
   /* set the hardware version 0.4.0 */
   oc_core_set_device_hwv(0, 0, 4, 0);
   
-  
   /* set the firmware version 0.4.0 */
   oc_core_set_device_fwv(0, 0, 4, 0);
   

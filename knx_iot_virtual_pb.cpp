@@ -915,7 +915,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
   strcat(text,"model            : KNX virtual - PB\n");
   strcat(text,"hardware type    : LW0001\n");
   strcat(text,"hardware version : [0, 1, 3]\n");
-  strcat(text,"firmware version : [0, 1, 9]\n\n");
+  strcat(text,"firmware version : [0, 2, 0]\n\n");
   
   strcat(text, "data points:\n");
   strcat(text,"url:/p/o_1_1 rt:urn:knx:dpa.421.61 if:if.s inst:1 name:OnOff_1\n");
