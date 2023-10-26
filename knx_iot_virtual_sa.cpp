@@ -654,6 +654,10 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
         sprintf(line, "  path: '%s' ", oc_string(entry->path));
         strcat(text, line);
       }
+      if (oc_string_len(entry->at) > 0){
+        sprintf(line, "  at: '%s' ", oc_string(entry->at));
+        strcat(text, line);
+      }
       if ( entry->ga_len > 0) {
         strcpy(line,"  ga : [");
         for (int i = 0; i < entry->ga_len; i++) {
@@ -724,6 +728,10 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
       }
       if (oc_string_len(entry->path) > 0){
         sprintf(line, "  path: '%s' ", oc_string(entry->path));
+        strcat(text, line);
+      }
+      if (oc_string_len(entry->at) > 0){
+        sprintf(line, "  at: '%s' ", oc_string(entry->at));
         strcat(text, line);
       }
       if ( entry->ga_len > 0) {
