@@ -452,8 +452,8 @@ void app_str_to_upper(char *str){
  * - serial number    : 00FA10010700
  * - base path
  * - knx spec version 
- * - hardware version : [0, 6, 0]
- * - firmware version : [0, 6, 0]
+ * - hardware version : [0, 7, 0]
+ * - firmware version : [0, 7, 0]
  * - hardware type    : 000000000002
  * - device model     : KNX virtual - SA
  *
@@ -470,11 +470,11 @@ app_init(void)
   oc_device_info_t *device = oc_core_get_device_info(0);
 
   
-  /* set the hardware version 0.6.0 */
-  oc_core_set_device_hwv(0, 0, 6, 0);
+  /* set the hardware version 0.7.0 */
+  oc_core_set_device_hwv(0, 0, 7, 0);
   
-  /* set the firmware version 0.6.0 */
-  oc_core_set_device_fwv(0, 0, 6, 0);
+  /* set the firmware version 0.7.0 */
+  oc_core_set_device_fwv(0, 0, 7, 0);
   
   /* set the hardware type*/
   //                         123456789012
