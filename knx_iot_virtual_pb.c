@@ -438,7 +438,7 @@ app_init(void)
   long int mid_num = strtol(mid, NULL, 16);
 
   /* manufactorer id */
-  oc_core_
+  oc_core_set_device_mid(0, (uint32_t)mid_num);
 
   /* set the hardware type*/
   //                         123456789012
