@@ -432,7 +432,7 @@ app_init(void)
   /* set the firmware version 0.7.0 */
   oc_core_set_device_fwv(0, 0, 7, 0);
 
-  char mid[20];
+  char mid[5];
   strncpy(mid, g_serial_number, 5); // mid = first 4 digits of sn
   mid[4] = '\0';
   long int mid_num = strtol(mid, NULL, 16);
