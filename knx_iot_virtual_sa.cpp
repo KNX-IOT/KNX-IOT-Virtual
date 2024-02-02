@@ -151,7 +151,8 @@ private:
   void updateInfoButtons();
   void updateTextButtons();
   void bool2text(bool on_off, char* text);
-  void int2text(int value, char* text, bool as_ets=true);
+  void int2text(int value, char* text);
+  void int2gatext(uint32_t value, char* text, bool as_ets=false);
   void int2grpidtext(uint64_t value, char* text, bool as_ets);
   void int2scopetext(uint32_t value, char* text);
   void double2text(double value, char* text);
@@ -585,7 +586,7 @@ void MyFrame::OnGroupObjectTable(wxCommandEvent& event)
       strcat(text, line);
       strcpy(line,"  ga : [");
       for (int i = 0; i < entry->ga_len; i++) {
-        this->int2text(entry->ga[i], line, ga_conversion);
+        this->int2gatext(entry->ga[i], line, ga_conversion);
       }
       strcat(line," ]\n");
       strcat(text, line);
@@ -661,7 +662,7 @@ void MyFrame::OnPublisherTable(wxCommandEvent& event)
       if ( entry->ga_len > 0) {
         strcpy(line,"  ga : [");
         for (int i = 0; i < entry->ga_len; i++) {
-          this->int2text(entry->ga[i], line, ga_conversion);
+          this->int2gatext(entry->ga[i], line, ga_conversion);
         }
         strcat(line," ]\n");
         strcat(text, line);
@@ -737,7 +738,7 @@ void MyFrame::OnRecipientTable(wxCommandEvent& event)
       if ( entry->ga_len > 0) {
         strcpy(line,"  ga : [");
         for (int i = 0; i < entry->ga_len; i++) {
-          this->int2text(entry->ga[i], line, ga_conversion);
+          this->int2gatext(entry->ga[i], line, ga_conversion);
         }
         strcat(line," ]\n");
         strcat(text, line);
@@ -909,7 +910,7 @@ void MyFrame::OnAuthTable(wxCommandEvent& event)
             sprintf(line, "  osc_ga : [");
             strcat(text, line);
             for (int i = 0; i < my_entry->ga_len; i++) {
-              this->int2text(my_entry->ga[i], text, ga_conversion);
+              this->int2gatext(my_entry->ga[i], text, ga_conversion);
             }
             sprintf(line, " ]\n");
             strcat(text, line);
@@ -1048,11 +1049,25 @@ void MyFrame::bool2text(bool on_off, char* text)
 /**
  * @brief convert the integer to text for display
  * 
- * @param on_off the integer
- * @param text the text to add info too
+ * @param value the integer
+ * @param text the text to add info to
+ */
+void MyFrame::int2text(int value, char* text)
+{
+  char value_text[50];
+
+  sprintf(value_text, " %d", value);
+  strcat(text, value_text);
+}
+
+/**
+ * @brief convert the group address to text for display
+ * 
+ * @param value the integer
+ * @param text the text to add info to
  * @param as_ets the text as terminology as used in ets
  */
-void MyFrame::int2text(int value, char* text, bool as_ets)
+void MyFrame::int2gatext(uint32_t value, char* text, bool as_ets)
 {
   char value_text[50];
 
@@ -1071,10 +1086,10 @@ void MyFrame::int2text(int value, char* text, bool as_ets)
     uint32_t ga_main = (ga >> 11);
     uint32_t ga_middle = (ga >> 8) & 0x7;
     uint32_t ga_sub = (ga & 0x000000FF);
-    sprintf(value_text, " %d/%d/%d", ga_main, ga_middle, ga_sub);
+    sprintf(value_text, " %lu/%lu/%lu", ga_main, ga_middle, ga_sub);
     strcat(text, value_text);
   } else {
-    sprintf(value_text, " %d", value);
+    sprintf(value_text, " %lu", value);
     strcat(text, value_text);
   }
 }
