@@ -247,7 +247,9 @@ bool app_retrieve_bool_variable(char* url)
   } 
   if ( strcmp(url, URL_INFOONOFF_4) == 0) { 
     return g_InfoOnOff_4; /**< global variable for InfoOnOff_4 */
-  } 
+  }
+  
+  return false;
 }
 
 // FAULT code
