@@ -488,7 +488,7 @@ app_init(void)
   
   /* set the hardware type*/
   //                         123456789012
-  oc_core_set_device_hwt(0, "000000000002");
+  oc_core_set_device_hwt(0, "000000000000");
 
   /* set the model */
   oc_core_set_device_model(0, "KNX virtual - SA");
